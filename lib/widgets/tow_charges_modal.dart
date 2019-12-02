@@ -43,8 +43,15 @@ class TowChargesModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.attach_money),
-                        title: Text(suggestion.towChargesName),
+                          leading: Icon(Icons.monetization_on),
+                          title: Column(
+                              crossAxisAlignment:  CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10, top: 15),
+                                    child: Text(suggestion.towChargesName)),
+                                Divider(height: 5.0, color: Colors.black38),
+                              ] )
                       );
                     },
                     onSuggestionSelected: (suggestion) {

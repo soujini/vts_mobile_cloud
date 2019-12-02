@@ -17,17 +17,23 @@ class _ChargesAddState extends State<ChargesAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-    child: AlertDialog(
-        content: Form(
+    return Scaffold(
+      appBar: AppBar(
+        // automaticallyImplyLeading: true,
+        title: Text('Add Charges'),
+      ),
+      body: Container(
+    child: SingleChildScrollView(
+   // child: AlertDialog(
+        //content:
+      child:Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.all(20.0),
-                child: Text('ADD Charges',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+
               ),
               new ListTile(
                 title: new TextFormField(
@@ -139,7 +145,7 @@ class _ChargesAddState extends State<ChargesAdd> {
                   child: Text('SAVE')),
             ],
           ),
-        )));
+        ))));
   }
 
   setTowCharge() {

@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:vts_mobile_cloud/screens/search_list_screen.dart';
+import 'package:vts_mobile_cloud/widgets/tow_type_modal.dart';
+import 'package:vts_mobile_cloud/widgets/authorization_modal.dart';
+import 'package:vts_mobile_cloud/widgets/wrecker_company_modal.dart';
+import 'package:vts_mobile_cloud/widgets/wrecker_driver_modal.dart';
 
 import '../widgets/search_calls_list.dart';
 
@@ -12,12 +18,17 @@ class SearchCallScreen extends StatefulWidget {
 }
 
 class SearchCallScreenState extends State<SearchCallScreen> {
+  DateTime now = DateTime.now();
+
   List<RadioModel> searchOption = new List<RadioModel>();
   List<RadioModel> searchOptionType = new List<RadioModel>();
-  String filterFields="";
+  String filterFields = "";
 
-  String searchOptionField="";
-  String dispatchStatus="";
+  String searchOptionField = "";
+  String dispatchStatus = "";
+  var selectedOptionIndex;
+  var selectedTypeIndex;
+  var selectedModalOption=0;
   final myController = TextEditingController();
 
   @override
@@ -31,37 +42,91 @@ class SearchCallScreenState extends State<SearchCallScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    searchOption.add(new RadioModel(false, 'Call Date', ''));
-    searchOption.add(new RadioModel(false, 'License Plate', ''));
+    searchOption.add(new RadioModel(false, 'CALL DATE', ''));
+    searchOption.add(new RadioModel(false, 'PLATE #', ''));
     searchOption.add(new RadioModel(false, 'PO#', ''));
-    searchOption.add(new RadioModel(false, 'Invoice', ''));
+    searchOption.add(new RadioModel(false, 'INVOICE', ''));
+    searchOption.add(new RadioModel(false, 'DRIVER', ''));
+    searchOption.add(new RadioModel(false, 'COMPANY', ''));
+    searchOption.add(new RadioModel(false, 'AUTHORIZATION', ''));
+    searchOption.add(new RadioModel(false, 'TOW TYPE', ''));
 
-    searchOptionType.add(new RadioModel(false, 'All', ''));
-    searchOptionType.add(new RadioModel(false, 'Received', ''));
-    searchOptionType.add(new RadioModel(false, 'Dispatch', ''));
-    searchOptionType.add(new RadioModel(false, 'Enroute', ''));
-    searchOptionType.add(new RadioModel(false, 'Onsite', ''));
-    searchOptionType.add(new RadioModel(false, 'Rolling', ''));
-    searchOptionType.add(new RadioModel(false, 'Arrived', ''));
-    searchOptionType.add(new RadioModel(false, 'Cleared', ''));
+    searchOptionType.add(new RadioModel(false, 'ALL', ''));
+    searchOptionType.add(new RadioModel(false, 'RECEIVED', ''));
+    searchOptionType.add(new RadioModel(false, 'DISPATCH', ''));
+    searchOptionType.add(new RadioModel(false, 'ENROUTE', ''));
+    searchOptionType.add(new RadioModel(false, 'ONSITE', ''));
+    searchOptionType.add(new RadioModel(false, 'ROLLING', ''));
+    searchOptionType.add(new RadioModel(false, 'ARRIVED', ''));
+    searchOptionType.add(new RadioModel(false, 'CLEARED', ''));
+  }
+
+  setDriver(id, name) {
+    setState(() {
+      selectedModalOption=id;
+//      _call.wreckerDriver = id;
+//      _call.wreckerDriverName = name;
+      myController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: name))
+              .value;
+    });
+  }
+  setCompany(id, name) {
+    setState(() {
+      selectedModalOption=id;
+//      _call.wreckerCompany = id;
+//      _call.wreckerCompanyName = name;
+      myController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: name))
+              .value;
+    });
+  }
+  setTowType(id, name) {
+    setState(() {
+      selectedModalOption=id;
+//      _call.towType = id;
+//      _call.towTypeName = name;
+      myController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: name))
+              .value;
+    });
+  }
+
+
+  setAuthorization(id, name) {
+    selectedModalOption=id;
+    setState(() {
+//      _call.towAuthorization = id;
+//      _call.towAuthorizationName = name;
+      myController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: name))
+              .value;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: "asdasd",
-        home: Scaffold(
+    return Scaffold(
+       // home: Scaffold(
             appBar: AppBar(
-              title: Text("Search Call"),
+              title: Text("Search Calls"),
             ),
             body: SingleChildScrollView(
+              child:Center(
               child: Column(children: <Widget>[
+                Row(children: <Widget>[
+                  Padding(
+                    padding:EdgeInsets.all(20.0),
+                        child:   Text("SEARCH OPTION (Choose any one)"),
+                  )
+
+                ]),
                 SizedBox(
-                  height: 175,
+                  height: 125,
                   child: GridView.count(
                     // Create a grid with 2 columns. If you change the scrollDirection to
                     // horizontal, this produces 2 rows.
-                    crossAxisCount: 3,
+                    crossAxisCount: 4,
                     childAspectRatio: 2.0,
                     padding: const EdgeInsets.all(5.0),
 //                mainAxisSpacing: 1.0,
@@ -70,19 +135,30 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                       return Center(
                           child: new InkWell(
                         //highlightColor: Colors.red,
-                        splashColor: Colors.blueAccent,
+                        splashColor: Colors.green,
                         onTap: () {
-                          if(index == 0){
-                            searchOptionField="dispatchDate:";
-                          }
-                          else if(index == 1){
-                            searchOptionField="licensePlate:";
-                          }
-                          else if(index == 2){
-                            searchOptionField="towedPONumber:";
-                          }
-                          else if(index == 3){
-                            searchOptionField="towedInvoice:";
+                          setState(() {
+                            selectedOptionIndex = index;
+                            myController.value =
+                                new TextEditingController.fromValue(new TextEditingValue(text: ""))
+                                    .value;
+                          });
+                          if (index == 0) {
+                            searchOptionField = "dispatchDate:";
+                          } else if (index == 1) {
+                            searchOptionField = "licensePlate:";
+                          } else if (index == 2) {
+                            searchOptionField = "towedPONumber:";
+                          } else if (index == 3) {
+                            searchOptionField = "towedInvoice:";
+                          }else if (index == 4) {
+                            searchOptionField = "wreckerDriver:";
+                          }else if (index == 5) {
+                            searchOptionField = "wreckerCompany:";
+                          }else if (index == 6) {
+                            searchOptionField = "towAuthorization:";
+                          }else if (index == 7) {
+                            searchOptionField = "towType:";
                           }
                           setState(() {
                             searchOption.forEach(
@@ -94,13 +170,164 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                       ));
                     }),
                   ),
+
                 ),
+
+//                Text("asdasdhajdsaskd "+selectedOptionIndex.toString()),
+                Padding(
+                  padding:EdgeInsets.all(20.0),
+                  child:(selectedOptionIndex == 1 || selectedOptionIndex == 2 || selectedOptionIndex == 3) ?
+                  SizedBox(
+                  height: 75,
+                  child: TextField(
+                      controller: myController,
+                      decoration:
+                      InputDecoration(labelText: 'Enter Value for Search Option')
+                  ),
+                ) : (selectedOptionIndex == 0)
+                      ?
+                  ListTile(
+                    title: new TextFormField(
+                      controller: myController,
+                      decoration: new InputDecoration(
+                        labelText: "Call Date",
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            DatePicker.showDatePicker(context,
+                                showTitleActions: true,
+                                //  minTime: DateTime(2018, 3, 5),
+                                //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                //   print('change $date');
+                                // },
+                                onConfirm: (date) {
+                                  String formattedDate =
+                                  DateFormat('MM-dd-yyyy').format(date);
+                                  myController.text = formattedDate;
+//                              String formattedTime = DateFormat('kk.mm').format(now);
+//                              String formattedTime2 = DateFormat('kk^mm').format(now);
+                                },
+                                currentTime: DateTime.now(),
+                                locale: LocaleType.en);
+                          }, //_controller.clear(),
+                          icon: Icon(Icons.date_range),
+                        ),
+                      ),
+                    //  onSaved: (val) => setState(() => _call.towedDate = val),
+                    ),
+                  ) :  (selectedOptionIndex == 4)?
+                  new ListTile(
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Driver"),
+//                  ),
+                    //trailing: Icon(Icons.shopping_cart),
+                    title: new TextFormField(
+                        controller: this.myController,
+                        decoration: new InputDecoration(
+                          labelText: "Driver",
+                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                        ),
+                        onTap: () {
+//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+                          Navigator.push(
+                              context,
+                              new MaterialPageRoute(
+                                  builder: (context) => new WreckerDriverModal(
+                                      setDriver: setDriver)));
+                        }),
+                  ) : (selectedOptionIndex == 5)?
+                  new ListTile(
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Company *"),
+//                  ),
+                    //trailing: Icon(Icons.shopping_cart),
+                    title: new TextFormField(
+                        controller: this.myController,
+                        decoration: new InputDecoration(
+                          labelText: "Company *",
+                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                        ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please select Company';
+                          }
+                        },
+                        onTap: () {
+//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+                          Navigator.push(
+                              context,
+                              new MaterialPageRoute(
+                                  builder: (context) => new WreckerCompanyModal(
+                                      setCompany: setCompany)));
+                        }),
+                  ): (selectedOptionIndex == 6) ?
+                  new ListTile(
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Authorization"),
+//                  ),
+                    //trailing: Icon(Icons.shopping_cart),
+                    title: new TextFormField(
+                        controller: this.myController,
+                        decoration: new InputDecoration(
+                          labelText: "Authorization",
+                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                        ),
+                        onTap: () {
+//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+                          Navigator.push(
+                              context,
+                              new MaterialPageRoute(
+                                  builder: (context) => new TowAuthorizationModal(
+                                      setAuthorization: setAuthorization)));
+                        }),
+                  ) : (selectedOptionIndex == 7) ?
+                  new ListTile(
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Tow Type *"),
+//                  ),
+                    //trailing: Icon(Icons.shopping_cart),
+                    title: new TextFormField(
+                        controller: this.myController,
+                        decoration: new InputDecoration(
+                          hintText: "Tow Type *",
+                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                        ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please select Tow Type';
+                          }
+                        },
+                        onTap: () {
+//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+                          Navigator.push(
+                              context,
+                              new MaterialPageRoute(
+                                  builder: (context) =>
+                                  new TowTypeModal(setTowType: setTowType)));
+                        }),
+                  ):
+                  new Container()
+                ),
+                Row(children: <Widget>[
+                  Padding(
+                    padding:EdgeInsets.all(20.0),
+                    child:   Text("SEARCH TYPE (Choose any one)"),
+                  )
+
+                ]),
                 SizedBox(
-                  height: 225.0,
+                  height: 125.0,
                   child: GridView.count(
                     // Create a grid with 2 columns. If you change the scrollDirection to
                     // horizontal, this produces 2 rows.
-                    crossAxisCount: 3,
+                    crossAxisCount: 4,
                     childAspectRatio: 2.0,
                     padding: const EdgeInsets.all(5.0),
 //                mainAxisSpacing: 1.0,
@@ -111,30 +338,22 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                         //highlightColor: Colors.red,
                         splashColor: Colors.blueAccent,
                         onTap: () {
-
-                          if(index == 0){
-                            dispatchStatus= "";
-                          }
-                          else if(index == 1){
-                            dispatchStatus= "R";
-                          }
-                          else if(index == 2){
-                            dispatchStatus= "D";
-                          }
-                          else if(index == 3){
-                            dispatchStatus= "E";
-                          }
-                          else if(index == 4){
-                            dispatchStatus= "O";
-                          }
-                          else if(index == 5){
-                            dispatchStatus= "G";
-                          }
-                          else if(index == 6){
-                            dispatchStatus= "A";
-                          }
-                          else if(index == 7){
-                            dispatchStatus= "C";
+                          if (index == 0) {
+                            dispatchStatus = "";
+                          } else if (index == 1) {
+                            dispatchStatus = "R";
+                          } else if (index == 2) {
+                            dispatchStatus = "D";
+                          } else if (index == 3) {
+                            dispatchStatus = "E";
+                          } else if (index == 4) {
+                            dispatchStatus = "O";
+                          } else if (index == 5) {
+                            dispatchStatus = "G";
+                          } else if (index == 6) {
+                            dispatchStatus = "A";
+                          } else if (index == 7) {
+                            dispatchStatus = "C";
                           }
                           setState(() {
                             searchOptionType.forEach(
@@ -147,14 +366,8 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                     }),
                   ),
                 ),
-                SizedBox(
-                  height: 75,
-                  child: TextField(
-                      controller: myController,
-                  decoration:
-                  InputDecoration(labelText: 'Enter Value for Search Option')
-                      ),
-                ),
+
+
                 SizedBox(
                     //                    padding: EdgeInsets.all(8.0),
 
@@ -170,13 +383,30 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                         padding: EdgeInsets.all(0.0),
                         splashColor: Colors.blueAccent,
                         onPressed: () {
-                          filterFields=searchOptionField+myController.text+"|pinNumber:PIN0000074|towedStatus:C|dispatchStatus:"+dispatchStatus;
+                          if(selectedOptionIndex == 0){
+                            filterFields = searchOptionField +
+                                myController.text +
+                                "|pinNumber:PIN0000074|towedStatus:C|dispatchStatus:" +
+                                dispatchStatus;
+                          }
+                          if(selectedOptionIndex > 0 && selectedOptionIndex < 4){
+                            filterFields = searchOptionField +
+                                myController.text +
+                                "|pinNumber:PIN0000074|towedStatus:C|dispatchStatus:" +
+                                dispatchStatus;
+                          }
+                          if(selectedOptionIndex >= 4){
+                            filterFields = searchOptionField +
+                                selectedModalOption.toString() +
+                                "|pinNumber:PIN0000074|towedStatus:C|dispatchStatus:" +
+                                dispatchStatus;
+
+                          }
                           Navigator.push(
                               context,
                               new MaterialPageRoute(
-                                  builder: (context) => SearchListScreen(filterFields)));
-//                       setState(() =>
-//                        selected_status="Accept");
+                                  builder: (context) =>
+                                      SearchListScreen(filterFields)));
                         },
                         child: Text('FIND')))
               ]),
@@ -186,7 +416,9 @@ class SearchCallScreenState extends State<SearchCallScreen> {
 
 class RadioItem extends StatelessWidget {
   final RadioModel _item;
+
   RadioItem(this._item);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -195,25 +427,25 @@ class RadioItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           new Container(
-            height: 50,
-            width: 120,
+            height: 45,
+            width: 95,
             child: new Center(
               child: new Text(_item.buttonText,
                   style: new TextStyle(
                       color: _item.isSelected ? Colors.white : Colors.black,
                       //fontWeight: FontWeight.bold,
-                      fontSize: 18.0)),
+                      fontSize: 11.5)),
             ),
             decoration: new BoxDecoration(
-              color: _item.isSelected ? Colors.blueAccent : Colors.transparent,
+              color: _item.isSelected ? Colors.green : Colors.transparent,
               border: new Border.all(
                   width: 1.0,
-                  color: _item.isSelected ? Colors.blueAccent : Colors.grey),
+                  color: _item.isSelected ? Colors.green : Colors.grey),
               borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
             ),
           ),
           new Container(
-            margin: new EdgeInsets.only(left: 10.0),
+            margin: new EdgeInsets.only(left: 1.0),
             child: new Text(_item.text),
           )
         ],
@@ -230,315 +462,3 @@ class RadioModel {
   RadioModel(this.isSelected, this.buttonText, this.text);
 }
 
-//import 'package:flutter/material.dart';
-//import 'package:vts_mobile_cloud/widgets/search_calls_list.dart';
-//
-//class SearchCallScreen extends StatelessWidget {
-//  SearchCallScreen({this.onPush});
-//  final ValueChanged<int> onPush;
-////  static const routeName = '/search-call';
-//
-//  @override
-//  Widget build(BuildContext context) {
-//    return Scaffold(
-//        appBar: AppBar(
-//          title: Text('SEARCH CALL'),
-//        ),
-//        body: Container(
-//            margin: EdgeInsets.all(10.0),
-//            padding: EdgeInsets.all(5.0),
-//            alignment: Alignment.topCenter,
-//            decoration: BoxDecoration(
-//              color: Colors.white,
-//              // border: Border.all(),
-//            ),
-//            child: Column(
-//              crossAxisAlignment: CrossAxisAlignment.center,
-////        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//              children: <Widget>[
-//                Padding(
-//                  padding: const EdgeInsets.all(1.0),
-//                  child: Text('Search Option (Choose any one)'),
-//                ),
-//                Row(
-//                  children: <Widget>[
-//                    Padding(
-//                        padding: EdgeInsets.all(1.0),
-//                        child: SizedBox(
-//                            width: 100,
-//                            height: 40,
-//                            child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                                shape: new RoundedRectangleBorder(
-//                                    borderRadius:
-//                                        new BorderRadius.circular(10.0),
-//                                    side: BorderSide(color: Color(0xff333333))),
-//                                disabledTextColor: Colors.black,
-//                                padding: EdgeInsets.all(8.0),
-//                                splashColor: Colors.blueAccent,
-//                                onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                                },
-//                                child: Text('Call Date')))),
-//                    Padding(
-//                        padding: EdgeInsets.all(8.0),
-//                        child: SizedBox(
-//                            width: 100,
-//                            height: 40,
-//                            child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                                shape: new RoundedRectangleBorder(
-//                                    borderRadius:
-//                                        new BorderRadius.circular(10.0),
-//                                    side: BorderSide(color: Color(0xff333333))),
-//                                disabledTextColor: Colors.black,
-//                                padding: EdgeInsets.all(8.0),
-//                                splashColor: Colors.blueAccent,
-//                                onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                                },
-//                                child: Text('License')))),
-//                    Padding(
-//                        padding: EdgeInsets.all(8.0),
-//                        child: SizedBox(
-//                            width: 100,
-//                            height: 40,
-//                            child: FlatButton(
-//                                //   color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-//                                // textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                                shape: new RoundedRectangleBorder(
-//                                    borderRadius:
-//                                        new BorderRadius.circular(10.0),
-//                                    side: BorderSide(color: Color(0xff333333))),
-//                                disabledTextColor: Colors.black,
-//                                padding: EdgeInsets.all(8.0),
-//                                splashColor: Colors.blueAccent,
-//                                onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                                },
-//                                child: Text('PO#')))),
-//                  ],
-//                ),
-//                Row(
-//                  children: <Widget>[
-//                    Padding(
-//                        padding: EdgeInsets.all(8.0),
-//                        child: SizedBox(
-//                            width: 100,
-//                            height: 40,
-//                            child: FlatButton(
-//                                // color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-//                                // textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                                shape: new RoundedRectangleBorder(
-//                                    borderRadius:
-//                                        new BorderRadius.circular(10.0),
-//                                    side: BorderSide(color: Color(0xff333333))),
-//                                disabledTextColor: Colors.black,
-//                                padding: EdgeInsets.all(8.0),
-//                                splashColor: Colors.blueAccent,
-//                                onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                                },
-//                                child: Text('Invoice')))),
-//                  ],
-//                ),
-//                Text('Search Type (Choose any one)',
-//                    textAlign: TextAlign.start),
-//                Row(children: <Widget>[
-//                  Padding(
-//                      padding: EdgeInsets.all(8.0),
-//                      child: SizedBox(
-//                          width: 100,
-//                          height: 40,
-//                          child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                              shape: new RoundedRectangleBorder(
-//                                  borderRadius: new BorderRadius.circular(10.0),
-//                                  side: BorderSide(color: Color(0xff333333))),
-//                              disabledTextColor: Colors.black,
-//                              padding: EdgeInsets.all(8.0),
-//                              splashColor: Colors.blueAccent,
-//                              onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                              },
-//                              child: Text('All')))),
-//                  Padding(
-//                      padding: EdgeInsets.all(8.0),
-//                      child: SizedBox(
-//                          width: 100,
-//                          height: 40,
-//                          child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                              shape: new RoundedRectangleBorder(
-//                                  borderRadius: new BorderRadius.circular(10.0),
-//                                  side: BorderSide(color: Color(0xff333333))),
-//                              disabledTextColor: Colors.black,
-//                              padding: EdgeInsets.all(8.0),
-//                              splashColor: Colors.blueAccent,
-//                              onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                              },
-//                              child: Text('Received')))),
-//                  Padding(
-//                      padding: EdgeInsets.all(8.0),
-//                      child: SizedBox(
-//                          width: 100,
-//                          height: 40,
-//                          child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                              shape: new RoundedRectangleBorder(
-//                                  borderRadius: new BorderRadius.circular(10.0),
-//                                  side: BorderSide(color: Color(0xff333333))),
-//                              disabledTextColor: Colors.black,
-//                              padding: EdgeInsets.all(8.0),
-//                              splashColor: Colors.blueAccent,
-//                              onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                              },
-//                              child: Text('Dispatch'))))
-//                ]),
-//                Row(children: <Widget>[
-//                  Padding(
-//                      padding: EdgeInsets.all(8.0),
-//                      child: SizedBox(
-//                          width: 100,
-//                          height: 40,
-//                          child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                              shape: new RoundedRectangleBorder(
-//                                  borderRadius: new BorderRadius.circular(10.0),
-//                                  side: BorderSide(color: Color(0xff333333))),
-//                              disabledTextColor: Colors.black,
-//                              padding: EdgeInsets.all(8.0),
-//                              splashColor: Colors.blueAccent,
-//                              onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                              },
-//                              child: Text('Enroute')))),
-//                  Padding(
-//                      padding: EdgeInsets.all(8.0),
-//                      child: SizedBox(
-//                          width: 100,
-//                          height: 40,
-//                          child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                              shape: new RoundedRectangleBorder(
-//                                  borderRadius: new BorderRadius.circular(10.0),
-//                                  side: BorderSide(color: Color(0xff333333))),
-//                              disabledTextColor: Colors.black,
-//                              padding: EdgeInsets.all(8.0),
-//                              splashColor: Colors.blueAccent,
-//                              onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                              },
-//                              child: Text('Onsite')))),
-//                  Padding(
-//                      padding: EdgeInsets.all(8.0),
-//                      child: SizedBox(
-//                          width: 100,
-//                          height: 40,
-//                          child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                              shape: new RoundedRectangleBorder(
-//                                  borderRadius: new BorderRadius.circular(10.0),
-//                                  side: BorderSide(color: Color(0xff333333))),
-//                              disabledTextColor: Colors.black,
-//                              padding: EdgeInsets.all(8.0),
-//                              splashColor: Colors.blueAccent,
-//                              onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                              },
-//                              child: Text('Rolling'))))
-//                ]),
-//                Row(
-//                  children: <Widget>[
-//                    Padding(
-//                        padding: EdgeInsets.all(8.0),
-//                        child: SizedBox(
-//                            width: 100,
-//                            height: 40,
-//                            child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                                shape: new RoundedRectangleBorder(
-//                                    borderRadius:
-//                                        new BorderRadius.circular(10.0),
-//                                    side: BorderSide(color: Color(0xff333333))),
-//                                disabledTextColor: Colors.black,
-//                                padding: EdgeInsets.all(8.0),
-//                                splashColor: Colors.blueAccent,
-//                                onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                                },
-//                                child: Text('Arrived')))),
-//                    Padding(
-//                        padding: EdgeInsets.all(8.0),
-//                        child: SizedBox(
-//                            width: 100,
-//                            height: 40,
-//                            child: FlatButton(
-//                                //   color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-//                                // textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                                shape: new RoundedRectangleBorder(
-//                                    borderRadius:
-//                                        new BorderRadius.circular(10.0),
-//                                    side: BorderSide(color: Color(0xff333333))),
-//                                disabledTextColor: Colors.black,
-//                                padding: EdgeInsets.all(8.0),
-//                                splashColor: Colors.blueAccent,
-//                                onPressed: () {
-////                        setState(() =>
-////                        selected_status="Accept");
-//                                },
-//                                child: Text('Cleared')))),
-//                  ],
-//                ),
-//                TextField(
-//                    decoration:
-//                        InputDecoration(labelText: 'License Plate')),
-//                Padding(
-//                    padding: EdgeInsets.all(8.0),
-//                    child: SizedBox(
-//                        width: 100,
-//                        height: 40,
-//                        child: FlatButton(
-////                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-////                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
-//                            shape: new RoundedRectangleBorder(
-//                                borderRadius: new BorderRadius.circular(10.0),
-//                                side: BorderSide(color: Color(0xff333333))),
-//                            disabledTextColor: Colors.black,
-//                            padding: EdgeInsets.all(8.0),
-//                            splashColor: Colors.blueAccent,
-//                            onPressed: () {
-//                              Navigator.push(
-//                                  context,
-//                                  new MaterialPageRoute(
-//                                      builder: (context) =>  SearchCallsList()));
-////                        setState(() =>
-////                        selected_status="Accept");
-//                            },
-//                            child: Text('FIND')))),
-//              ],
-//            )));
-//  }
-//}

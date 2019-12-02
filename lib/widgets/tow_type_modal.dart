@@ -5,11 +5,11 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:vts_mobile_cloud/providers/relationTowType_provider.dart';
 
 class TowTypeModal extends StatelessWidget {
-
   final Function setTowType;
+
   TowTypeModal({Key key, this.setTowType}) : super(key: key);
 
-  final  _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController1 = TextEditingController();
 
   @override
@@ -43,9 +43,49 @@ class TowTypeModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text(suggestion.towTypeName),
-                      );
+                          leading: Icon(Icons.rv_hookup),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 15),
+                                  child: Text(suggestion.towTypeName)),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                                  child: Row(children: <Widget>[
+//                                    Text("Authorization  ",
+//                                        style: TextStyle(
+//                                            color: Colors.black, fontSize: 14)),
+                                    Text(suggestion.towAuthorizationName,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14))
+                                  ])),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 5),
+                                  child:  Row(children: <Widget>[
+//                                  Text(
+//                                      "Reason ",
+//                                      style: TextStyle(
+//                                          color: Colors.black, fontSize: 14)),
+                                    Text(
+                                        suggestion.towReasonName,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14))
+                                  ])),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 5),
+                                  child: Row(children: <Widget>[
+                                  Text(suggestion.towJurisdictionName,
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 14)),
+                                    ])),
+
+
+                              Divider(height: 5.0, color: Colors.black38),
+                            ],
+                          )
+//                      subtitle: Text('\$${suggestion['id']}'),
+                          );
                     },
                     onSuggestionSelected: (suggestion) {
                       this._typeAheadController1.text = suggestion.towTypeName;

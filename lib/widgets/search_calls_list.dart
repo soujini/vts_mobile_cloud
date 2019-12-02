@@ -87,7 +87,6 @@ class SearchCallsList extends StatelessWidget {
                         ),
                         Expanded(child: SizedBox()),
                         Text((searchedCalls.dispatchStatusName.toUpperCase()),
-                            // .toUpperCase(),
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -95,6 +94,9 @@ class SearchCallsList extends StatelessWidget {
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
+                              Provider.of<Calls>(context).selectedCall.id = searchedCalls.id;
+                              Provider.of<Calls>(context).selectedCall.dispatchStatusName = searchedCalls.dispatchStatusName;
+                              Provider.of<Calls>(context).selectedCall.dispatchInstructions_string = searchedCalls.dispatchInstructions_string;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(

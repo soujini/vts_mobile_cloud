@@ -43,8 +43,41 @@ class WreckerCompanyModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text(suggestion.wreckerCompanyName),
+                          leading: Icon(Icons.build),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 15),
+                                  child: Text(suggestion.wreckerCompanyName)),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                                  child: Row(children: <Widget>[
+                                    Text("State License : ",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14)),
+                                    Text(suggestion.stateLicense,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14))
+                                  ])),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 5),
+                                  child:  Row(children: <Widget>[
+                                  Text(
+                                      "City License : ",
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 14)),
+                                    Text(
+                                        suggestion.cityLicense,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14))
+                                  ])),
+
+
+                              Divider(height: 5.0, color: Colors.black38),
+                            ],
+                          )
+//                      subtitle: Text('\$${suggestion['id']}'),
                       );
                     },
                     onSuggestionSelected: (suggestion) {

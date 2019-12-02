@@ -94,7 +94,10 @@ class ActiveCallsList extends StatelessWidget {
                         FlatButton.icon(
 
                             onPressed: () {
-                              Provider.of<Calls>(context).id = activeCalls.id;
+                             Provider.of<Calls>(context).selectedCall.id = activeCalls.id;
+                             Provider.of<Calls>(context).selectedCall.dispatchStatusName = activeCalls.dispatchStatusName;
+                             Provider.of<Calls>(context).selectedCall.dispatchInstructions_string = activeCalls.dispatchInstructions_string;
+
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
@@ -111,7 +114,6 @@ class ActiveCallsList extends StatelessWidget {
                                   builder: (BuildContext context) {
                                     return UpdateStatus(activeCalls.id, activeCalls.dispatchStatusName, activeCalls.dispatchInstructions_string);
                                   });
-                              // showDialogUpdateStatus(context);
                             },
                             textColor: Colors.grey,
                             icon: Icon(Icons.update),

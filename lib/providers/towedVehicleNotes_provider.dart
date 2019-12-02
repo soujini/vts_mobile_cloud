@@ -55,21 +55,21 @@ TowedVehicleNote _towedVehicleNoteFromJson(Map<String, dynamic> parsedJson) {
       errorStatus: _convertTobool(parsedJson["errorStatus"]),
       errorMessage: parsedJson["errorMessage"],
       id: int.parse(parsedJson["id"]),
-      pinNumber: parsedJson["pinNumber"],
+      pinNumber: parsedJson["pinNumber"] != null ? parsedJson["pinNumber"] : '',
       vehicleCreatedByUserId: int.parse(parsedJson["vehicleCreatedByUserId"]),
-      vehicleCreatedByUserName: parsedJson["vehicleCreatedByUserName"],
-      vehicleCreatedDate: parsedJson["vehicleCreatedDate"],
-      vehicleCreatedTime: parsedJson["vehicleCreatedTime"],
+      vehicleCreatedByUserName: parsedJson["vehicleCreatedByUserName"] != null ? parsedJson["vehicleCreatedByUserName"] :'',
+      vehicleCreatedDate: parsedJson["vehicleCreatedDate"] != null ? parsedJson["vehicleCreatedDate"] :'',
+      vehicleCreatedTime: parsedJson["vehicleCreatedTime"] != null ? parsedJson["vehicleCreatedTime"] : '',
       vehicleModifiedByUserId: int.parse(parsedJson["vehicleModifiedByUserId"]),
-      vehicleModifiedByUserName: parsedJson["vehicleModifiedByUserName"],
-      vehicleModifiedDate: parsedJson["vehicleModifiedDate"],
-      vehicleModifiedTime:  parsedJson["vehicleModifiedTime"],
+      vehicleModifiedByUserName: parsedJson["vehicleModifiedByUserName"] != null ? parsedJson["vehicleModifiedByUserName"] : '',
+      vehicleModifiedDate: parsedJson["vehicleModifiedDate"] != null ? parsedJson["vehicleModifiedDate"] : '',
+      vehicleModifiedTime:  parsedJson["vehicleModifiedTime"] != null ? parsedJson["vehicleModifiedTime"] : '',
       towedVehicle: int.parse(parsedJson["towedVehicle"]),
       ownerNotes: _convertTobool(parsedJson["ownerNotes"]),
       paymentNotes: _convertTobool(parsedJson["paymentNotes"]),
 //      vehicleNotes: parsedJson['vehicleNotes'],
       //base64Binary
-      vehicleNotes_string: parsedJson["vehicleNotes_string"],
+      vehicleNotes_string: parsedJson["vehicleNotes_string"] != null ? parsedJson["vehicleNotes_string"] : '',
       importID: int.parse(parsedJson["importID"]));
 }
 
@@ -93,9 +93,6 @@ class TowedVehicleNotesVM with ChangeNotifier {
 
   Future<List> listMini(int pageIndex, int pageSize, String _towedVehicle) async {
     Xml2Json xml2json = new Xml2Json();
-
-    //  notes = new List<TowedVehicleNote>();
-
 
     int iStart = 0;
     int iEnd = 0;
@@ -155,20 +152,15 @@ class TowedVehicleNotesVM with ChangeNotifier {
   getTowedVehicleNotes(extractedData, count) {
     final List<TowedVehicleNote> towedVehicleNotes = [];
 
-    for (var i = 0; i < extractedData.length; i++) {
-      //towedVehicleNotes.add(new TowedVehicleNote.fromJson(extractedData[i]));
-      towedVehicleNotes.add(new TowedVehicleNote(
-        vehicleCreatedByUserName: extractedData[i]["vehicleCreatedByUserName"] != null ? extractedData[i]["vehicleCreatedByUserName"] : '',
-        vehicleCreatedDate: extractedData[i]["vehicleCreatedDate"] != null ? extractedData[i]["vehicleCreatedDate"] : '',
-        vehicleCreatedTime: extractedData[i]["vehicleCreatedTime"] != null ? extractedData[i]["vehicleCreatedTime"] : '',
-        vehicleModifiedByUserName: extractedData[i]["vehicleModifiedByUserName"] != null ? extractedData[i]["vehicleModifiedByUserName"] : '',
-        vehicleModifiedDate: extractedData[i]["vehicleModifiedDate"] != null ? extractedData[i]["vehicleModifiedDate"] : '',
-        vehicleModifiedTime:  extractedData[i]["vehicleModifiedTime"] != null ? extractedData[i]["vehicleModifiedTime"] : '--',
-        vehicleNotes_string: extractedData[i]["vehicleNotes_string"] != null ? extractedData[i]["vehicleNotes_string"] : '--'
-      ));
-
+    if(count == 1){
+      towedVehicleNotes.add(new TowedVehicleNote.fromJson(extractedData));
     }
-    _towedVehicleNotes = towedVehicleNotes;
-    notifyListeners();
+    else if(count > 1) {
+      for (var i = 0; i < extractedData.length; i++) {
+        towedVehicleNotes.add(new TowedVehicleNote.fromJson(extractedData[i]));
+      }
+    }
+      _towedVehicleNotes = towedVehicleNotes;
+      notifyListeners();
   }
 }

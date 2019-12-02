@@ -34,18 +34,17 @@ class WreckerDriver {
 
   factory WreckerDriver.fromJson(Map<String, dynamic> parsedJson) {
     return WreckerDriver(
-      errorStatus: parsedJson['errorStatus'] as String,
-      errorMessage:parsedJson['errorMessage']  as String,
-      id:(parsedJson['id'] != null ? int.parse(parsedJson['id']): 0),
-      pinNumber:parsedJson['pinNumber'] as String,
+      errorStatus: parsedJson['errorStatus'] != null ? parsedJson['errorStatus']: '',
+      errorMessage:parsedJson['errorMessage'] != null ? parsedJson['errorMessage']: '',
+      id:(parsedJson['id'] != "0" ? int.parse(parsedJson['id']): 0),
+      pinNumber:parsedJson['pinNumber'] != null ? parsedJson['pinNumber']: '',
       wreckerDriver: (parsedJson['wreckerDriver'] != null ? int.parse(parsedJson['wreckerDriver']): 0),
-      wreckerDriverName: parsedJson['wreckerDriverName'] as String,
-      QBReference: parsedJson['QBReference'] as String,
-      stateLicense: parsedJson['stateLicense'] as String,
-      cityLicense: parsedJson['cityLicense'] as String,
-      towTruck: (parsedJson['towTruck'] != null ? int.parse(parsedJson['towTruck']): 0),
-      towTruckName: parsedJson['towTruckName'] as String,
-
+      wreckerDriverName: parsedJson['wreckerDriverName'] != null ? parsedJson['wreckerDriverName']: '',
+      QBReference: parsedJson['QBReference'] != null ? parsedJson['QBReference']: '',
+      stateLicense: parsedJson['stateLicense'] != null ? parsedJson['stateLicense']: '',
+      cityLicense: parsedJson['cityLicense'] != null ? parsedJson['cityLicense']: '',
+      towTruck: (parsedJson['towTruck'] != "0" ? int.parse(parsedJson['towTruck']): 0),
+      towTruckName: parsedJson['towTruckName'] != null ? parsedJson['towTruckName']: '',
     );
   }
 }

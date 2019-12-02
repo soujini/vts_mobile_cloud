@@ -11,7 +11,6 @@ class TowCustomersModal extends StatelessWidget {
 //  String dispatchInstructions_string="";
 //  TowCustomersModal();
 
-
 //  @override
 //  State<StatefulWidget> createState() {
 //    return _TowCustomersModalState();
@@ -23,16 +22,13 @@ class TowCustomersModal extends StatelessWidget {
 
   TowCustomersModal({Key key, this.setTowCustomer}) : super(key: key);
 
-  final  _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   bool pressAttention = false;
   String selected_status = "";
 
-
   final TextEditingController _typeAheadController1 = TextEditingController();
-  initState(){
 
-  }
-
+  initState() {}
 
 //  void _loadData() async {
 //    await Provider.of<TowCustomersVM>(context).list();
@@ -40,8 +36,8 @@ class TowCustomersModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   // _loadData();
-     Provider.of<TowCustomersVM>(context).list();
+    // _loadData();
+    Provider.of<TowCustomersVM>(context).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -50,44 +46,66 @@ class TowCustomersModal extends StatelessWidget {
         body: Container(
             padding: EdgeInsets.all(10),
             child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TypeAheadFormField(
-                textFieldConfiguration: TextFieldConfiguration(
-                  autofocus: true,
-                  style: DefaultTextStyle.of(context)
-                      .style
-                      .copyWith(fontStyle: FontStyle.italic),
-                  decoration: InputDecoration(
-                      suffixIcon: Icon(Icons.arrow_drop_down),
-                      border: UnderlineInputBorder()),
-                  controller: this._typeAheadController1,
-                ),
-                suggestionsCallback: (pattern) async {
-                  return Provider.of<TowCustomersVM>(context).tc;
-                },
-                itemBuilder: (context, suggestion) {
-                  return ListTile(
-                    leading: Icon(Icons.shopping_cart),
-                    title: Text(suggestion.towCustomerName),
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TypeAheadFormField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      autofocus: true,
+                      style: DefaultTextStyle.of(context)
+                          .style
+                          .copyWith(fontStyle: FontStyle.italic),
+                      decoration: InputDecoration(
+                          suffixIcon: Icon(Icons.arrow_drop_down),
+                          border: UnderlineInputBorder()),
+                      controller: this._typeAheadController1,
+                    ),
+                    suggestionsCallback: (pattern) async {
+                      return Provider.of<TowCustomersVM>(context).tc;
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                          leading:
+                               Icon(Icons.perm_identity),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 15),
+                                  child: Text(suggestion.towCustomerName)),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                                  child: Text(suggestion.businessStreet,
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 14))),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 5),
+                                  child: Text(
+                                      suggestion.businessCityStateZipName,
+                                      style: TextStyle(
+                                          color: Colors.grey, fontSize: 14))),
+                              Divider(height: 5.0, color: Colors.black38),
+                            ],
+                          )
 //                      subtitle: Text('\$${suggestion['id']}'),
-                  );
-                },
-                onSuggestionSelected: (suggestion) {
-                  this._typeAheadController1.text = suggestion.towCustomerName;
-                  setTowCustomer(suggestion.towCustomer, suggestion.towCustomerName);
-                  Navigator.of(context).pop();
-                },
+                          );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      this._typeAheadController1.text =
+                          suggestion.towCustomerName;
+                      setTowCustomer(
+                          suggestion.towCustomer, suggestion.towCustomerName);
+                      Navigator.of(context).pop();
+                    },
 //                  validator: (value) {
 //                    if (value.isEmpty) {
 //                      return 'Please select a city';
 //                    }
 //                  },
+                  ),
+                ],
               ),
-            ],
-          ),
-        )));
+            )));
   }
 }

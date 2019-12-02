@@ -24,6 +24,7 @@ import 'package:vts_mobile_cloud/providers/vehicleColor_provider.dart';
 import 'package:vts_mobile_cloud/providers/vehicleMake_provider.dart';
 import 'package:vts_mobile_cloud/providers/vehicleStyle_provider.dart';
 import 'package:vts_mobile_cloud/providers/towedVehicleNotes_provider.dart';
+import 'package:vts_mobile_cloud/providers/towedVehicleCharges_provider.dart';
 
 import './screens/login_screen.dart';
 
@@ -96,7 +97,9 @@ class _MyAppState extends State<MyApp>{
         ChangeNotifierProvider(builder: (_)=>LicenseTypesVM()),
         ChangeNotifierProvider(builder: (_)=>SystemPrioritiesVM()),
         ChangeNotifierProvider(builder: (_)=>TowedVehicleNotesVM()),
+        ChangeNotifierProvider(builder: (_)=>TowedVehicleChargesVM()),
         ChangeNotifierProvider(builder: (_)=>TowChargesVM()),
+
       ],
 
  //   return //Provides instance of type Calls

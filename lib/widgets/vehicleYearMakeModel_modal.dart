@@ -18,7 +18,7 @@ class VehicleYearMakeModelModal extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Vehicle Year Make Model'),
+          title: Text('Select Vehicle'),
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -43,8 +43,15 @@ class VehicleYearMakeModelModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text(suggestion.vehicleYearMakeModelName),
+                        leading: Icon(Icons.directions_car),
+                        title: Column(
+                            crossAxisAlignment:  CrossAxisAlignment.start,
+                            children: <Widget>[
+                          Padding(
+                              padding: EdgeInsets.only(bottom: 10, top: 15),
+                              child: Text(suggestion.vehicleYearMakeModelName)),
+                              Divider(height: 5.0, color: Colors.black38),
+                            ] )
                       );
                     },
                     onSuggestionSelected: (suggestion) {

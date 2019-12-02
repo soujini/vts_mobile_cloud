@@ -261,8 +261,6 @@ class TowCustomersVM with ChangeNotifier {
     ["getDefaultsResponse"]["getDefaultsResult"];
 
     final List<TowCustomer> dd = [];
-
-    print("defaults data "+extractedData.toString());
     dd.add(new TowCustomer.fromJson(extractedData));
     _defaultsData=dd;
   }

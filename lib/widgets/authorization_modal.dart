@@ -43,8 +43,15 @@ class TowAuthorizationModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text(suggestion.towAuthorizationName),
+                          leading: Icon(Icons.check_circle_outline),
+                          title: Column(
+                              crossAxisAlignment:  CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10, top: 15),
+                                    child: Text(suggestion.towAuthorizationName)),
+                                Divider(height: 5.0, color: Colors.black38),
+                              ] )
                       );
                     },
                     onSuggestionSelected: (suggestion) {

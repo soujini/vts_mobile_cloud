@@ -44,8 +44,15 @@ class VehicleStyleModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text(suggestion.name),
+                          leading: Icon(Icons.style),
+                          title: Column(
+                              crossAxisAlignment:  CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10, top: 15),
+                                    child: Text(suggestion.name)),
+                                Divider(height: 5.0, color: Colors.black38),
+                              ] )
                       );
                     },
                     onSuggestionSelected: (suggestion) {

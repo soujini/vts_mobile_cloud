@@ -16,17 +16,21 @@ class _NotesAddState extends State<NotesAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-        content: Form(
+   // return AlertDialog(
+    return Scaffold(
+        appBar: AppBar(
+        // automaticallyImplyLeading: true,
+        title: Text('Add Notes'),
+    ),
+    body: Container(
+        child: Form(
       key: _formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Padding(
             padding: EdgeInsets.all(20.0),
-            child: Text('ADD NOTES',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          ),
+                     ),
           new ListTile(
 //                leading: Container(
 //                  width: 60,
@@ -100,6 +104,6 @@ class _NotesAddState extends State<NotesAdd> {
             child: Text('SAVE')),
         ],
       ),
-    ));
+    )));
   }
 }

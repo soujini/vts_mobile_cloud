@@ -26,14 +26,14 @@ class TowTruck {
 
   factory TowTruck.fromJson(Map<String, dynamic> parsedJson) {
     return TowTruck(
-      errorStatus: parsedJson['errorStatus'] as String,
-      errorMessage:parsedJson['errorMessage']  as String,
-      id:(parsedJson['id'] != null ? int.parse(parsedJson['id']): 0),
-      pinNumber:parsedJson['pinNumber'] as String,
-      towTruck: (parsedJson['towTruck'] != null ? int.parse(parsedJson['towTruck']): 0),
-      towTruckName: parsedJson['towTruckName'] as String,
-      licensePlate: parsedJson['licensePlate'] as String,
-      VIN: parsedJson['VIN'] as String,
+      errorStatus: parsedJson['errorStatus'] != null ? parsedJson['errorStatus'] : '',
+      errorMessage:parsedJson['errorMessage'] != null ? parsedJson['errorMessage'] : '',
+      id:(parsedJson['id'] != "0" ? int.parse(parsedJson['id']) : 0),
+      pinNumber:parsedJson['pinNumber'] != null ? parsedJson['pinNumber'] : '',
+      towTruck: (parsedJson['towTruck'] != "0" ? int.parse(parsedJson['towTruck']) : 0),
+      towTruckName: parsedJson['towTruckName'] != null ? parsedJson['towTruckName'] : '',
+      licensePlate: parsedJson['licensePlate'] != null ? parsedJson['licensePlate'] : '',
+      VIN: parsedJson['VIN'] != null ? parsedJson['VIN'] : '',
 
     );
   }

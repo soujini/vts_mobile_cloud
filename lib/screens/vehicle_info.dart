@@ -4,6 +4,7 @@ import '../models/call.dart';
 
 class VehicleInfoScreen extends StatelessWidget {
   Call activeCalls = Call();
+
   VehicleInfoScreen(this.activeCalls);
 
   @override
@@ -11,151 +12,221 @@ class VehicleInfoScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Call Info'),
+          title: Text('Call Details'),
         ),
-        body: Column(mainAxisAlignment:MainAxisAlignment.spaceEvenly,children: <Widget>[
+        body: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  new Row(
+                    children: <Widget>[
+                      Text(
+                          (activeCalls.vehicleYear.toString() +
+                              ' ' +
+                              activeCalls.vehicleYearMakeModelName),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text(' '),
+                      Text(('(' + activeCalls.color + ')'),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  new Row(
+                    children: <Widget>[
+                      Text((activeCalls.dispatchStatusName.toUpperCase()),
+                          style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  new Row(children: <Widget>[
+                    Text((activeCalls.towedInvoice),
+                        style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  ]),
+                  new Divider(height: 5.0, color: Colors.black38),
+                  new Row(
+                    children: <Widget>[
+                      Text((activeCalls.towCustomerName),
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  new Row(
+                    children: <Widget>[
+                      Container(
+                          width: 80,
+                          child: Text("From",
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: 14))),
+                      Text(
+                          (activeCalls.towedStreet +
+                              ' ' +
+                              activeCalls.towedStreetTwo +
+                              ' ' +
+                              activeCalls.towedCityName +
+                              ' ' +
+                              activeCalls.towedStateName +
+                              ' ' +
+                              activeCalls.towedZipCode),
+                          style: TextStyle(color: Colors.black, fontSize: 14)),
+                    ],
+                  ),
+                  new Row(
+                    children: <Widget>[
+                      Container(
+                          width: 80,
+                          child: Text("To",
+                              style: TextStyle(
+                                  color: Colors.grey, fontSize: 14))),
+                      Text(
+                          (activeCalls.towedToStreet +
+                              ' ' +
+                              activeCalls.towedToStreetTwo +
+                              ' ' +
+                              activeCalls.towedToCityName +
+                              ' ' +
+                              activeCalls.towedToStateName +
+                              ' ' +
+                              activeCalls.towedToZipCode),
+                          style: TextStyle(color: Colors.black, fontSize: 14)),
+                    ],
+                  ),
+                  new Divider(height: 5.0, color: Colors.black38),
 
-          new Row(
-            children: <Widget>[
-              Text(
-                  (activeCalls.vehicleYear.toString() +
-                      ' ' +
-                      activeCalls.vehicleYearMakeModelName),
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              Text(' '),
-              Text(('(' + activeCalls.color + ')'),
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              Text((activeCalls.dispatchStatusName.toUpperCase()),
-                  style: TextStyle(color: Colors.green, fontSize: 14)),
-            ],
-          ),
-          new Row(children: <Widget>[
-            Text((activeCalls.towedInvoice),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-          ]),
-          new Row(
-            children: <Widget>[
-              Text((activeCalls.towCustomerName),
-                  style: TextStyle(fontSize: 14)),
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              Text(("From  "),
-                  style: TextStyle(color: Colors.grey, fontSize: 14)),
-              Text(
-                  (activeCalls.towedStreet +
-                      ' ' +
-                      activeCalls.towedStreetTwo +
-                      ' ' +
-                      activeCalls.towedCityName +
-                      ' ' +
-                      activeCalls.towedStateName +
-                      ' ' +
-                      activeCalls.towedZipCode),
-                  style: TextStyle(color: Colors.black, fontSize: 14)),
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              Text(("To      "), style: TextStyle(color: Colors.grey, fontSize: 14)),
-              Text(
-                  (activeCalls.towedToStreet +
-                      ' ' +
-                      activeCalls.towedToStreetTwo +
-                      ' ' +
-                      activeCalls.towedToCityName +
-                      ' ' +
-                      activeCalls.towedToStateName +
-                      ' ' +
-                      activeCalls.towedToZipCode),
-                  style: TextStyle(color: Colors.black, fontSize: 14)),
-            ],
-          ),
-          new Row(mainAxisAlignment:MainAxisAlignment.start,children: <Widget>[
-            Text(("Dispatcher     "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchContact != null ? activeCalls.dispatchContact:'-'),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("License #       "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.licensePlate != null ? activeCalls.licensePlate:'-'),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("VIN                  "), style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.VIN != null ? activeCalls.VIN:'-'),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Driver              "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.wreckerDriverName),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Truck              "), style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.towTruckName),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-
-          new Row(children: <Widget>[
-            Text(("Received        "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchReceivedTime),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Dispatch        "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchDispatchTime),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Enroute           "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchEnrouteTime),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Onsite             "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchOnsiteTime),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Rolling            "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchRollingTime),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Arrived            "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchArrivedTime),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("Cleared           "),
-                style: TextStyle(color: Colors.grey, fontSize: 14)),
-            Text((activeCalls.dispatchClearedTime),
-                style: TextStyle(color: Colors.black, fontSize: 14)),
-          ]),
-          new Row(children: <Widget>[
-            Text(("NOTES"),
-                style: TextStyle(color: Colors.green, fontSize: 14)),
-          ]),
-          Flexible(
-            child: Text(activeCalls.dispatchInstructions_string),
-          )
+                  new Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                            width: 80,
+                            child: Text("Dispatcher",
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: 14))),
+                        Text(
+                            (activeCalls.dispatchContact != null
+                                ? activeCalls.dispatchContact
+                                : '-'),
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 14)),
+                      ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("License #",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text(
+                        (activeCalls.licensePlate != null
+                            ? activeCalls.licensePlate
+                            : '-'),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("VIN",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.VIN != null ? activeCalls.VIN : '-'),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Driver",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.wreckerDriverName),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Truck",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.towTruckName),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Divider(height: 5.0, color: Colors.black38),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Received",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.dispatchReceivedTime),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Dispatch",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.dispatchDispatchTime),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Enroute",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.dispatchEnrouteTime),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Onsite",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.dispatchOnsiteTime),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Rolling",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.dispatchRollingTime),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Arrived",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.dispatchArrivedTime),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Row(children: <Widget>[
+                    Container(
+                        width: 80,
+                        child: Text("Cleared",
+                            style: TextStyle(
+                                color: Colors.grey, fontSize: 14))),
+                    Text((activeCalls.dispatchClearedTime),
+                        style: TextStyle(color: Colors.black, fontSize: 14)),
+                  ]),
+                  new Divider(height: 5.0, color: Colors.black38),
+                  new Row(children: <Widget>[
+                    Text(("NOTES"),
+                        style: TextStyle(
+                            color: Colors.green,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold)),
+                  ]),
+                  Flexible(
+                    child: Text(activeCalls.dispatchInstructions_string),
+                  )
 //
-        ]));
+                ])));
 
 //
 //      theme: new ThemeData(

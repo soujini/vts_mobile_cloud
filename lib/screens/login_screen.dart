@@ -17,10 +17,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   int _state = 0;
   final _user = new User();
   final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
+  final GlobalKey<FormState> _scaffoldKey = new GlobalKey<FormState>();
 
   GlobalKey _globalKey = new GlobalKey();
 
-  void submit() async {
+  void submit(BuildContext context) async {
     if (this._formKey.currentState.validate()) {
       animateButton();
       _formKey.currentState.save(); // Save our form now.
@@ -31,7 +32,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           _user.password.toUpperCase(),
           _user.pinNumber.toUpperCase());
 
-      if (Provider.of<UsersVM>(context).userData[0].errorStatus == true) {
+      if (Provider
+          .of<UsersVM>(context)
+          .userData[0].errorStatus == true) {
         setState(() {
           _state = 2;
         });
@@ -39,18 +42,31 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           widget.setScreen("home");
         });
       } else {
-        print(
-            "errror " + Provider.of<UsersVM>(context).userData[0].errorMessage);
-        //Display Error
+        setState(() {
+          _state = 0;
+          _showDialog(context);
+        });
       }
     }
+  }
+
+  _showDialog(BuildContext context) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+            backgroundColor: Colors.lightGreen,
+          content: Text(Provider.of<UsersVM>(context).userData[0].errorMessage,
+              style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+        ))));
+
   }
 
   @override
   Widget build(BuildContext context) {
     // final Size screenSize = MediaQuery.of(context).size;
     return new Scaffold(
-        body: Container(
+        key: this._scaffoldKey,
+        body: Builder(
+        builder: (context) => Container(
             decoration: BoxDecoration(
                 gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -79,6 +95,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         bottom: 0,
                       ),
                       child: TextFormField(
+                          onEditingComplete: () {
+                            this.submit(context);
+                            FocusScope.of(context).requestFocus(new FocusNode());
+                          },
                           decoration: new InputDecoration(
                             prefixIcon: Icon(Icons.account_circle,
                                 color: Color(0XffC4CFDB)),
@@ -114,6 +134,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       bottom: 0,
                     ),
                     child: TextFormField(
+                        onEditingComplete: () {
+                          this.submit(context);
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                        },
                         obscureText: true,
                         decoration: new InputDecoration(
                           prefixIcon:
@@ -151,6 +175,11 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       bottom: 0,
                     ),
                     child: TextFormField(
+                        onEditingComplete: () {
+                          this.submit(context);
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                        },
+//                        onSubmitted: (value) {},
                         decoration: new InputDecoration(
                           prefixIcon:
                               Icon(Icons.dialpad, color: Color(0XffC4CFDB)),
@@ -206,9 +235,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   key: _globalKey,
                                   child: setUpButtonChild(),
                                   onPressed: () {
-                                    // setState(() {
-                                    this.submit();
-                                    // });
+                                    FocusScope.of(context).requestFocus(new FocusNode());
+                                    this.submit(context);
                                   },
                                   minWidth: double.infinity,
                                   height: 55.0,
@@ -219,7 +247,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-            )));
+            ))));
   }
 
   Widget setUpButtonChild() {

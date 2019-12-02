@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   final _items = [
-    BottomNavigationBarItem(icon: Icon(Icons.call), title: Text('CALLS')),
+    BottomNavigationBarItem(icon: Icon(Icons.directions_car), title: Text('CALLS')),
     BottomNavigationBarItem(icon: Icon(Icons.search), title: Text('SEARCH')),
     BottomNavigationBarItem(icon: Icon(Icons.add), title: Text('ADD')),
     BottomNavigationBarItem(icon: Icon(Icons.info), title: Text('ABOUT')),

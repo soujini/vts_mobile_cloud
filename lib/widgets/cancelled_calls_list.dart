@@ -93,6 +93,9 @@ class CancelledCallsList extends StatelessWidget {
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
+                              Provider.of<Calls>(context).selectedCall.id = cancelledCalls.id;
+                              Provider.of<Calls>(context).selectedCall.dispatchStatusName = cancelledCalls.dispatchStatusName;
+                              Provider.of<Calls>(context).selectedCall.dispatchInstructions_string = cancelledCalls.dispatchInstructions_string;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(

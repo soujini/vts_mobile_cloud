@@ -43,8 +43,41 @@ class TowTrucksModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text(suggestion.towTruckName),
+                          leading: Icon(Icons.directions_transit),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 15),
+                                  child: Text(suggestion.towTruckName)),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 5, top: 5),
+                                  child: Row(children: <Widget>[
+                                    Text("License Plate : ",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14)),
+                                    Text(suggestion.licensePlate,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14))
+                                  ])),
+                              Padding(
+                                  padding: EdgeInsets.only(bottom: 10, top: 5),
+                                  child:  Row(children: <Widget>[
+                                    Text(
+                                        "VIN : ",
+                                        style: TextStyle(
+                                            color: Colors.black, fontSize: 14)),
+                                    Text(
+                                        suggestion.VIN,
+                                        style: TextStyle(
+                                            color: Colors.grey, fontSize: 14))
+                                  ])),
+
+
+                              Divider(height: 5.0, color: Colors.black38),
+                            ],
+                          )
+//                      subtitle: Text('\$${suggestion['id']}'),
                       );
                     },
                     onSuggestionSelected: (suggestion) {

@@ -18,7 +18,7 @@ class LicenseTypeModal extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select License Style'),
+          title: Text('Select Vehicle License Type'),
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -43,8 +43,15 @@ class LicenseTypeModal extends StatelessWidget {
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.shopping_cart),
-                        title: Text(suggestion.name),
+                          leading: Icon(Icons.assignment),
+                          title: Column(
+                              crossAxisAlignment:  CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Padding(
+                                    padding: EdgeInsets.only(bottom: 10, top: 15),
+                                    child: Text(suggestion.name)),
+                                Divider(height: 5.0, color: Colors.black38),
+                              ] )
                       );
                     },
                     onSuggestionSelected: (suggestion) {

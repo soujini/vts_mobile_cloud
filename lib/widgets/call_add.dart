@@ -566,6 +566,7 @@ class _CallAddState extends State<CallAdd> {
           title: Text('Add Call'),
           actions: <Widget>[
             new IconButton(
+//              key: this._formKey,
               icon: new Icon(Icons.save),
               tooltip: 'Save',
               onPressed: () => save(),
@@ -573,8 +574,9 @@ class _CallAddState extends State<CallAdd> {
           ],
         ),
         body: Form(
+            key: this._formKey,
             child: SingleChildScrollView(
-          key: this._formKey,
+
           child: Padding(
             padding: EdgeInsets.all(10.0),
             child: Column(
@@ -610,15 +612,15 @@ class _CallAddState extends State<CallAdd> {
                     )),
 
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Customer *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Customer *"),
+//                  ),
                   title: new TextFormField(
                       controller: this._towCustomerController,
                       decoration: new InputDecoration(
-                        hintText: "Customer",
+                        labelText: "Customer *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -642,16 +644,16 @@ class _CallAddState extends State<CallAdd> {
                 ),
 
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("VIN *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("VIN *"),
+//                  ),
 //                  //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _vinController,
                     decoration: new InputDecoration(
-                      hintText: "VIN",
+                      labelText: "VIN *",
                       suffixIcon: IconButton(
                         onPressed: () => _getVIN(), //_controller.clear(),
                         icon: Icon(Icons.autorenew),
@@ -667,16 +669,16 @@ class _CallAddState extends State<CallAdd> {
                 ),
 
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Model *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Model *"),
+//                  ),
 //                  //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._modelController,
                       decoration: new InputDecoration(
-                        hintText: "Model",
+                        labelText: "Model",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -696,16 +698,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Year *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Year *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._yearController,
                       decoration: new InputDecoration(
-                        hintText: "Year",
+                        labelText: "Year *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -724,16 +726,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Make *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Make *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._makeController,
                       decoration: new InputDecoration(
-                        hintText: "Make",
+                        labelText: "Make *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -751,16 +753,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Style *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Style *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._styleController,
                       decoration: new InputDecoration(
-                        hintText: "Style",
+                        labelText: "Style *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -778,16 +780,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Top Color *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Top Color *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._topColorController,
                       decoration: new InputDecoration(
-                        hintText: "Top Color",
+                        labelText: "Top Color *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -805,16 +807,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Bottom Color *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Bottom Color *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._secondColorController,
                       decoration: new InputDecoration(
-                        hintText: "Bottom Color",
+                        labelText: "Bottom Color *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -832,16 +834,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("License Plate *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("License Plate *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _licensePlateController,
                     decoration: new InputDecoration(
-                      hintText: "License Plate",
+                      labelText: "License Plate *",
                       suffixIcon: Icon(Icons.clear),
                     ),
                     validator: (value) {
@@ -852,16 +854,16 @@ class _CallAddState extends State<CallAdd> {
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("License State *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("License State *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._licenseStateController,
                       decoration: new InputDecoration(
-                        hintText: "License State",
+                        labelText: "License State *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -910,16 +912,16 @@ class _CallAddState extends State<CallAdd> {
 
 
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Tow Type *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Tow Type *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._towTypeController,
                       decoration: new InputDecoration(
-                        hintText: "Tow Type",
+                        labelText: "Tow Type *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -937,16 +939,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Tow Reason"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Tow Reason"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._towReasonController,
                       decoration: new InputDecoration(
-                        hintText: "Tow Reason",
+                        labelText: "Tow Reason",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       onTap: () {
@@ -959,16 +961,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Authorization"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Authorization"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._authorizationController,
                       decoration: new InputDecoration(
-                        hintText: "Authorization",
+                        labelText: "Authorization",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       onTap: () {
@@ -981,16 +983,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Jurisdiction *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Jurisdiction *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._jurisdictionController,
                       decoration: new InputDecoration(
-                        hintText: "Jurisdiction",
+                        labelText: "Jurisdiction *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -1007,18 +1009,88 @@ class _CallAddState extends State<CallAdd> {
                                     setJurisdiction: setJurisdiction)));
                       }),
                 ),
-
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Towed Date"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Towed Date"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _towedDateController,
                     decoration: new InputDecoration(
-                      hintText: "Towed Date",
+                      labelText: "Call Date",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          DatePicker.showDatePicker(context,
+                              showTitleActions: true,
+                              //  minTime: DateTime(2018, 3, 5),
+                              //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                              //   print('change $date');
+                              // },
+                              onConfirm: (date) {
+                                String formattedDate =
+                                DateFormat('MM-dd-yyyy').format(date);
+                                _towedDateController.text = formattedDate;
+//                              String formattedTime = DateFormat('kk.mm').format(now);
+//                              String formattedTime2 = DateFormat('kk^mm').format(now);
+                              },
+                              currentTime: DateTime.now(),
+                              locale: LocaleType.en);
+                        }, //_controller.clear(),
+                        icon: Icon(Icons.date_range),
+                      ),
+                    ),
+                    onSaved: (val) => setState(() => _call.dispatchDate = val),
+                  ),
+                ),
+                new ListTile(
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Towed Time"),
+//                  ),
+                  //trailing: Icon(Icons.shopping_cart),
+                  title: new TextFormField(
+                    controller: _towedTimeController,
+                    decoration: new InputDecoration(
+                      labelText: "Received",
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          DatePicker.showTimePicker(context,
+                              showTitleActions: true,
+                              //  minTime: DateTime(2018, 3, 5),
+                              //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                              //   print('change $date');
+                              // },
+                              onConfirm: (time) {
+                                String formattedTime =
+                                DateFormat('HH:mm').format(time);
+                                _towedTimeController.text = formattedTime;
+//                              String formattedTime = DateFormat('kk.mm').format(now);
+//                              String formattedTime2 = DateFormat('kk^mm').format(now);
+                              },
+                              currentTime: DateTime.now(),
+                              locale: LocaleType.en);
+                        }, //_controller.clear(),
+                        icon: Icon(Icons.access_time),
+                      ),
+                    ),
+                    onSaved: (val) => setState(() => _call.dispatchReceivedTime = val),
+                  ),
+                ),
+
+                new ListTile(
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Towed Date"),
+//                  ),
+                  //trailing: Icon(Icons.shopping_cart),
+                  title: new TextFormField(
+                    controller: _towedDateController,
+                    decoration: new InputDecoration(
+                      labelText: "Towed Date",
                       suffixIcon: IconButton(
                         onPressed: () {
                           DatePicker.showDatePicker(context,
@@ -1044,16 +1116,16 @@ class _CallAddState extends State<CallAdd> {
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Towed Time"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Towed Time"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _towedTimeController,
                     decoration: new InputDecoration(
-                      hintText: "Towed Time",
+                      labelText: "Towed Time",
                       suffixIcon: IconButton(
                         onPressed: () {
                           DatePicker.showTimePicker(context,
@@ -1079,16 +1151,16 @@ class _CallAddState extends State<CallAdd> {
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Location *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Location *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _towedStreetController,
                     decoration: new InputDecoration(
-                      hintText: "Location",
+                      labelText: "Location *",
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
@@ -1099,16 +1171,16 @@ class _CallAddState extends State<CallAdd> {
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("City"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("City"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._towedCityController,
                       decoration: new InputDecoration(
-                        hintText: "City",
+                        labelText: "City",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       onTap: () {
@@ -1121,16 +1193,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("State"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("State"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._towedStateController,
                       decoration: new InputDecoration(
-                        hintText: "State",
+                        labelText: "State",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       onTap: () {
@@ -1143,46 +1215,46 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Zip Code"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Zip Code"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _towedZipCodeController,
                     decoration: new InputDecoration(
-                      hintText: "Zip Code",
+                      labelText: "Zip Code",
                     ),
                     onSaved: (val) => setState(() => _call.towedZipCode = val),
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Destination"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Destination"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _towedToStreetController,
                     decoration: new InputDecoration(
-                      hintText: "Destination",
+                      labelText: "Destination",
                     ),
                     onSaved: (val) => setState(() => _call.towedToStreet = val),
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Company *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Company *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._companyController,
                       decoration: new InputDecoration(
-                        hintText: "Company",
+                        labelText: "Company *",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -1200,30 +1272,30 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Towed Status"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Towed Status"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _towedStatusController,
                     decoration: new InputDecoration(
-                      hintText: "Towed Status",
+                      labelText: "Towed Status",
                     ),
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Driver"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Driver"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._driverController,
                       decoration: new InputDecoration(
-                        hintText: "Driver",
+                        labelText: "Driver",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       onTap: () {
@@ -1236,16 +1308,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Truck"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Truck"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._truckController,
                       decoration: new InputDecoration(
-                        hintText: "Truck",
+                        labelText: "Truck",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       onTap: () {
@@ -1287,16 +1359,16 @@ class _CallAddState extends State<CallAdd> {
                       color: Colors.black54,
                     )),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Bill To"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Bill To"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                       controller: this._billToController,
                       decoration: new InputDecoration(
-                        hintText: "Bill To",
+                        labelText: "Bill To",
                         suffixIcon: Icon(Icons.arrow_forward_ios),
                       ),
                       validator: (value) {
@@ -1314,16 +1386,16 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("Invoice # *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("Invoice # *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     controller: _towedInvoiceController,
                     decoration: new InputDecoration(
-                      hintText: "Invoice #",
+                      labelText: "Invoice # *",
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
@@ -1336,15 +1408,15 @@ class _CallAddState extends State<CallAdd> {
                   ),
                 ),
                 new ListTile(
-                  leading: Container(
-                    width: 100, // can be whatever value you want
-                    alignment: Alignment.centerLeft,
-                    child: Text("PO # *"),
-                  ),
+//                  leading: Container(
+//                    width: 100, // can be whatever value you want
+//                    alignment: Alignment.centerLeft,
+//                    child: Text("PO # *"),
+//                  ),
                   //trailing: Icon(Icons.shopping_cart),
                   title: new TextFormField(
                     decoration: new InputDecoration(
-                      hintText: "PO #",
+                      labelText: "PO # *",
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
@@ -1369,38 +1441,38 @@ class _CallAddState extends State<CallAdd> {
 //                  }, child: Text('Clear')),
 //                ) ,
 //                  Spacer(),
-//                Expanded(
-//                child:RaisedButton(
-//                    onPressed: () async {},
-////                      final form = _formKey.currentState;
-////                      if (form.validate()) {
-////                        form.save();
-////                        await Provider.of<ProcessTowedVehiclesVM>(context)
-////                            .checkForDuplicateTickets(_call);
-////                        if (Provider.of<ProcessTowedVehiclesVM>(context)
-////                                .duplicateData["errorStatus"] ==
-////                            "true") {
-////                          showDialog(
-////                              context: context,
-////                              builder: (BuildContext context) {
-////                                return DuplicateCall();
-////                              });
-////
-////                          //Add Yes or No Button and Rock it
-////                        }
-////                        else{
-////                          //Call Save here
-////                          Provider.of<Calls>(context).create(_call);
-////                        }
-////                        _showDialog(context);
-////                      }
-////                    },
-//                    child: Text('Save'))),
-//            ]))
-              ],
-            ),
-          ),
-        )));
+       //         Expanded(
+//                RaisedButton(
+//                    onPressed: () async {
+//                      final form = _formKey.currentState;
+//                      if (form.validate()) {
+//                        form.save();
+//                        await Provider.of<ProcessTowedVehiclesVM>(context)
+//                            .checkForDuplicateTickets(_call);
+//                        if (Provider.of<ProcessTowedVehiclesVM>(context)
+//                                .duplicateData["errorStatus"] ==
+//                            "true") {
+//                          showDialog(
+//                              context: context,
+//                              builder: (BuildContext context) {
+//                                return DuplicateCall();
+//                              });
+//
+//                          //Add Yes or No Button and Rock it
+//                        }
+//                        else{
+//                          //Call Save here
+//                          Provider.of<Calls>(context).create(_call);
+//                        }
+//                        _showDialog(context);
+//                      }
+//                    },
+//                    child: Text('Save')),
+        ])))
+            //  ],
+
+
+        ));
   }
 
   _showDialog(BuildContext context) {
@@ -1427,7 +1499,7 @@ class _CallAddState extends State<CallAdd> {
       } else {
         //Call Save here
         Provider.of<Calls>(context).create(_call);
-        print("souji " + _call.toString());
+//        print("souji " + _call.toString());
       }
       _showDialog(context);
     }

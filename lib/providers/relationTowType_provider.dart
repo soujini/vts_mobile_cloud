@@ -4,7 +4,7 @@ import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 
 class TowType {
-  String errorStatus;
+  bool errorStatus;
   String errorMessage;
   int id;
   String pinNumber;
@@ -39,23 +39,32 @@ class TowType {
 
   factory TowType.fromJson(Map<String, dynamic> parsedJson) {
     return TowType(
-      errorStatus: parsedJson['errorStatus'] as String,
-      errorMessage:parsedJson['errorMessage']  as String,
-      id:(parsedJson['id'] != null ? int.parse(parsedJson['id']): 0),
-      pinNumber:parsedJson['pinNumber'] as String,
+      errorStatus: _convertTobool(parsedJson['errorStatus']),
+      errorMessage: parsedJson['errorMessage'] != null ?  parsedJson['errorMessage']: '',
+      id: (parsedJson['id'] != "0" ? int.parse(parsedJson['id']): 0),
+      pinNumber: parsedJson['pinNumber']  != null ?  parsedJson['pinNumber']: '',
       towType: (parsedJson['towType'] != null ? int.parse(parsedJson['towType']): 0),
-      towTypeName: parsedJson['towTypeName'] as String,
-      towAuthorization: (parsedJson['towAuthorization'] != null ? int.parse(parsedJson['towAuthorization']): 0),
-      towAuthorizationName: parsedJson['towAuthorizationName'] as String,
-      towReason: (parsedJson['towReason'] != null ? int.parse(parsedJson['towReason']): 0),
-      towReasonName: parsedJson['towAuthorizationName'] as String,
-      towJurisdiction: (parsedJson['towJurisdiction'] != null ? int.parse(parsedJson['towJurisdiction']): 0),
-      towJurisdictionName: parsedJson['towAuthorizationName'] as String,
-      storageMunicipal: (parsedJson['storageMunicipal'] != null ? int.parse(parsedJson['storageMunicipal']): 0),
-      storageMunicipalName: parsedJson['towAuthorizationName'] as String,
+      towTypeName: parsedJson['towTypeName']  != null ?  parsedJson['towTypeName']: '',
+      towAuthorization: (parsedJson['towAuthorization'] != "0" ? int.parse(parsedJson['towAuthorization']): 0),
+      towAuthorizationName: parsedJson['towAuthorizationName']  != null ?  parsedJson['towAuthorizationName']: '',
+      towReason: (parsedJson['towReason'] != "0" ? int.parse(parsedJson['towReason']): 0),
+      towReasonName: parsedJson['towReasonName']  != null ?  parsedJson['towReasonName']: '',
+      towJurisdiction: (parsedJson['towJurisdiction'] != "0" ? int.parse(parsedJson['towJurisdiction']): 0),
+      towJurisdictionName: parsedJson['towJurisdictionName']  != null ?  parsedJson['towJurisdictionName']: '',
+      storageMunicipal: (parsedJson['storageMunicipal'] != "0" ? int.parse(parsedJson['storageMunicipal']): 0),
+      storageMunicipalName: parsedJson['storageMunicipalName'] != null ?  parsedJson['storageMunicipalName']: '',
 
     );
   }
+}
+bool _convertTobool(value) {
+  if (value is String) {
+    if (value.toLowerCase() == "true")
+      return true;
+    else
+      return false;
+  } else
+    return value;
 }
 
 class TowTypesVM with ChangeNotifier {
@@ -115,8 +124,6 @@ class TowTypesVM with ChangeNotifier {
       tc.add(new TowType.fromJson(extractedData[i]));
     }
     _towTypes = tc;
-    print(response.body);
-    print(_towTypes.length);
     //notifyListeners();
   }
 }
