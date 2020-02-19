@@ -118,7 +118,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                               color: Colors.black54),
                           validator: (value) {
                             if (value.isEmpty) {
-                              return 'Please enter some text';
+                              return 'Please enter your username';
                             }
                             return null;
                           },
@@ -158,7 +158,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             color: Colors.black54),
                         validator: (value) {
                           if (value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Please enter your password';
                           }
                           return null;
                         },
@@ -199,7 +199,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             color: Colors.black54),
                         validator: (value) {
                           if (value.isEmpty) {
-                            return 'Please enter some text';
+                            return 'Please enter your customer pin';
                           }
                           return null;
                         },

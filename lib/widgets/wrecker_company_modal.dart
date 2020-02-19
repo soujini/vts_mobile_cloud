@@ -59,7 +59,8 @@ class WreckerCompanyModal extends StatelessWidget {
                                     Text(suggestion.stateLicense,
                                         style: TextStyle(
                                             color: Colors.grey, fontSize: 14))
-                                  ])),
+                                  ]
+                                  )),
                               Padding(
                                   padding: EdgeInsets.only(bottom: 10, top: 5),
                                   child:  Row(children: <Widget>[

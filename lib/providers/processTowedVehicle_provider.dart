@@ -5,6 +5,7 @@ import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 
 import '../models/call.dart';
+import '../providers/secureStoreMixin_provider.dart';
 import 'user_provider.dart';
 
 class ProcessTowedVehicle {
@@ -117,7 +118,7 @@ bool _convertTobool(value) {
     return value;
 }
 
-class ProcessTowedVehiclesVM with ChangeNotifier {
+class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
 var duplicateData;
 
   Future checkForDuplicateTickets(Call _call) async {
@@ -127,7 +128,10 @@ var duplicateData;
 
     final String appName = "towing";
     final int userId = 200;
-    final pinNumber = "PIN0000074";
+    String pinNumber="";
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
     //final towedInvoice = _call.towedInvoice;
     final towedInvoice = 780679;
     final int wreckerCompany =_call.wreckerCompany;

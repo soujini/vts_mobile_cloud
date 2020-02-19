@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../providers/secureStoreMixin_provider.dart';
 
 class User{
 bool errorStatus;
@@ -333,7 +336,7 @@ User _userFromJson(Map<String, dynamic> parsedJson) {
     ticketActivityTabDelete: _convertTobool(parsedJson['ticketActivityTabDelete']),
   );
 }
-class UsersVM with ChangeNotifier {
+class UsersVM with ChangeNotifier, SecureStoreMixin {
   List<User> _userData = [];
   List<User> tc;
 
@@ -388,7 +391,18 @@ class UsersVM with ChangeNotifier {
     final List<User> dd = [];
 
     dd.add(new User.fromJson(extractedData));
+    final storage = new FlutterSecureStorage();
     _userData = dd;
+
+  //  SecureStoreMixin secureStoreMixin = new SecureStoreMixin();
+    setSecureStore("pinNumber",  extractedData["pinNumber"]);
+    setSecureStore("timeZoneName",  extractedData["timeZoneName"]);
+
+// Store password
+//    await storage.write(key: "username", value: extractedData["userName"]);
+//    await storage.write(key: "password", value:extractedData["password"]);
+//    await storage.write(key: "customerPIN", value: extractedData["userName"]);
+
   }
 }
 

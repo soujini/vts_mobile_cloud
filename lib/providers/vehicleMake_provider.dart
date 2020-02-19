@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
+import '../providers/secureStoreMixin_provider.dart';
+
 
 class VehicleMake {
   String errorStatus;
@@ -33,7 +35,7 @@ class VehicleMake {
   }
 }
 
-class VehicleMakesVM with ChangeNotifier {
+class VehicleMakesVM with ChangeNotifier, SecureStoreMixin {
   List<VehicleMake> _vehicleMakes = [];
 
   List<VehicleMake> get vehicleMakes {
@@ -48,8 +50,12 @@ class VehicleMakesVM with ChangeNotifier {
     final String appName = "towing";
     final int userId = 3556;
     String filterFields = "";
+    String pinNumber="";
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
 
-    filterFields = "pinNumber:PIN0000074";
+    filterFields = "pinNumber:"+pinNumber;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

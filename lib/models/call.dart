@@ -4,231 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 
+Test imgFromJson(String str) => Test.fromJson(json.decode(str));
+String imgToJson(Test data) => json.encode(data.toJson());
+
+class Test {
+  String topColorName;
+  String bottomColorName;
+
+  Test({
+    this.topColorName,
+    this.bottomColorName,
+  });
+
+  factory Test.fromJson(Map<String, dynamic> json) => Test(
+    topColorName: json["topColorName"],
+    bottomColorName: json["bottomColorName"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "topColorName": topColorName,
+    "bottomColorName": bottomColorName,
+  };
+}
+
 class Call {
-//  int id;
-//  String pinNumber;
-//  String VIN;
-//  String licensePlate;
-//  int topColor;
-//  String topColorName;
-//  int secondColor;
-//  String secondColorName;
-//  int vehicleMake;
-//  String vehicleMakeName;
-//  int vehicleYearMakeModel;
-//  String vehicleYearMakeModelName;
-//  int vehicleStyle;
-//  String vehicleStyleName;
-//  int vehicleYear;
-//  String vehicleLicenseType;
-//  String vehicleLicenseTypeName;
-//  int vehicleLicenseYear;
-//  int vehicleLicenseState;
-//  String vehicleLicenseStateName;
-//  String vehicleTitle;
-//  int towType;
-//  String towTypeName;
-//  int towCustomer;
-//  String towCustomerName;
-//  int towBillTo;
-//  String towBillToName;
-//  int towReason;
-//  String towReasonName;
-//  String towReasonExportCode;
-//  int towJurisdiction;
-//  String towJurisdictionName;
-//  int towAuthorization;
-//  String towAuthorizationName;
-//  String towAuthorizationStreet;
-//  String towAuthorizationStreetTwo;
-//  int towAuthorizationCity;
-//  String towAuthorizationCityName;
-//  int towAuthorizationState;
-//  String towAuthorizationStateName;
-//  String towAuthorizationZipCode;
-//  String towAuthorizationContact;
-//  String towAuthorizationPhone;
-//  String towedStreet;
-//  String towedStreetTwo;
-//  int towedCity;
-//  String towedCityName;
-//  int towedState;
-//  String towedStateName;
-//  String towedZipCode;
-//  String towedDate;
-//  String towedTime;
-//  String towTruckNumber;
-//  String towTruckMedallion;
-//  int towTruck;
-//  String towTruckName;
-//  String towTruckLicensePlate;
-//  int towTruckLicenseState;
-//  String towTruckLicenseStateName;
-//  String wreckerDriverLicense;
-//  int wreckerDriver;
-//  String wreckerDriverName;
-//  String wreckerDriverPayment;
-//  String wreckerDriverPaid;
-//  String wreckerDriverPhone;
-//  String wreckerDriverStateLicense;
-//  String wreckerDriverCityLicense;
-//  int wreckerDriverSMSType;
-//  int wreckerCompany;
-//  String wreckerCompanyName;
-//  String wreckerCompanyStateLicense;
-//  String wreckerCompanyCityLicense;
-//  String payStatus;
-//  String payStatusName;
-//  int TVRMSRefNumber;
-//  String stockNumber;
-//  int storageStatus;
-//  String storageStatusName;
-//  String storageCompanyLicenseState;
-//  int storageCompany;
-//  String storageCompanyName;
-//  String storageReceivedDate;
-//  String storageReceivedTime;
-//  String storageReleaseDate;
-//  String storageReleaseTime;
-//  String storageReleaseToName;
-//  String storageReleaseToStreet;
-//  String storageReleaseToStreetTwo;
-//  int storageReleaseToCity;
-//  String storageReleaseToCityName;
-//  int storageReleaseToState;
-//  String storageReleaseToStateName;
-//  String storageReleaseToZipCode;
-//  String storageReleaseToPhone;
-//  int storageReleaseIDType;
-//  String storageReleaseIDTypeName;
-//  String storageReleaseIDNumber;
-//  int storageReleaseOwnerType;
-//  String storageReleaseOwnerTypeName;
-//  int storageReleaseOwnership;
-//  String storageReleaseOwnershipName;
-//  String storageMvrDate;
-//  String storageMvrTime;
-//  String storageMvrUUID;
-//  bool storageMvrAutoData;
-//  String storageLienRefNumber;
-//  int storageLienHolder;
-//  String storageLienHolderName;
-//  int storageMunicipal;
-//  String storageMunicipalName;
-//  bool noCharge;
-//  int  systemRuntimeType;
-//  String systemRuntimeTypeName;
-//  String QBReference;
-//  String towedStatus;
-//  String towedStatusName;
-//  bool towedBonus;
-//  String towedPONumber;
-//  String towedInvoice;
-//  String towedRONumber;
-//  String towedToStreet;
-//  String towedToStreetTwo;
-//  String towedToCityName;
-//  int towedToCity;
-//  String towedToStateName;
-//  int towedToState;
-//  String towedToZipCode;
-//  String towedTrailerNumber;
-//  String towedTruckNumber;
-//  bool towedNoCommission;
-//  String towedDiscountRate;
-//  String towedDiscountAmount;
-//  String dispatchStatus;
-//  String dispatchStatusName;
-//  int dispatchSortStatus;
-//  String dispatchDate;
-//  String dispatchReceivedTime;
-//  String dispatchDispatchTime;
-//  String dispatchEnrouteTime;
-//  String dispatchOnsiteTime;
-//  String dispatchRollingTime;
-//  String dispatchArrivedTime;
-//  String dispatchClearedTime;
-//  int dispatchETAMinutes;
-//  bool dispatchAlarmConfirm;
-//  bool dispatchCancel;
-//  int dispatchLimitMiles;
-//  String dispatchLimitAmount;
-//  String dispatchContact;
-//  String dispatchContactPhone;
-//  //<dispatchInstructions;base64Binary</dispatchInstructions;
-//  String dispatchInstructions_string;
-//  String dispatchJobID;
-//  String dispatchID;
-//  String dispatchResponseID;
-//  String dispatchAuthorizationNumber;
-//  int dispatchPriorityLevel;
-//  String dispatchPriorityLevelName;
-//  String dispatchMemberNumber;
-//  int bodyShop;
-//  String bodyShopName;
-//  String bodyShopAtShopDate;
-//  String bodyShopPendingDate;
-//  String bodyShopWorkingDate;
-//  String bodyShopTotaledDate;
-//  String bodyShopMovedDate;
-//  String bodyShopDriverTransferDate;
-//  String bodyShopDriverRepairDate;
-//  String bodyShopPaymentDate;
-//  String bodyShopDriverTransferAmount;
-//  String bodyShopDriverRepairAmount;
-//  String bodyShopPaymentAmount;
-//  //<storageMvrRawData;base64Binary</storageMvrRawData;
-//  //<storageMvrXMLRawData;base64Binary</storageMvrXMLRawData;
-//  String storageMvrRawData_string;
-//  String storageMvrXMLRawData_string;
-//  int vehicleOdometer;
-//  String storageInventoryDate;
-//  String storageInventoryTime;
-//  String lawContactName;
-//  String lawDate;
-//  String lawTime;
-//  String lawCaseNumber;
-//  String auctionReturnDate;
-//  String auctionReturnTime;
-//  String searchYearMakeModelName;
-//  String towedSubTotal;
-//  String towedDiscountTotal;
-//  String towedTaxAmount;
-//  String towedTotalAmount;
-//  String towedPaidAmount;
-//  String towedBalance;
-//  String towedCommissionTotal;
-//  String towedTaxableTotal;
-//  String releaseAmount;
-//  String releaseChangeDue;
-//  int releaseTowedVehicle;
-//  int dispatchETAMaximum;
-//  String dispatchProviderResponse;
-//  int dispatchProviderSelectedResponse;
-//  String dispatchProviderSelectedResponseName;
-//  String dispatchRequestorResponse;
-//  int systemMotorClub;
-//  String providerContactName;
-//  String providerContactPhone;
-//  String contractorId;
-//  String locationId;
-//  String clientId;
-//  bool keys;
-//  String keyTag;
-//  bool junk;
-//  bool repairable;
-//  bool ownerRelease;
-//  bool onHold;
-//  String tarpDate;
-//  String tarpTime;
-//  int timeZone;
-//  String timeZoneName;
-//  String count;
-//  String color;
-
-
   int count;
   int id;
+  String pinNumber;
   String dispatchStatusName;
   double towedTotalAmount;
   String towReasonName;
@@ -307,7 +109,7 @@ class Call {
   int towedToState;
   int towBillTo;
   String towBillToName;
-  String towedStatus;
+  int towedStatus;
   String towedStatusName;
   String dispatchMemberNumber;
   String dispatchLimitAmount;
@@ -353,230 +155,167 @@ class Call {
   bool dispatchCancel;
   int vehicleLicenseType;
   String vehicleLicenseTypeName;
+  String storageMvrAutoData;
+  String systemRuntimeType;
+  String keys;
+  String ownerRelease;
+  bool onHold;
+  String bodyShopRepairAmount;
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+  "topColorName":topColorName,
+  "secondColorName":secondColorName,
+  "vehicleMakeName":vehicleMakeName,
+  "vehicleYearMakeModelName":vehicleYearMakeModelName,
+  "vehicleLicenseStateName":vehicleLicenseStateName,
+  "towTypeName":towTypeName,
+  "towCustomerName":towCustomerName,
+  "towBillToName":towBillToName,
+  "towJurisdictionName":towJurisdictionName,
+  "wreckerDriverName":wreckerDriverName,
+  "wreckerCompanyName":wreckerCompanyName,
+  "towAuthorizationName":towAuthorizationName,
+  "towReasonName":towReasonName,
+  "pinNumber":"PIN0000074",
+  "VIN":VIN,
+  "licensePlate":licensePlate,
+  "topColor":topColor,
+  "secondColor":secondColor,
+  "vehicleMake":vehicleMake,
+  "vehicleYearMakeModel":vehicleYearMakeModel,
+  "vehicleStyle":vehicleStyle,
+  "vehicleYear":vehicleYear,
+  "vehicleLicenseType":vehicleLicenseType,
+  "vehicleLicenseState":vehicleLicenseState,
+  "vehicleTitle":vehicleTitle,
+  "vehicleOdometer":vehicleOdometer,
+  "towType":towType,
+  "towCustomer":towCustomer,
+  "towBillTo":towBillTo,
+  "towReason":towReason,
+  "towJurisdiction":towJurisdiction,
+  "storageMunicipal":storageMunicipal,
+  "towAuthorization":towAuthorization,
+//  "towAuthorizationStreet":towAuthorizationStreet,
+//  "towAuthorizationStreetTwo":towAuthorizationStreetTwo,
+//  "towAuthorizationCity":towAuthorizationCity,
+//  "towAuthorizationState":towAuthorizationState,
+//  "towAuthorizationCityName":towAuthorizationCityName,
+//  "towAuthorizationStateName":towAuthorizationStateName,
+//  "towAuthorizationZipCode":towAuthorizationZipCode,
+//  "towAuthorizationContact":towAuthorizationContact,
+//  "towAuthorizationPhone":towAuthorizationPhone,
+  "towedStreet":towedStreet,
+  "towedStreetTwo":towedStreetTwo,
+  "towedCity":towedCity,
+  "towedState":towedState,
+  "towedZipCode":towedZipCode,
+//  "towTruckNumber":towTruckNumber,
+  "towTruck":towTruck,
+//  "towTruckLicensePlate":towTruckLicensePlate,
+//  "towTruckLicenseState":towTruckLicenseState,
+//  "wreckerDriverLicense":wreckerDriverLicense,
+  "wreckerDriver":wreckerDriver,
+  "wreckerDriverPayment":wreckerDriverPayment,
+  "wreckerDriverPaid":wreckerDriverPaid,
+  "wreckerCompany":wreckerCompany,
+//  "TVRMSRefNumber":TVRMSRefNumber,
+  "storageCompany":storageCompany,
+//  "storageCompanyLicenseState":storageCompanyLicenseState,
+//  "storageReleaseDate":storageReleaseDate,
+//  "storageReleaseTime":storageReleaseTime,
+//  "storageReleaseToName":storageReleaseToName,
+//  "storageReleaseToStreet":storageReleaseToStreet,
+//  "storageReleaseToStreetTwo":storageReleaseToStreetTwo,
+//  "storageReleaseToCity":storageReleaseToCity,
+//  "storageReleaseToState":storageReleaseToState,
+//  "storageReleaseToZipCode":storageReleaseToZipCode,
+//  "storageReleaseToPhone":storageReleaseToPhone,
+//  "storageReleaseIDType":storageReleaseIDType,
+//  "storageReleaseIDNumber":storageReleaseIDNumber,
+//  "storageReleaseOwnerType":storageReleaseOwnerType,
+//  "storageReleaseOwnership":storageReleaseOwnership,
+//  "storageMvrDate":storageMvrDate,
+//  "storageMvrTime":storageMvrTime,
+//  "storageMvrUUID":storageMvrUUID,
+  "storageMvrAutoData":false,
+//  "storageLienRefNumber":storageLienRefNumber,
+//  "storageLienHolder":storageLienHolder,
+  "noCharge":false,
+  "systemRuntimeType":2,
+//  "QBReference":QBReference,
+  "towedStatus":towedStatus,
+  "towedBonus":false,
+  "towedPONumber":towedPONumber,
+  "towedInvoice":towedInvoice,
+  "towedRONumber":towedRONumber,
+  "towedToStreet":towedToStreet,
+  "towedToStreetTwo":towedToStreetTwo,
+  "towedToCity":towedToCity,
+  "towedToState":towedToState,
+  "towedToZipCode":towedToZipCode,
+  "towedTrailerNumber":towedTrailerNumber,
+  "towedTruckNumber":towedTruckNumber,
+  "towedNoCommission":false,
+  "towedDiscountRate":towedDiscountRate,
+  "towedDiscountAmount":towedDiscountAmount,
+  "keys":false,
+  "junk":false,
+  "repairable":false,
+  "ownerRelease":false,
+  "onHold":false,
+  "dispatchDate":dispatchDate,
+  "dispatchReceivedTime":dispatchReceivedTime,
+  "towedDate":towedDate,
+  "towedTime":towedTime,
+//  "storageReceivedDate":storageReceivedDate,
+//  "storageReceivedTime":storageReceivedTime,
+  "dispatchDispatchTime":dispatchDispatchTime,
+  "dispatchEnrouteTime":dispatchEnrouteTime,
+  "dispatchOnsiteTime":dispatchOnsiteTime,
+  "dispatchRollingTime":dispatchRollingTime,
+  "dispatchArrivedTime":dispatchArrivedTime,
+//  "dispatchClearedTime":dispatchClearedTime,
+  "dispatchETAMinutes":dispatchETAMinutes,
+  "dispatchAlarmConfirm":false,
+  "dispatchCancel":false,
+  "dispatchLimitMiles":dispatchLimitMiles,
+  "dispatchLimitAmount":dispatchLimitAmount,
+  "dispatchContact":dispatchContact,
+  "dispatchContactPhone":dispatchContactPhone,
+  "dispatchPriorityLevel":1,
+  "dispatchJobID":dispatchJobID,
+  "dispatchID":dispatchID,
+  "dispatchResponseID":dispatchResponseID,
+  "dispatchAuthorizationNumber":dispatchAuthorizationNumber,
+  "dispatchETAMaximum":30,
+  "dispatchProviderResponse":dispatchProviderResponse,
+//  "dispatchProviderSelectedResponse":dispatchProviderSelectedResponse,
+  "dispatchRequestorResponse":dispatchRequestorResponse,
+//  "systemMotorClub":systemMotorClub,
+  "dispatchMemberNumber":dispatchMemberNumber,
+  "bodyShop":bodyShop,
+  "bodyShopAtShopDate":bodyShopAtShopDate,
+  "bodyShopPendingDate":bodyShopPendingDate,
+  "bodyShopWorkingDate":bodyShopWorkingDate,
+  "bodyShopTotaledDate":bodyShopTotaledDate,
+  "bodyShopMovedDate":bodyShopMovedDate,
+  "bodyShopDriverTransferDate":bodyShopDriverTransferDate,
+  "bodyShopDriverRepairDate":bodyShopDriverRepairDate,
+  "bodyShopPaymentDate":bodyShopPaymentDate,
+  "bodyShopDriverTransferAmount":0.00,
+  "bodyShopDriverRepairAmount":0.00,
+  "bodyShopPaymentAmount":bodyShopPaymentAmount,
+//  "lawContactName":lawContactName,
+//  "lawDate":lawDate,
+//  "lawTime":lawTime,
+//  "lawCaseNumber":lawCaseNumber,
+//  "keyTag":keyTag,
+//  "auctionReturnDate":auctionReturnDate,
+//  "auctionReturnTime":auctionReturnTime,
+  };
 
   Call({
-//    this.id,
-//    this.pinNumber,
-//    this.VIN,
-//    this.licensePlate,
-//    this.topColor,
-//    this.topColorName,
-//    this.secondColor,
-//    this.secondColorName,
-//    this.vehicleMake,
-//    this.vehicleMakeName,
-//    this.vehicleYearMakeModel,
-//    this.vehicleYearMakeModelName,
-//    this.vehicleStyle,
-//    this.vehicleStyleName,
-//    this.vehicleYear,
-//    this.vehicleLicenseType,
-//    this.vehicleLicenseTypeName,
-//    this.vehicleLicenseYear,
-//    this.vehicleLicenseState,
-//    this.vehicleLicenseStateName,
-//    this.vehicleTitle,
-//    this.towType,
-//    this.towTypeName,
-//    this.towCustomer,
-//    this.towCustomerName,
-//    this.towBillTo,
-//    this.towBillToName,
-//    this.towReason,
-//    this.towReasonName,
-//    this.towReasonExportCode,
-//    this.towJurisdiction,
-//    this.towJurisdictionName,
-//    this.towAuthorization,
-//    this.towAuthorizationName,
-//    this.towAuthorizationStreet,
-//    this.towAuthorizationStreetTwo,
-//    this.towAuthorizationCity,
-//    this.towAuthorizationCityName,
-//    this.towAuthorizationState,
-//    this.towAuthorizationStateName,
-//    this.towAuthorizationZipCode,
-//    this.towAuthorizationContact,
-//    this.towAuthorizationPhone,
-//    this.towedStreet,
-//    this.towedStreetTwo,
-//    this.towedCity,
-//    this.towedCityName,
-//    this.towedState,
-//    this.towedStateName,
-//    this.towedZipCode,
-//    this.towedDate,
-//    this.towedTime,
-//    this.towTruckNumber,
-//    this.towTruckMedallion,
-//    this.towTruck,
-//    this.towTruckName,
-//    this.towTruckLicensePlate,
-//    this.towTruckLicenseState,
-//    this.towTruckLicenseStateName,
-//    this.wreckerDriverLicense,
-//    this.wreckerDriver,
-//    this.wreckerDriverName,
-//    this.wreckerDriverPayment,
-//    this.wreckerDriverPaid,
-//    this.wreckerDriverPhone,
-//    this.wreckerDriverStateLicense,
-//    this.wreckerDriverCityLicense,
-//    this.wreckerDriverSMSType,
-//    this.wreckerCompany,
-//    this.wreckerCompanyName,
-//    this.wreckerCompanyStateLicense,
-//    this.wreckerCompanyCityLicense,
-//    this.payStatus,
-//    this.payStatusName,
-//    this.TVRMSRefNumber,
-//    this.stockNumber,
-//    this.storageStatus,
-//    this.storageStatusName,
-//    this.storageCompanyLicenseState,
-//    this.storageCompany,
-//    this.storageCompanyName,
-//    this.storageReceivedDate,
-//    this.storageReceivedTime,
-//    this.storageReleaseDate,
-//    this.storageReleaseTime,
-//    this.storageReleaseToName,
-//    this.storageReleaseToStreet,
-//    this.storageReleaseToStreetTwo,
-//    this.storageReleaseToCity,
-//    this.storageReleaseToCityName,
-//    this.storageReleaseToState,
-//    this.storageReleaseToStateName,
-//    this.storageReleaseToZipCode,
-//    this.storageReleaseToPhone,
-//    this.storageReleaseIDType,
-//    this.storageReleaseIDTypeName,
-//    this.storageReleaseIDNumber,
-//    this.storageReleaseOwnerType,
-//    this.storageReleaseOwnerTypeName,
-//    this.storageReleaseOwnership,
-//    this.storageReleaseOwnershipName,
-//    this.storageMvrDate,
-//    this.storageMvrTime,
-//    this.storageMvrUUID,
-//    this.storageMvrAutoData,
-//    this.storageLienRefNumber,
-//    this.storageLienHolder,
-//    this.storageLienHolderName,
-//    this.storageMunicipal,
-//    this.storageMunicipalName,
-//    this.noCharge,
-//    this. systemRuntimeType,
-//    this.systemRuntimeTypeName,
-//    this.QBReference,
-//    this.towedStatus,
-//    this.towedStatusName,
-//    this.towedBonus,
-//    this.towedPONumber,
-//    this.towedInvoice,
-//    this.towedRONumber,
-//    this.towedToStreet,
-//    this.towedToStreetTwo,
-//    this.towedToCityName,
-//    this.towedToCity,
-//    this.towedToStateName,
-//    this.towedToState,
-//    this.towedToZipCode,
-//    this.towedTrailerNumber,
-//    this.towedTruckNumber,
-//    this.towedNoCommission,
-//    this.towedDiscountRate,
-//    this.towedDiscountAmount,
-//    this.dispatchStatus,
-//    this.dispatchStatusName,
-//    this.dispatchSortStatus,
-//    this.dispatchDate,
-//    this.dispatchReceivedTime,
-//    this.dispatchDispatchTime,
-//    this.dispatchEnrouteTime,
-//    this.dispatchOnsiteTime,
-//    this.dispatchRollingTime,
-//    this.dispatchArrivedTime,
-//    this.dispatchClearedTime,
-//    this.dispatchETAMinutes,
-//    this.dispatchAlarmConfirm,
-//    this.dispatchCancel,
-//    this.dispatchLimitMiles,
-//    this.dispatchLimitAmount,
-//    this.dispatchContact,
-//    this.dispatchContactPhone,
-//    //<dispatchInstructions,base64Binary</dispatchInstructions,
-//    this.dispatchInstructions_string,
-//    this.dispatchJobID,
-//    this.dispatchID,
-//    this.dispatchResponseID,
-//    this.dispatchAuthorizationNumber,
-//    this.dispatchPriorityLevel,
-//    this.dispatchPriorityLevelName,
-//    this.dispatchMemberNumber,
-//    this.bodyShop,
-//    this.bodyShopName,
-//    this.bodyShopAtShopDate,
-//    this.bodyShopPendingDate,
-//    this.bodyShopWorkingDate,
-//    this.bodyShopTotaledDate,
-//    this.bodyShopMovedDate,
-//    this.bodyShopDriverTransferDate,
-//    this.bodyShopDriverRepairDate,
-//    this.bodyShopPaymentDate,
-//    this.bodyShopDriverTransferAmount,
-//    this.bodyShopDriverRepairAmount,
-//    this.bodyShopPaymentAmount,
-//    //<storageMvrRawData,base64Binary</storageMvrRawData,
-//    //<storageMvrXMLRawData,base64Binary</storageMvrXMLRawData,
-//    this.storageMvrRawData_string,
-//    this.storageMvrXMLRawData_string,
-//    this.vehicleOdometer,
-//    this.storageInventoryDate,
-//    this.storageInventoryTime,
-//    this.lawContactName,
-//    this.lawDate,
-//    this.lawTime,
-//    this.lawCaseNumber,
-//    this.auctionReturnDate,
-//    this.auctionReturnTime,
-//    this.searchYearMakeModelName,
-//    this.towedSubTotal,
-//    this.towedDiscountTotal,
-//    this.towedTaxAmount,
-//    this.towedTotalAmount,
-//    this.towedPaidAmount,
-//    this.towedBalance,
-//    this.towedCommissionTotal,
-//    this.towedTaxableTotal,
-//    this.releaseAmount,
-//    this.releaseChangeDue,
-//    this.releaseTowedVehicle,
-//    this.dispatchETAMaximum,
-//    this.dispatchProviderResponse,
-//    this.dispatchProviderSelectedResponse,
-//    this.dispatchProviderSelectedResponseName,
-//    this.dispatchRequestorResponse,
-//    this.systemMotorClub,
-//    this.providerContactName,
-//    this.providerContactPhone,
-//    this.contractorId,
-//    this.locationId,
-//    this.clientId,
-//    this.keys,
-//    this.keyTag,
-//    this.junk,
-//    this.repairable,
-//    this.ownerRelease,
-//    this.onHold,
-//    this.tarpDate,
-//    this.tarpTime,
-//    this.timeZone,
-//    this.timeZoneName,
-//    this.count,
-//    this.color,
-
-
     @required this.count,
     @required this.id,
     @required this.dispatchStatusName,
@@ -690,11 +429,182 @@ class Call {
     this.wreckerCompanyName,
     this.dispatchAlarmConfirm,
     this.dispatchCancel,
+    this.pinNumber,
+    this.vehicleYearMakeModel,
+    this.towReason,
+    this.storageMunicipal,
+    this.towTruck,
+    this.wreckerDriver,
+    this.storageCompany,
+    this.storageMvrAutoData,
+    this.systemRuntimeType,
+    this.keys,
+    this.ownerRelease,
+    this.onHold,
+    this.bodyShopRepairAmount
   });
 
   factory Call.fromJson(Map<String, dynamic> json) =>
       _towedVehicleCallsFromJson(json);
 
+  factory Call.fromJsonForAdd(Map<String, dynamic> json) =>
+      _towedVehicleCallsFromJsonForAdd(json);
+  }
+
+Call _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
+  return Call(
+      topColorName:parsedJson["topColorName"],
+      secondColorName:parsedJson["secondColorName"]
+//      vehicleMakeName:parsedJson["vehicleMakeName"] != null ? parsedJson["vehicleMakeName"] : '',
+//      vehicleYearMakeModelName:parsedJson["vehicleYearMakeModelName"] != null ? parsedJson["vehicleYearMakeModelName"] : '',
+//      vehicleLicenseStateName:parsedJson["vehicleLicenseStateName"] != null ? parsedJson["vehicleLicenseStateName"] : '',
+//      towTypeName:parsedJson["towTypeName"] != null ? parsedJson["towTypeName"] : '',
+//      towCustomerName:parsedJson["towCustomerName"] != null ? parsedJson["towCustomerName"] : '',
+//      towBillToName:parsedJson["towBillToName"] != null ? parsedJson["towBillToName"] : '',
+//      towJurisdictionName:parsedJson["towJurisdictionName"] != null ? parsedJson["towJurisdictionName"] : '',
+//      wreckerDriverName:parsedJson["wreckerDriverName"] != null ? parsedJson["wreckerDriverName"] : '',
+//      wreckerCompanyName:parsedJson["wreckerCompanyName"] != null ? parsedJson["wreckerCompanyName"] : '',
+//      towAuthorizationName:parsedJson["towAuthorizationName"] != null ? parsedJson["towAuthorizationName"] : '',
+//      towReasonName:parsedJson["towReasonName"] != null ? parsedJson["towReasonName"] : '',
+//      pinNumber:"PIN0000074",
+//      VIN:parsedJson["VIN"] != null ? parsedJson["VIN"] : '',
+//      licensePlate:parsedJson["licensePlate"] != null ? parsedJson["licensePlate"] : '',
+//      topColor:parsedJson["topColor"] != null ? parsedJson["topColor"] : '',
+//      secondColor: parsedJson["secondColor"],
+//      vehicleMake:parsedJson["vehicleMake"] != null ? parsedJson["vehicleMake"] : '',
+//      vehicleYearMakeModel:parsedJson["vehicleYearMakeModel"] != null ? parsedJson["vehicleYearMakeModel"] : '',
+//      vehicleStyle:parsedJson["vehicleStyle"] != null ? parsedJson["vehicleStyle"] : '',
+//      vehicleYear:parsedJson["vehicleYear"] != null ? parsedJson["vehicleYear"] : '',
+//      vehicleLicenseType:parsedJson["vehicleLicenseType"],
+//      vehicleLicenseState:parsedJson["vehicleLicenseState"] != null ? parsedJson["vehicleLicenseState"] : '',
+//      vehicleTitle:parsedJson["vehicleTitle"] != null ? parsedJson["vehicleTitle"] : '',
+//      vehicleOdometer:parsedJson["vehicleOdometer"] != null ? parsedJson["vehicleOdometer"] : '',
+//      towType:parsedJson["towType"],
+//      towCustomer:parsedJson["towCustomer"] != null ? parsedJson["towCustomer"] : '',
+//      towBillTo:parsedJson["towBillTo"] != null ? parsedJson["towBillTo"] : '',
+//      towReason:parsedJson["towReason"] != null ? parsedJson["towReason"] : '',
+//      towJurisdiction:parsedJson["towJurisdiction"] != null ? parsedJson["towJurisdiction"] : '',
+//      storageMunicipal:parsedJson["storageMunicipal"] != null ? parsedJson["storageMunicipal"] : '',
+//      towAuthorization:parsedJson["towAuthorization"] != null ? parsedJson["towAuthorization"] : '',
+////  towAuthorizationStreet:parsedJson["towAuthorizationStreet"] != null ? parsedJson["towAuthorizationStreet"] : '',
+////  towAuthorizationStreetTwo:parsedJson["towAuthorizationStreetTwo"] != null ? parsedJson["towAuthorizationStreetTwo"] : '',
+////  towAuthorizationCity:parsedJson["towAuthorizationCity"] != null ? parsedJson["towAuthorizationCity"] : '',
+////  towAuthorizationState:parsedJson["towAuthorizationState"] != null ? parsedJson["towAuthorizationState"] : '',
+////  towAuthorizationCityName:parsedJson["towAuthorizationCityName"] != null ? parsedJson["towAuthorizationCityName"] : '',
+////  towAuthorizationStateName:parsedJson["towAuthorizationStateName"] != null ? parsedJson["towAuthorizationStateName"] : '',
+////  towAuthorizationZipCode:parsedJson["towAuthorizationZipCode"] != null ? parsedJson["towAuthorizationZipCode"] : '',
+////  towAuthorizationContact:parsedJson["towAuthorizationContact"] != null ? parsedJson["towAuthorizationContact"] : '',
+////  towAuthorizationPhone:parsedJson["towAuthorizationPhone"] != null ? parsedJson["towAuthorizationPhone"] : '',
+//      towedStreet:parsedJson["towedStreet"] != null ? parsedJson["towedStreet"] : '',
+//      towedStreetTwo:parsedJson["towedStreetTwo"] != null ? parsedJson["towedStreetTwo"] : '',
+//      towedCity:parsedJson["towedCity"] != null ? parsedJson["towedCity"] : '',
+//      towedState:parsedJson["towedState"] != null ? parsedJson["towedState"] : '',
+//      towedZipCode:parsedJson["towedZipCode"] != null ? parsedJson["towedZipCode"] : '',
+////  towTruckNumber:towTruckNumber,
+//      towTruck:parsedJson["towTruck"],
+////  towTruckLicensePlate:towTruckLicensePlate,
+////  towTruckLicenseState:towTruckLicenseState,
+////  wreckerDriverLicense:wreckerDriverLicense,
+//      wreckerDriver:parsedJson["wreckerDriver"] != null ? parsedJson["wreckerDriver"] : '',
+//      wreckerDriverPayment:parsedJson["wreckerDriverPayment"] != null ? parsedJson["wreckerDriverPayment"] : '',
+//      wreckerDriverPaid:parsedJson["wreckerDriverPaid"] != null ? parsedJson["wreckerDriverPaid"] : '',
+//      wreckerCompany:parsedJson["wreckerCompany"] != null ? parsedJson["wreckerCompany"] : '',
+////  TVRMSRefNumber:parsedJson["TVRMSRefNumber"] != null ? parsedJson["TVRMSRefNumber"] : '',
+//      storageCompany:parsedJson["storageCompany"] != null ? parsedJson["storageCompany"] : '',
+////  storageCompanyLicenseState:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseDate:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseTime:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseToName:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseToStreet:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseToStreetTwo:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseToCity:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseToState:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseToZipCode:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseToPhone:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseIDType:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseIDNumber:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseOwnerType:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageReleaseOwnership:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageMvrDate:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageMvrTime:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageMvrUUID:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////      storageMvrAutoData:_convertTobool("false"),
+////  storageLienRefNumber:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  storageLienHolder:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+//      noCharge:false,
+////      systemRuntimeType:2,
+////  QBReference:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+//      towedStatus:parsedJson["towedStatus"] != null ? parsedJson["towedStatus"] : '',
+//      towedBonus:parsedJson["towedBonus"] != null ? parsedJson["towedBonus"] : '',
+//      towedPONumber:parsedJson["towedPONumber"] != null ? parsedJson["towedPONumber"] : '',
+//      towedInvoice:parsedJson["towedInvoice"] != null ? parsedJson["towedInvoice"] : '',
+//      towedRONumber:parsedJson["towedRONumber"] != null ? parsedJson["towedRONumber"] : '',
+//      towedToStreet:parsedJson["towedToStreet"] != null ? parsedJson["towedToStreet"] : '',
+//      towedToStreetTwo:parsedJson["towedToStreetTwo"] != null ? parsedJson["towedToStreetTwo"] : '',
+//      towedToCity:parsedJson["towedToCity"],
+//      towedToState:parsedJson["towedToState"],
+//      towedToZipCode:parsedJson["towedToZipCode"] != null ? parsedJson["towedToZipCode"] : '',
+//      towedTrailerNumber:parsedJson["towedTrailerNumber"] != null ? parsedJson["towedTrailerNumber"] : '',
+//      towedTruckNumber:parsedJson["towedTruckNumber"] != null ? parsedJson["towedTruckNumber"] : '',
+//      towedNoCommission:false,
+//      towedDiscountRate:parsedJson["towedDiscountRate"] != null ? parsedJson["towedDiscountRate"] : '',
+//      towedDiscountAmount:parsedJson["towedDiscountAmount"] != null ? parsedJson["towedDiscountAmount"] : '',
+////      keys:false,
+//      junk:false,
+//      repairable:false,
+////      ownerRelease:false,
+//      onHold:false,
+//      dispatchDate:parsedJson["dispatchDate"] != null ? parsedJson["dispatchDate"] : '',
+//      dispatchReceivedTime:parsedJson["dispatchReceivedTime"] != null ? parsedJson["dispatchReceivedTime"] : '',
+//      towedDate:parsedJson["towedDate"] != null ? parsedJson["towedDate"] : '',
+//      towedTime:parsedJson["towedTime"] != null ? parsedJson["towedTime"] : '',
+////  storageReceivedDate:storageReceivedDate,
+////  storageReceivedTime:storageReceivedTime,
+//      dispatchDispatchTime:parsedJson["dispatchDispatchTime"] != null ? parsedJson["dispatchDispatchTime"] : '',
+//      dispatchEnrouteTime:parsedJson["dispatchEnrouteTime"] != null ? parsedJson["dispatchEnrouteTime"] : '',
+//      dispatchOnsiteTime:parsedJson["dispatchOnsiteTime"] != null ? parsedJson["dispatchOnsiteTime"] : '',
+//      dispatchRollingTime:parsedJson["dispatchRollingTime"] != null ? parsedJson["dispatchRollingTime"] : '',
+//      dispatchArrivedTime:parsedJson["dispatchArrivedTime"] != null ? parsedJson["dispatchArrivedTime"] : '',
+////  dispatchClearedTime:dispatchClearedTime,
+//      dispatchETAMinutes:parsedJson["dispatchETAMinutes"] != null ? parsedJson["dispatchETAMinutes"] : '',
+//      dispatchAlarmConfirm:false,
+//      dispatchCancel:false,
+//      dispatchLimitMiles:parsedJson["dispatchLimitMiles"] != null ? parsedJson["dispatchLimitMiles"] : '',
+//      dispatchLimitAmount:parsedJson["dispatchLimitAmount"] != null ? parsedJson["dispatchLimitAmount"] : '',
+//      dispatchContact:parsedJson["dispatchContact"] != null ? parsedJson["dispatchContact"] : '',
+//      dispatchContactPhone:parsedJson["dispatchContactPhone"] != null ? parsedJson["dispatchContactPhone"] : '',
+//      dispatchPriorityLevel:1,
+//      dispatchJobID:parsedJson["dispatchJobID"] != null ? parsedJson["dispatchJobID"] : '',
+//      dispatchID:parsedJson["dispatchID"] != null ? parsedJson["dispatchID"] : '',
+//      dispatchResponseID:parsedJson["dispatchResponseID"] != null ? parsedJson["dispatchResponseID"] : '',
+//      dispatchAuthorizationNumber:parsedJson["dispatchAuthorizationNumber"] != null ? parsedJson["dispatchAuthorizationNumber"] : '',
+//      dispatchETAMaximum:"30",
+//      dispatchProviderResponse:parsedJson["dispatchProviderResponse"] != null ? parsedJson["dispatchProviderResponse"] : '',
+////  dispatchProviderSelectedResponse:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+//      dispatchRequestorResponse:parsedJson["dispatchRequestorResponse"] != null ? parsedJson["dispatchRequestorResponse"] : '',
+////  systemMotorClub:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+//      dispatchMemberNumber:parsedJson["dispatchMemberNumber"] != null ? parsedJson["dispatchMemberNumber"] : '',
+//      bodyShop:parsedJson["bodyShop"] ,
+//      bodyShopAtShopDate:parsedJson["bodyShopAtShopDate"] != null ? parsedJson["bodyShopAtShopDate"] : '',
+//      bodyShopPendingDate:parsedJson["bodyShopPendingDate"] != null ? parsedJson["bodyShopPendingDate"] : '',
+//      bodyShopWorkingDate:parsedJson["bodyShopWorkingDate"] != null ? parsedJson["bodyShopWorkingDate"] : '',
+//      bodyShopTotaledDate:parsedJson["bodyShopTotaledDate"] != null ? parsedJson["bodyShopTotaledDate"] : '',
+//      bodyShopMovedDate:parsedJson["bodyShopMovedDate"] != null ? parsedJson["bodyShopMovedDate"] : '',
+//      bodyShopDriverTransferDate:parsedJson["bodyShopDriverTransferDate"] != null ? parsedJson["bodyShopDriverTransferDate"] : '',
+//      bodyShopDriverRepairDate:parsedJson["bodyShopDriverRepairDate"] != null ? parsedJson["bodyShopDriverRepairDate"] : '',
+//      bodyShopPaymentDate:parsedJson["bodyShopPaymentDate"] != null ? parsedJson["bodyShopPaymentDate"] : '',
+//      bodyShopDriverTransferAmount:"0.00",
+//      bodyShopDriverRepairAmount:"0.00",
+//      bodyShopPaymentAmount:parsedJson["bodyShopPaymentAmount"] != null ? parsedJson["bodyShopPaymentAmount"] : '',
+////  lawContactName:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  lawDate:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  lawTime:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  lawCaseNumber:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  keyTag:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  auctionReturnDate:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+////  auctionReturnTime:parsedJson["topColorName"] != null ? parsedJson["topColorName"] : '',
+
+  );
 }
 
 Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
@@ -764,9 +674,7 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
           ? parsedJson["towedToZipCode"]
           : '',
       dispatchInstructions_string: parsedJson["dispatchInstructions_string"],
-      towedStatus: parsedJson["towedStatus"] != null
-          ? parsedJson["towedStatus"]
-          : "",
+      towedStatus:int.parse(parsedJson["towedStatus"]),
       towedStatusName: parsedJson["towedStatusName"] != null
           ? parsedJson["towedStatusName"]
           : '',
@@ -823,8 +731,7 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
           : "",
       //   towReason: parsedJson["towReason"],
       //   towedState: parsedJson["towedState"],
-      wreckerCompany: parsedJson["wreckerCompany"] != "0" ? int.parse(
-          parsedJson["wreckerCompany"]) : 0,
+      wreckerCompany:int.parse(parsedJson["wreckerCompany"]),
       wreckerCompanyName: parsedJson["wreckerCompanyName"] != null
           ? parsedJson["wreckerCompanyName"]
           : '',

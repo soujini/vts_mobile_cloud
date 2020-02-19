@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vin_decoder/vin_decoder.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'dart:convert';
 import 'package:vts_mobile_cloud/widgets/tow_customers_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_trucks_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_type_modal.dart';
@@ -25,6 +26,7 @@ import 'package:vts_mobile_cloud/providers/storage_company_provider.dart';
 import 'package:vts_mobile_cloud/widgets/duplicate_call.dart';
 
 import '../models/call.dart';
+
 
 class CallAdd extends StatefulWidget {
   CallAdd() : super();
@@ -92,18 +94,6 @@ class _CallAddState extends State<CallAdd> {
 //      field.reset();
   }
 
-  void _setInitalDefaults() async {
-    setStyle(1, "Other");
-    setLicenseState(43, "TX");
-    setTowedStatus(1, "Call");
-    _towedDateController.text = DateFormat('MM-dd-yyyy').format(_date);
-    _towedTimeController.text = DateFormat('kk:mm').format(_date);
-
-//    print("KIRTI   " +
-//        Provider.of<StorageCompaniesVM>(context).sc["towedInvoice"]);
-    // print("oli  "+Provider.of<StorageCompaniesVM>(context).storageCompanyData.toString());
-  }
-
   _getTowCustomerDefaults(id) async {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('MM-dd-yyyy').format(now);
@@ -111,192 +101,116 @@ class _CallAddState extends State<CallAdd> {
     String formattedTime2 = DateFormat('kk^mm').format(now);
     String currentYear = now.year.toString();
 
+    //Initial Defaults
+    setStyle(1, "Other");
+    setLicenseState(43, "TX");
+    setTowedStatus(1, "Call");
+    _towedDateController.text = DateFormat('MM-dd-yyyy').format(_date);
+    _towedTimeController.text = DateFormat('kk:mm').format(_date);
+
     await Provider.of<TowCustomersVM>(context).getDefaults(id);
     var dd = Provider.of<TowCustomersVM>(context).defaultsData;
     var ud = Provider.of<UsersVM>(context).userData;
+    setTowedInvoice(ud[0].storageCompany);
 
     setState(() {
-      _call.dispatchInstructions =
-          dd[0].instructions != null ? dd[0].instructions : '';
-      _call.dispatchInstructions_string =
-          dd[0].instructions_string != null ? dd[0].instructions_string : '';
+
+      _call.towBillTo = dd[0].towCustomer;
+      _call.towBillToName = dd[0].towCustomerName;
+      _billToController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towBillToName)) .value;
+      _call.dispatchInstructions =  dd[0].instructions != null ? dd[0].instructions : '';
+      _call.dispatchInstructions_string = dd[0].instructions_string != null ? dd[0].instructions_string : '';
       _call.dispatchContact = dd[0].contact != null ? dd[0].contact : '';
-      _call.dispatchContactPhone =
-          dd[0].billingMainPhone != null ? dd[0].billingMainPhone : '';
-
-      _call.towAuthorization =
-          dd[0].towAuthorization != "0" ? dd[0].towAuthorization : '0';
-      _call.towAuthorizationName =
-          dd[0].towAuthorizationName != null ? dd[0].towAuthorizationName : '';
-      _authorizationController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towAuthorizationName))
-          .value;
-
-      _call.towType = dd[0].towType != "0" ? dd[0].towType : '0';
+      _call.dispatchContactPhone = dd[0].billingMainPhone != null ? dd[0].billingMainPhone : '';
+      _call.towAuthorization = dd[0].towAuthorization != 0 ? dd[0].towAuthorization : 0;
+      _call.towAuthorizationName =dd[0].towAuthorizationName != null ? dd[0].towAuthorizationName : '';
+      _authorizationController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towAuthorizationName)).value;
+      _call.towType = dd[0].towType != 0 ? dd[0].towType : 0;
       _call.towTypeName = dd[0].towTypeName != null ? dd[0].towTypeName : '';
-      _towTypeController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towTypeName))
-          .value;
-
-      _call.towJurisdiction =
-          dd[0].towJurisdiction != '0' ? dd[0].towJurisdiction : '0';
-      _call.towJurisdictionName =
-          dd[0].towJurisdictionName != null ? dd[0].towJurisdictionName : '';
-      _jurisdictionController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towJurisdictionName))
-          .value;
-
-      _call.towReason = dd[0].towReason != '0' ? dd[0].towReason : '0';
-      _call.towReasonName =
-          dd[0].towReasonName != null ? dd[0].towReasonName : '';
-      _towReasonController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towReasonName))
-          .value;
-
-      _call.storageMunicipal =
-          dd[0].storageMunicipal != '0' ? dd[0].storageMunicipal : '0';
-      _call.storageMunicipalName =
-          dd[0].storageMunicipalName != null ? dd[0].storageMunicipalName : '';
+      _towTypeController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towTypeName)).value;
+      _call.towJurisdiction = dd[0].towJurisdiction != 0 ? dd[0].towJurisdiction : 0;
+      _call.towJurisdictionName =dd[0].towJurisdictionName != null ? dd[0].towJurisdictionName : '';
+      _jurisdictionController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towJurisdictionName)).value;
+      _call.towReason = dd[0].towReason != 0 ? dd[0].towReason : 0;
+      _call.towReasonName = dd[0].towReasonName != null ? dd[0].towReasonName : '';
+      _towReasonController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towReasonName)).value;
+      _call.storageMunicipal = dd[0].storageMunicipal != 0 ? dd[0].storageMunicipal : 0;
+      _call.storageMunicipalName = dd[0].storageMunicipalName != null ? dd[0].storageMunicipalName : '';
       _call.PORequired = dd[0].PORequired != null ? dd[0].PORequired : '';
-      _call.invoiceRequired =
-          dd[0].invoiceRequired != null ? dd[0].invoiceRequired : '';
-
-      _call.towedCity =
-          ud[0].storageCompanyCity != '0' ? ud[0].storageCompanyCity : '0';
-      _call.towedCityName = ud[0].storageCompanyCityName != null
-          ? ud[0].storageCompanyCityName
-          : '';
-      _call.towedState =
-          ud[0].storageCompanyState != '0' ? ud[0].storageCompanyState : '0';
-      _call.towedStateName = ud[0].storageCompanyStateName != null
-          ? ud[0].storageCompanyStateName
-          : '';
-
-      if (dd[0].storageCompany != '0') {
-        _call.storageCompany = dd[0].storageCompany;
-        _call.storageCompanyName = dd[0].storageCompanyName;
-      } else {
-        _call.storageCompany = ud[0].storageCompany;
-        _call.storageCompanyName = ud[0].companyName;
-      }
-      _call.towedDiscountRate =
-          dd[0].discountPercent != null ? dd[0].discountPercent : '';
-      _call.towedDiscountAmount =
-          dd[0].discountRate != null ? dd[0].discountRate : '';
-
-      _call.vehicleMake = dd[0].vehicleMake != '0' ? dd[0].vehicleMake : '0';
-      _call.vehicleMakeName =
-          dd[0].vehicleMakeName != null ? dd[0].vehicleMakeName : '';
-      _makeController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.vehicleMakeName))
-          .value;
-
-      _call.vehicleYearMakeModel =dd[0].vehicleYearMakeModel != '0' ? dd[0].vehicleYearMakeModel : '0';
+      _call.invoiceRequired = dd[0].invoiceRequired != null ? dd[0].invoiceRequired : '';
+      _call.towedCity = ud[0].storageCompanyCity != 0 ? ud[0].storageCompanyCity : 0;
+      _call.towedCityName = ud[0].storageCompanyCityName != null ? ud[0].storageCompanyCityName : '';
+      _call.towedState = ud[0].storageCompanyState != 0 ? ud[0].storageCompanyState : 0;
+      _call.towedStateName = ud[0].storageCompanyStateName != null ? ud[0].storageCompanyStateName: '';
+      _call.storageCompany = dd[0].storageCompany != 0 ? dd[0].storageCompany : 0;
+      _call.storageCompanyName = dd[0].storageCompanyName != null ? dd[0].storageCompanyName : '';
+      _call.towedDiscountRate = dd[0].discountPercent != null ? dd[0].discountPercent : '';
+      _call.towedDiscountAmount = dd[0].discountRate != null ? dd[0].discountRate : '';
+      _call.vehicleMake = dd[0].vehicleMake != 0 ? dd[0].vehicleMake : 0;
+      _call.vehicleMakeName = dd[0].vehicleMakeName != null ? dd[0].vehicleMakeName : '';
+      _makeController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleMakeName)).value;
+      _call.vehicleYearMakeModel =dd[0].vehicleYearMakeModel != 0 ? dd[0].vehicleYearMakeModel : 0;
       _call.vehicleYearMakeModelName = dd[0].vehicleYearMakeModelName != null ? dd[0].vehicleYearMakeModelName: '';
-      _modelController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.vehicleYearMakeModelName))
-          .value;
-
-      _call.vehicleYear = dd[0].vehicleYear == "0" ? int.parse(currentYear): int.parse(dd[0].vehicleYear);
+      _modelController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleYearMakeModelName)).value;
+      _call.vehicleYear = dd[0].vehicleYear != "0" ? dd[0].vehicleYear : int.parse(currentYear);
       _yearController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleYear.toString())).value;
 
-      if (dd[0].vehicleColor != '0') {
+      if (dd[0].vehicleColor != 0) {
         _call.topColor = dd[0].vehicleColor;
         _call.topColorName = dd[0].vehicleColorName;
-        _topColorController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.topColorName))
-            .value;
-
-        _call.secondColor = dd[0].vehicleColor == '0' ? dd[0].vehicleColor : '0';
-        _call.secondColorName = dd[0].vehicleColorName == null ? dd[0].vehicleColorName : '';
-        _secondColorController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.secondColorName))
-            .value;
+        _topColorController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.topColorName)).value;
+        _call.secondColor = dd[0].vehicleColor;
+        _call.secondColorName = dd[0].vehicleColorName;
+        _secondColorController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.secondColorName)).value;
       }
       if (_convertTobool(dd[0].defaultFromAddress) == true){
         _call.towedStreet = dd[0].businessStreet;
-        _towedStreetController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedStreet))
-            .value;
-
+        _towedStreetController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedStreet)).value;
         _call.towedStreetTwo = dd[0].businessStreetTwo;
         _call.towedCity = dd[0].businessCity;
         _call.towedState = dd[0].businessState;
-
         _call.towedZipCode = dd[0].businessZipCode;
-        _towedZipCodeController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedZipCode))
-            .value;
-
+        _towedZipCodeController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedZipCode)).value;
         _call.towedCityName = dd[0].businessCityName;
-        _towedCityController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedCityName))
-            .value;
+        _towedCityController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedCityName)).value;
         _call.towedStateName = dd[0].businessStateName;
-        _towedStateController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedStateName))
-            .value;
+        _towedStateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedStateName)).value;
       }
 
       if (dd[0].defaultToAddress == true) {
         _call.towedToStreet = dd[0].businessStreet;
-        _towedToStreetController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedToStreet))
-            .value;
+        _towedToStreetController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedToStreet)).value;
 
-        _call.towedToStreetTwo = Provider.of<TowCustomersVM>(context)
-            .defaultsData[0]
-            .businessStreetTwo;
+        _call.towedToStreetTwo = Provider.of<TowCustomersVM>(context).defaultsData[0].businessStreetTwo;
         _call.towedToCity = dd[0].businessCity;
         _call.towedToState = dd[0].businessState;
         _call.towedToZipCode = dd[0].businessZipCode;
         _call.towedToCityName =  dd[0].businessCityName;
-        _towedToCityController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedToCityName))
-            .value;
+        _towedToCityController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToCityName)).value;
         _call.towedToStateName = dd[0].businessStateName;
-        _towedToStateController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedToStateName))
-            .value;
+        _towedToStateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStateName)).value;
       }
 
       if (dd[0].towedToStreet != null) {
         _call.towedToStreet = dd[0].towedToStreet;
-        _towedToStreetController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedToStreet))
-            .value;
-
+        _towedToStreetController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStreet)) .value;
         _call.towedToStreetTwo = dd[0].towedToStreetTwo;
         _call.towedToCity = dd[0].towedToCity;
         _call.towedToState = dd[0].towedToState;
         _call.towedToZipCode = dd[0].towedToZipCode;
         _call.towedToCityName = dd[0].towedToCityName;
-        _towedToCityController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedToCityName))
-            .value;
+        _towedToCityController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToCityName)).value;
         _call.towedToStateName = dd[0].towedToStateName;
-        _towedToStateController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towedToStateName))
-            .value;
+        _towedToStateController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedToStateName)).value;
       }
 
-      if (dd[0].towBillTo != 0) {
-        _call.towBillTo = dd[0].towBillTo;
-        _call.towBillToName = dd[0].towBillToName;
 
-        _billToController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.towBillToName))
-            .value;
-      }
       if (_convertTobool(dd[0].defaultVIN) == true){
         _call.VIN = 'NOVIN';
-        _vinController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.VIN))
-            .value;
+        _vinController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.VIN)).value;
       }
 
-      if (_convertTobool(dd[0].defaultPlate) == true)
-        {
+      if (_convertTobool(dd[0].defaultPlate) == true){
         _call.licensePlate = 'TXPLATE';
         _licensePlateController.value = new TextEditingController.fromValue(
                 new TextEditingValue(text: _call.licensePlate))
@@ -351,12 +265,9 @@ class _CallAddState extends State<CallAdd> {
     setState(() {
       _call.towCustomer = id;
       _call.towCustomerName = name;
-      _towCustomerController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
-              .value;
+      _towCustomerController.value =new TextEditingController.fromValue(new TextEditingValue(text: name)) .value;
     });
     _getTowCustomerDefaults(id);
-    _setInitalDefaults();
   }
 
   setTowedStatus(id, name) {
@@ -367,6 +278,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setModel(id, name) {
@@ -377,15 +289,18 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setVehicleYear(year) {
+    print("setting year");
     setState(() {
       _call.vehicleYear = year;
       _yearController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: year.toString()))
           .value;
     });
+    _formKey.currentState.validate();
   }
 
   setMake(id, name) {
@@ -396,6 +311,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setStyle(id, name) {
@@ -406,6 +322,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setTopColor(id, name) {
@@ -416,6 +333,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setSecondColor(id, name) {
@@ -426,6 +344,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setLicenseState(id, name) {
@@ -436,6 +355,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setTowType(id, name) {
@@ -446,6 +366,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setTowReason(id, name) {
@@ -456,6 +377,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setAuthorization(id, name) {
@@ -466,6 +388,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setJurisdiction(id, name) {
@@ -476,6 +399,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setCity(id, name) {
@@ -486,6 +410,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setTowedState(id, name) {
@@ -496,6 +421,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setCompany(id, name) {
@@ -506,7 +432,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    setTowedInvoice();
+    _formKey.currentState.validate();
   }
 
   setDriver(id, name) {
@@ -517,6 +443,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setTruck(id, name) {
@@ -527,6 +454,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setBillTo(id, name) {
@@ -537,6 +465,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
+    _formKey.currentState.validate();
   }
 
   setYearMakeModelName(yearMakeModelObj) {
@@ -545,17 +474,15 @@ class _CallAddState extends State<CallAdd> {
     setModel(yearMakeModelObj.id, yearMakeModelObj.vehicleModelName);
   }
 
-  setTowedInvoice() async {
-    await Provider.of<StorageCompaniesVM>(context)
-        .get(_call.storageCompany.toString());
+  setTowedInvoice(storageCompanyId) async {
+    await Provider.of<StorageCompaniesVM>(context).get(storageCompanyId);
+
     setState(() {
-      var towedInvoice = _call.towedInvoice =
-          Provider.of<StorageCompaniesVM>(context).sc["towedInvoice"];
+      var towedInvoice = _call.towedInvoice =Provider.of<StorageCompaniesVM>(context).sc["towedInvoice"];
       var newTowedInvoice = int.parse(towedInvoice) + 1;
-      _towedInvoiceController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: newTowedInvoice.toString()))
-          .value;
+      _towedInvoiceController.value = new TextEditingController.fromValue( new TextEditingValue(text: newTowedInvoice.toString())).value;
     });
+    _formKey.currentState.validate();
   }
 
   @override
@@ -1499,7 +1426,7 @@ class _CallAddState extends State<CallAdd> {
       } else {
         //Call Save here
         Provider.of<Calls>(context).create(_call);
-//        print("souji " + _call.toString());
+        print("souji " + jsonEncode(_call.toJson()));
       }
       _showDialog(context);
     }

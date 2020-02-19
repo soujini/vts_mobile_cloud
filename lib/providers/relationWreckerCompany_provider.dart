@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
+import '../providers/secureStoreMixin_provider.dart';
 
 class WreckerCompany {
   String errorStatus;
@@ -39,13 +40,13 @@ class WreckerCompany {
       wreckerCompanyName: parsedJson['wreckerCompanyName'] as String,
       QBReference: parsedJson['QBReference'] as String,
       documentHeader: parsedJson['documentHeader'] as String,
-      stateLicense: parsedJson['stateLicense'] as String,
-      cityLicense: parsedJson['cityLicense'] as String,
+      stateLicense: parsedJson['stateLicense'] != null ? parsedJson['stateLicense'] :'',
+      cityLicense: parsedJson['cityLicense'] != null ? parsedJson['cityLicense'] :'',
     );
   }
 }
 
-class WreckerCompaniesVM with ChangeNotifier {
+class WreckerCompaniesVM with ChangeNotifier, SecureStoreMixin {
 
   List<WreckerCompany> _wreckerCompanies = [];
 
@@ -61,8 +62,12 @@ class WreckerCompaniesVM with ChangeNotifier {
     final String appName = "towing";
     final int userId = 3556;
     String filterFields = "";
+    String pinNumber="";
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
 
-    filterFields = "pinNumber:PIN0000074";
+    filterFields = "pinNumber:"+pinNumber;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

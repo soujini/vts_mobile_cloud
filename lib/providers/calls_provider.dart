@@ -5,8 +5,9 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 import '../models/call.dart';
+import '../providers/secureStoreMixin_provider.dart';
 
-class Calls with ChangeNotifier {
+class Calls with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
 
   int _activeCount = 0;
@@ -64,13 +65,96 @@ class Calls with ChangeNotifier {
 
     final String appName = "towing";
     final int userId = 3556;
-    List <String> fieldList;
-    String dispatchInstructions_string;
-    String timeZoneName= "Central Standard Time";
+    List<String> fieldList;
+    String xmlValues="";
+    String dispatchInstructions_string="bind this instruction";
+    String timeZoneName= "";
 
-    var json = jsonEncode(call.toJson());
-    print("json "+json);
+    await getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
 
+    //List<String> fieldList;
+//    fieldList =  List<String>();
+//
+//    var jsonString='{"topColorName":"Red", "BottomColorName":"Yellow"}';
+//   //var jsonString  = jsonEncode(call.toJson());
+////    Map myMap = json.decode(jsonString);
+//    var list  = json.decode(jsonString) as List;
+//
+////
+//   List<Test> test = list.map((i)=>Test.fromJson(i)).toList();
+//    print(test.runtimeType); //return
+////   print(test);
+//
+
+
+//
+
+    //The type of the return value result is Map<String, dynamic>.
+    // It's a Map because we are parsing a JSON object. The type of Map key is always String,
+    // while the type of Map value depends on the actual data, so it's dynamic.
+    // We can use runtimeType to get the actual type of value for the key shippingAddresses, which is List.
+
+//    var user = new User.fromJson(result);
+//    print(user);
+
+
+    //fieldList.add(new Call.fromJsonForAdd(parsedJson).toString());
+
+    //xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+    //print(xmlValues);
+
+
+
+//    print("fllllll     "+fieldList.length.toString());
+
+
+
+//    Map myMap = json.decode(jsonData);
+//    Iterable i = myMap['jobs'];
+//    List<Jobs> jobs = i.map((model) => Jobs.fromJson(model)).toList();
+
+//   var x = Call.fromJsonForAdd(parsedjson);
+////   print(x.length.toString());
+//    for(var i=0; i<x.length; i++){
+
+//    xmlValues = y.map((v) => '<string>$v</string>').join();
+//    fieldListt = y.map((i)=>Call.fromJsonForAdd(i));
+//
+//    fieldList.add(jsonDecode(x));
+//    var y   = jsonDecode(x.fromJson());
+//    print("xxx    "+jsonData.toString());
+//    print("yyyy    "+y.toString());
+
+//    var z  = new Cal//l.fromJsonForAdd(y);
+//print("zzzzzz "+z.toString() );
+//    fieldList.add(new Call.fromJsonForAdd(y).toString());
+
+//toString    y.map((x)=>
+//      print(x)
+//    );
+//    fieldList=(json.decode(x) as List<String>).map((i) =>
+//        y.fromJson(i)).toList();
+
+
+//    print("anotherStrongListOfInts    "+fieldList.toString());
+
+//     fieldList = List<dynamic>.from(
+//      y.map<dynamic>(
+//            (dynamic item) => item,
+//      ),
+//    );
+//
+//     fieldList = json.decode(x);
+
+
+//    print("xxxx "+x); // return ["one"
+//    print("yyyy "+y.toString());
+
+//    print("fieldlist    "+fieldList.to);
+   // xmlValues = y.map((v) => '<string>$v</string>').join();
+  //  print ("xml val "+xmlValues);
 
 //    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
 //        "<soap:Envelope "
@@ -115,52 +199,68 @@ class Calls with ChangeNotifier {
     final int userId = 1;
     final int id = call_id;
     List<String> fieldList = new List<String>();
-    List<String> fieldList1 = new List<String>();
-    String tabUpdate = "Call";
+    String tabUpdate = "Billing";
     String fieldName=field_name;
     bool moveStatus=false;
     String dispatchInstructions_string="";//Need to be updated
-    String timeZoneName="Central Standard Time";
     String xmlValues="";
+    String pinNumber;
+    String timeZoneName;
 
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('MM-dd-yyyy').format(now);
     String formattedTime = DateFormat('kk.mm').format(now);
     String formattedTime2 = DateFormat('kk^mm').format(now);
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+    await getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+      print("timezone name "+token);
+    });
 
-    if(fieldName == "Received")
-      {
-        fieldList = [
-          "pinNumber:PIN0000074",
-          "dispatchOnsiteTime:"+formattedTime,
-          "towedStatus:C"
-        ];
-        fieldList = ["dispatchReceivedTime:"+formattedTime];
-        fieldName = "Received - "+formattedTime2;
-      }
-    else  if(fieldName == "Dispatch")
+
+
+//    if(fieldName == "Received")
+//      {
+//        fieldList = [
+//          "pinNumber:"+pinNumber,
+//          "dispatchOnsiteTime:"+formattedTime,
+//          "towedStatus:C"
+//        ];
+//        fieldList = ["dispatchReceivedTime:"+formattedTime];
+//        fieldName = "Received - "+formattedTime2;
+//      }
+     if(fieldName == "Dispatch")
     {
       fieldList = [
-        "pinNumber:PIN0000074",
+        "pinNumber:"+pinNumber,
         "dispatchDate:"+formattedDate,
         "dispatchDispatchTime:"+formattedTime,
+        "dispatchStatusName:Dispatch",
         "towedStatus:C"
       ];
       fieldName = "Dispatch - "+formattedTime2;
+      xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+      print("sue b do me do   "+xmlValues);
     }
-    else  if(fieldName == "Enroute")
+     if(fieldName == "Enroute")
     {
       fieldList = [
-        "pinNumber:PIN0000074",
+        "pinNumber:"+pinNumber,
         "dispatchEnrouteTime:"+formattedTime,
+        "dispatchStatusName:Enroute",
         "towedStatus:C"
       ];
       fieldName = "Enroute - "+formattedTime2;
+      xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+      print("sue b do me do   "+xmlValues);
     }
+
     else  if(fieldName == "Onsite")
     {
       fieldList = [
-        "pinNumber:PIN0000074",
+        "pinNumber:"+pinNumber,
         "dispatchOnsiteTime:"+formattedTime,
         "dispatchStatusName:Onsite",
         "towedStatus:C"
@@ -173,29 +273,36 @@ class Calls with ChangeNotifier {
     else  if(fieldName == "Rolling")
     {
       fieldList = [
-        "pinNumber:PIN0000074",
+        "pinNumber:"+pinNumber,
         "dispatchRollingTime:"+formattedTime,
+        "dispatchStatusName:Rolling",
         "towedStatus:C"
       ];
       fieldName = "Rolling - "+formattedTime2;
+      xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+      print("sue b do me do   "+xmlValues);
     }
     else  if(fieldName == "Arrived")
     {
       fieldList = [
-        "pinNumber:PIN0000074",
+        "pinNumber:"+pinNumber,
         "dispatchArrivedTime:"+formattedTime,
+        "dispatchStatusName:Arrived",
         "towedStatus:C"
       ];
       fieldName = "Arrived - "+formattedTime2;
+      xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     }
     else  if(fieldName == "Cleared")
     {
       fieldList = [
-        "pinNumber:PIN0000074",
+        "pinNumber:"+pinNumber,
         "dispatchClearedTime:"+formattedTime,
+        "dispatchStatusName:Cleared",
         "towedStatus:C"
       ];
       fieldName = "Cleared - "+formattedTime2;
+      xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     }
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
@@ -209,11 +316,6 @@ class Calls with ChangeNotifier {
         "<userId>${userId}</userId>"
         "<id>${id}</id>"
         "<fieldList>${xmlValues}</fieldList>"
-//        "<string>${a}</string>"
-//        "<string></string>"
-//        "<string></string>"
-//        "<string></string>"
-//        "</fieldList>"
         "<tabUpdate>${tabUpdate}</tabUpdate>"
         "<fieldName>${fieldName}</fieldName>"
         "<moveStatus>${moveStatus}</moveStatus>"
@@ -228,7 +330,7 @@ class Calls with ChangeNotifier {
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/update",
-          "Host": "cktsystems.com"
+          "Host": "cktsystems.com",
           //"Accept": "text/xml"
         },
         body: envelope);
@@ -306,17 +408,24 @@ class Calls with ChangeNotifier {
     final bool listAfterInsert = true;
     final bool currentDayList = true;
     bool activeDispatch = true;
+    String pinNumber;
+    await await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+
+
+
 
     if (mode == 'active') {
-     filterFields = "pinNumber:PIN0000074|towedStatus:C";
+     filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
       towedStatus = "C";
       activeDispatch = true;
     } else if (mode == 'completed') {
-     filterFields = "pinNumber:PIN0000074|towedStatus:C";
+     filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
       towedStatus = "C";
       activeDispatch = false;
     } else if (mode == 'cancelled') {
-      filterFields = "pinNumber:PIN0000074|towedStatus:X";
+      filterFields = "pinNumber:"+pinNumber+"|towedStatus:X";
       towedStatus = "X";
       activeDispatch = true;
     }

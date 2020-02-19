@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
+import '../providers/secureStoreMixin_provider.dart';
+
 
 class TowCustomer {
   String errorStatus;
@@ -204,7 +206,7 @@ bool _convertTobool(value) {
     return value;
 }
 
-class TowCustomersVM with ChangeNotifier {
+class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
   List<TowCustomer> _towCustomers = [];
   List<TowCustomer> _defaultsData = [];
   List<TowCustomer> get towC {
@@ -216,15 +218,16 @@ class TowCustomersVM with ChangeNotifier {
   }
 
   List<TowCustomer> tc;
-
-
   Future getDefaults(int a) async{
     Xml2Json xml2json = new Xml2Json();
 
     final String appName = "towing";
     final int userId = 3556;
     final int towCustomer = a;
-    final String pinNumber = "PIN0000074";
+    String pinNumber="";
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -273,8 +276,12 @@ class TowCustomersVM with ChangeNotifier {
     final String appName = "towing";
     final int userId = 3556;
     String filterFields = "";
+    String pinNumber="";
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
 
-    filterFields = "pinNumber:PIN0000074";
+    filterFields = "pinNumber:"+pinNumber;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

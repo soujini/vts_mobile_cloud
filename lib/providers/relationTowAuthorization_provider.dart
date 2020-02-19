@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 
+import '../providers/secureStoreMixin_provider.dart';
+
 class TowAuthorization {
   String errorStatus;
   String errorMessage;
@@ -32,7 +34,7 @@ class TowAuthorization {
   }
 }
 
-class TowAuthorizationsVM with ChangeNotifier {
+class TowAuthorizationsVM with ChangeNotifier, SecureStoreMixin {
 
   List<TowAuthorization> _towAuthorizations = [];
 
@@ -48,8 +50,13 @@ class TowAuthorizationsVM with ChangeNotifier {
     final String appName = "towing";
     final int userId = 3556;
     String filterFields = "";
+    String pinNumber="";
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
 
-    filterFields = "pinNumber:PIN0000074";
+
+    filterFields = "pinNumber:"+pinNumber;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

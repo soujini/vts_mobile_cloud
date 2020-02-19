@@ -32,12 +32,12 @@ class StorageCompaniesVM with ChangeNotifier {
     return _storageCompanyData;
   }
 
-  Future get(String sx) async {
+  Future get(storageCompanyId) async {
     Xml2Json xml2json = new Xml2Json();
 
     final String appName = "towing";
     final int userId = 3556;
-    int id = int.parse(sx);
+    int id = storageCompanyId;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

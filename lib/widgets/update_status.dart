@@ -35,14 +35,34 @@ class _UpdateStatusState extends State<UpdateStatus> {
                     'UPDATE STATUS', style: TextStyle(fontSize: 20,
                     fontWeight: FontWeight.bold)),
               ),
+//              Padding(
+//                  padding: EdgeInsets.all(8.0),
+//                  child: SizedBox(
+//                      width: 125,
+//                      height: 40,
+//                      child: FlatButton(
+//                          color:  selected_status == "Accept" ? Color(0xff12406F): Colors.white,
+//                          textColor: getCurrentStatusColor("Accept"),
+//                          shape: new RoundedRectangleBorder(
+//                              borderRadius: new BorderRadius.circular(
+//                                  10.0), side: BorderSide(color: Color(0xff333333))),
+//                          disabledTextColor: Colors.black,
+//                          padding: EdgeInsets.all(8.0),
+//                          splashColor: Colors.blueAccent,
+//                          onPressed: () {
+//                            setState(() =>
+//                            selected_status="Accept");
+//                          },
+//                          child: Text('ACCEPT')))
+//              ),
               Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 125,
                       height: 40,
                       child: FlatButton(
-                          color:  selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-                          textColor: getCurrentStatusColor("Accept"),
+                          color: selected_status == "Dispatch" ? Color(0xff12406F): Colors.white,
+                          textColor:getCurrentStatusColor("Dispatch"),
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(
                                   10.0), side: BorderSide(color: Color(0xff333333))),
@@ -51,9 +71,9 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             setState(() =>
-                            selected_status="Accept");
+                            selected_status="Dispatch");
                           },
-                          child: Text('ACCEPT')))
+                          child: Text('DISPATCH')))
               ),
               Padding(
                   padding: EdgeInsets.all(8.0),
@@ -207,7 +227,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                                   child: Align(
                                       alignment: Alignment
                                           .center,
-                                      child: Text('SET TO \n'+ selected_status.toLowerCase(),
+                                      child: Text('SET TO \n'+ selected_status.toUpperCase(),
                                           textAlign: TextAlign.center)
                                   )
                               )
@@ -227,8 +247,7 @@ getCurrentStatusColor(String currentStatus) {
     }
 
   else{
-    return Colors.black38;
+    return Colors.grey;
   }
-//  selected_status == "Accept" ? Color(0xff12406F): Colors.white,
 }
 }

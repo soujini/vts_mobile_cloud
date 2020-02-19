@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 
+import '../providers/secureStoreMixin_provider.dart';
+
 class VehicleYearMakeModel {
   bool errorStatus;
   String errorMessage;
@@ -55,7 +57,7 @@ class VehicleYearMakeModel {
   }
 }
 
-class VehicleYearMakeModelsVM with ChangeNotifier {
+class VehicleYearMakeModelsVM with ChangeNotifier, SecureStoreMixin {
   List<VehicleYearMakeModel> _vehicleYearMakeModels = [];
 
   List<VehicleYearMakeModel> get vehicleYearMakeModels {
@@ -66,10 +68,14 @@ class VehicleYearMakeModelsVM with ChangeNotifier {
     Xml2Json xml2json = new Xml2Json();
     List<VehicleYearMakeModel> tc;
     tc = List<VehicleYearMakeModel>();
+    String pinNumber="";
+    await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
 
     final String appName = "towing";
     final int userId = 3556;
-    String filterFields = "pinNumber:PIN0000074";
+    String filterFields = "pinNumber:"+pinNumber;
     final int iStart = 1;
     final int iEnd = 10;
 

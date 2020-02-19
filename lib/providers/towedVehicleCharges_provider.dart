@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import 'calls_provider.dart';
+import '../providers/secureStoreMixin_provider.dart';
+
 
 class TowedVehicleCharge {
   bool errorStatus;
@@ -86,7 +88,7 @@ bool _convertTobool(value) {
     return value;
 }
 
-class TowedVehicleChargesVM with ChangeNotifier {
+class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
   var selectedCharge = new TowedVehicleCharge();
   List<TowedVehicleCharge> _towedVehicleCharges = [];
   List<TowedVehicleCharge> notes;
@@ -112,7 +114,11 @@ class TowedVehicleChargesVM with ChangeNotifier {
     final String appName = "towing";
     final int userId = 1;
     String filterFields = "";
-    filterFields = "pinNumber:PIN0000074|towedVehicle:" + _towedVehicle;
+    String pinNumber="";
+    await await getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+    filterFields = "pinNumber:"+pinNumber+"|towedVehicle:" + _towedVehicle;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
