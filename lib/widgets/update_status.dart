@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
 import '../providers/calls_provider.dart';
 
 
@@ -221,8 +222,15 @@ class _UpdateStatusState extends State<UpdateStatus> {
                                       .lightGreenAccent,
                                   onPressed: () {
                                     Provider.of<Calls>(context)
-                                        .update(widget.id,selected_status,widget.dispatchInstructions_string);
-                                    Navigator.pop(context);
+                                        .update(widget.id,selected_status,widget.dispatchInstructions_string).then((res){
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                              new CallsScreen()));
+                                    });
+//
                                   },
                                   child: Align(
                                       alignment: Alignment

@@ -4,29 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 
-Test imgFromJson(String str) => Test.fromJson(json.decode(str));
-String imgToJson(Test data) => json.encode(data.toJson());
-
-class Test {
-  String topColorName;
-  String bottomColorName;
-
-  Test({
-    this.topColorName,
-    this.bottomColorName,
-  });
-
-  factory Test.fromJson(Map<String, dynamic> json) => Test(
-    topColorName: json["topColorName"],
-    bottomColorName: json["bottomColorName"],
-  );
-
-  Map<String, dynamic> toJson() => {
-    "topColorName": topColorName,
-    "bottomColorName": bottomColorName,
-  };
-}
-
 class Call {
   int count;
   int id;
@@ -34,6 +11,8 @@ class Call {
   String dispatchStatusName;
   double towedTotalAmount;
   String towReasonName;
+  int vehicleModel;
+  int vehicleYearMakeModel;
   String vehicleMakeName;
   String vehicleYearMakeModelName;
   int vehicleYear;
@@ -104,7 +83,6 @@ class Call {
   String storageCompanyName;
   String towedDiscountRate;
   String towedDiscountAmount;
-  int vehicleYearMakeModel;
   int towedToCity;
   int towedToState;
   int towBillTo;
@@ -322,6 +300,7 @@ class Call {
     @required this.towedTotalAmount,
     @required this.towReasonName,
     @required this.vehicleMakeName,
+    this.vehicleModel,
     @required this.vehicleYearMakeModelName,
     @required this.vehicleYear,
     @required this.color,
@@ -354,6 +333,7 @@ class Call {
     @required this.dispatchRollingTime,
     @required this.dispatchClearedTime,
     @required this.dispatchArrivedTime,
+    this.vehicleYearMakeModel,
     this.towedPONumber,
     this.towCustomer,
     this.towedDate,
@@ -430,7 +410,6 @@ class Call {
     this.dispatchAlarmConfirm,
     this.dispatchCancel,
     this.pinNumber,
-    this.vehicleYearMakeModel,
     this.towReason,
     this.storageMunicipal,
     this.towTruck,
@@ -614,6 +593,7 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       towedTotalAmount: double.parse(parsedJson["towedTotalAmount"]),
       towReasonName: parsedJson["towReasonName"],
       vehicleMakeName: parsedJson["vehicleMakeName"],
+      vehicleYearMakeModel: int.parse(parsedJson["vehicleYearMakeModel"]),
       vehicleYearMakeModelName: parsedJson["vehicleYearMakeModelName"],
       vehicleYear: int.parse(parsedJson["vehicleYear"]),
       color: parsedJson["color"],

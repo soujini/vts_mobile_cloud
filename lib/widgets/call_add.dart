@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vin_decoder/vin_decoder.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
 import 'dart:convert';
 import 'package:vts_mobile_cloud/widgets/tow_customers_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_trucks_modal.dart';
@@ -293,7 +294,6 @@ class _CallAddState extends State<CallAdd> {
   }
 
   setVehicleYear(year) {
-    print("setting year");
     setState(() {
       _call.vehicleYear = year;
       _yearController.value = new TextEditingController.fromValue(
@@ -1425,8 +1425,14 @@ class _CallAddState extends State<CallAdd> {
         //Add Yes or No Button and Rock it
       } else {
         //Call Save here
-        Provider.of<Calls>(context).create(_call);
-        print("souji " + jsonEncode(_call.toJson()));
+        Provider.of<Calls>(context).create(_call).then((res){
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) =>
+                  new CallsScreen()));
+        });
+
       }
       _showDialog(context);
     }

@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 
 import '../models/call.dart';
+import '../models/call_add.dart';
 import '../providers/secureStoreMixin_provider.dart';
 
 class Calls with ChangeNotifier, SecureStoreMixin {
@@ -73,136 +74,93 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     await getSecureStore('timeZoneName', (token) {
       timeZoneName=token;
     });
+    var objText = jsonEncode(call);
+    print(objText);
 
-    //List<String> fieldList;
-//    fieldList =  List<String>();
-//
-//    var jsonString='{"topColorName":"Red", "BottomColorName":"Yellow"}';
-//   //var jsonString  = jsonEncode(call.toJson());
-////    Map myMap = json.decode(jsonString);
-//    var list  = json.decode(jsonString) as List;
-//
-////
-//   List<Test> test = list.map((i)=>Test.fromJson(i)).toList();
-//    print(test.runtimeType); //return
-////   print(test);
-//
+   Call_Add user = Call_Add.fromJsonForAdd(jsonDecode(objText));
 
+    fieldList = [
+      "towCustomer:"+call.towCustomer.toString(),
+      "VIN:"+call.VIN.toString(),
+//      "vehicleModel:"+call.vehicleModel.toString(),
+      'vehicleYear:'+call.vehicleYear.toString(),
+      'vehicleMake:'+call.vehicleMake.toString(),
+      "vehicleStyle:"+call.vehicleStyle.toString(),
+      "topColor:"+call.topColor.toString(),
+      "secondColor:"+call.secondColor.toString(),
+      "licensePlate:"+call.licensePlate.toString(),
+      "vehicleLicenseState:"+call.vehicleLicenseState.toString(),
+      "towType:"+call.towType.toString(),
+      "towReason:"+call.towReason.toString(),
+      'towAuthorization:'+call.towAuthorization.toString(),
+      "towJurisdiction:"+call.towJurisdiction.toString(),
+      "dispatchDate:"+call.dispatchDate.toString(),
+      "dispatchReceivedTime:"+call.dispatchReceivedTime.toString(),
+      "towedDate:"+call.towedDate.toString(),
+      "towedTime:"+call.towedTime.toString(),
+      "towedStreet:"+call.towedStreet.toString(),
+      "towedCity:"+call.towedCity.toString(),
+      "towedState:"+call.towedState.toString(),
+      "towedZipCode:"+call.towedZipCode.toString(),
+      "towedStreetTwo:"+call.towedStreetTwo.toString(),
+      "wreckerCompany:"+call.wreckerCompany.toString(),
+      "towedStatus:C",
+      "wreckerDriver:"+call.wreckerDriver.toString(),
+      "towTruck:"+call.towTruck.toString(),
+      "towBillTo:"+call.towBillTo.toString(),
+      'towedInvoice:'+call.towedInvoice.toString(),//newTowedInvoice =>Check
+      "towedPONumber:"+call.towedPONumber.toString(),
+      "pinNumber:PIN0000074",
+       "systemRuntimeType:2"
+    ];
+    xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+    print(xmlValues);
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<create  xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<fieldList>${xmlValues}</fieldList>"
+        "<dispatchInstructions_string>${dispatchInstructions_string}</dispatchInstructions_string>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
+        "</create>"
+        "</soap:Body>"
+        "</soap:Envelope>";
 
-//
+    final response = await http.post(
+        'http://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/create",
+          "Host": "cktsystems.com"
+          //"Accept": "text/xml"
+        },
+        body: envelope);
 
-    //The type of the return value result is Map<String, dynamic>.
-    // It's a Map because we are parsing a JSON object. The type of Map key is always String,
-    // while the type of Map value depends on the actual data, so it's dynamic.
-    // We can use runtimeType to get the actual type of value for the key shippingAddresses, which is List.
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
 
-//    var user = new User.fromJson(result);
-//    print(user);
-
-
-    //fieldList.add(new Call.fromJsonForAdd(parsedJson).toString());
-
-    //xmlValues = fieldList.map((v) => '<string>$v</string>').join();
-    //print(xmlValues);
-
-
-
-//    print("fllllll     "+fieldList.length.toString());
-
-
-
-//    Map myMap = json.decode(jsonData);
-//    Iterable i = myMap['jobs'];
-//    List<Jobs> jobs = i.map((model) => Jobs.fromJson(model)).toList();
-
-//   var x = Call.fromJsonForAdd(parsedjson);
-////   print(x.length.toString());
-//    for(var i=0; i<x.length; i++){
-
-//    xmlValues = y.map((v) => '<string>$v</string>').join();
-//    fieldListt = y.map((i)=>Call.fromJsonForAdd(i));
-//
-//    fieldList.add(jsonDecode(x));
-//    var y   = jsonDecode(x.fromJson());
-//    print("xxx    "+jsonData.toString());
-//    print("yyyy    "+y.toString());
-
-//    var z  = new Cal//l.fromJsonForAdd(y);
-//print("zzzzzz "+z.toString() );
-//    fieldList.add(new Call.fromJsonForAdd(y).toString());
-
-//toString    y.map((x)=>
-//      print(x)
-//    );
-//    fieldList=(json.decode(x) as List<String>).map((i) =>
-//        y.fromJson(i)).toList();
-
-
-//    print("anotherStrongListOfInts    "+fieldList.toString());
-
-//     fieldList = List<dynamic>.from(
-//      y.map<dynamic>(
-//            (dynamic item) => item,
-//      ),
-//    );
-//
-//     fieldList = json.decode(x);
-
-
-//    print("xxxx "+x); // return ["one"
-//    print("yyyy "+y.toString());
-
-//    print("fieldlist    "+fieldList.to);
-   // xmlValues = y.map((v) => '<string>$v</string>').join();
-  //  print ("xml val "+xmlValues);
-
-//    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
-//        "<soap:Envelope "
-//        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
-//        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
-//        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
-//        "<soap:Body>"
-//        "<create  xmlns=\"http://cktsystems.com/\">"
-//        "<appName>${appName}</appName>"
-//        "<userId>${userId}</userId>"
-//        "<fieldList>${fieldList}</fieldList>"
-//        "<dispatchInstructions_string>${dispatchInstructions_string}</dispatchInstructions_string>"
-//        "<timeZoneName>${timeZoneName}</timeZoneName>"
-//        "</create>"
-//        "</soap:Body>"
-//        "</soap:Envelope>";
-//
-//    final response = await http.post(
-//        'http://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
-//        headers: {
-//          "Content-Type": "text/xml; charset=utf-8",
-//          "SOAPAction": "http://cktsystems.com/create",
-//          "Host": "cktsystems.com"
-//          //"Accept": "text/xml"
-//        },
-//        body: envelope);
-//
-//    final resBody = xml2json.parse(response.body);
-//    final jsondata = xml2json.toParker();
-//    final data = json.decode(jsondata);
-//
-//    final extractedData = await data["soap:Envelope"]["soap:Body"]
-//    ["createResponse"]["createResult"];
-//    print("result of create "+extractedData.toString());
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["createResponse"]["createResult"];
+    print("result of create "+extractedData.toString());
 
   }
 
-
-  Future<List> update(int call_id, String field_name, String _dispatchInstructions_string) async {
-
+  Future<String> update(int call_id, String field_name, String _dispatchInstructions_string) async {
+    print("dispatch instructions "+_dispatchInstructions_string);
     final String appName = "towing";
     final int userId = 1;
     final int id = call_id;
     List<String> fieldList = new List<String>();
-    String tabUpdate = "Billing";
+    String tabUpdate = "Call";
     String fieldName=field_name;
     bool moveStatus=false;
-    String dispatchInstructions_string="";//Need to be updated
+    String dispatchInstructions_string=_dispatchInstructions_string;//Need to be updated
     String xmlValues="";
     String pinNumber;
     String timeZoneName;
@@ -216,40 +174,24 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     });
     await getSecureStore('timeZoneName', (token) {
       timeZoneName=token;
-      print("timezone name "+token);
     });
-
-
-
-//    if(fieldName == "Received")
-//      {
-//        fieldList = [
-//          "pinNumber:"+pinNumber,
-//          "dispatchOnsiteTime:"+formattedTime,
-//          "towedStatus:C"
-//        ];
-//        fieldList = ["dispatchReceivedTime:"+formattedTime];
-//        fieldName = "Received - "+formattedTime2;
-//      }
-     if(fieldName == "Dispatch")
+    if(fieldName == "Dispatch")
     {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchDate:"+formattedDate,
         "dispatchDispatchTime:"+formattedTime,
-        "dispatchStatusName:Dispatch",
         "towedStatus:C"
       ];
       fieldName = "Dispatch - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
       print("sue b do me do   "+xmlValues);
     }
-     if(fieldName == "Enroute")
+    if(fieldName == "Enroute")
     {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchEnrouteTime:"+formattedTime,
-        "dispatchStatusName:Enroute",
         "towedStatus:C"
       ];
       fieldName = "Enroute - "+formattedTime2;
@@ -262,11 +204,10 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchOnsiteTime:"+formattedTime,
-        "dispatchStatusName:Onsite",
         "towedStatus:C"
       ];
       fieldName = "Onsite - "+formattedTime2;
-       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+      xmlValues = fieldList.map((v) => '<string>$v</string>').join();
       print("sue b do me do   "+xmlValues);
 
     }
@@ -275,7 +216,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchRollingTime:"+formattedTime,
-        "dispatchStatusName:Rolling",
         "towedStatus:C"
       ];
       fieldName = "Rolling - "+formattedTime2;
@@ -287,7 +227,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchArrivedTime:"+formattedTime,
-        "dispatchStatusName:Arrived",
         "towedStatus:C"
       ];
       fieldName = "Arrived - "+formattedTime2;
@@ -298,7 +237,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchClearedTime:"+formattedTime,
-        "dispatchStatusName:Cleared",
         "towedStatus:C"
       ];
       fieldName = "Cleared - "+formattedTime2;
@@ -345,9 +283,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
 //    final extractedData = await data["soap:Envelope"]["soap:Body"]
 //    ["listMiniMobileResponse"]["listMiniMobileResult"]["items"]
 //    ["towedVehicleSummarys"];
+  //listMiniMobile('active', 0, 15,"");
+//    this.listMiniMobile("active", 1, 50, "");
+    return response.body;
 
   }
-
   Future<List> get(id) async {
 
     final String appName = "towing";
@@ -402,7 +342,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     }
 
     final String appName = "towing";
-    final int userId = 1;
+    final int userId = 3556;
     String filterFields = "";
     String towedStatus;
     final bool listAfterInsert = true;
@@ -412,9 +352,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     await await getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
-
-
-
 
     if (mode == 'active') {
      filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
@@ -434,8 +371,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       towedStatus = "C";
       activeDispatch = true;
   }
-
-
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
         "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -457,7 +392,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        'http://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx?op=listMiniMobile',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMiniMobile",
@@ -620,6 +555,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       ));
     }
     else if(count > 1){
+
       for (var i = 0; i < _activeCallsFiltered.length; i++) {
         activeCalls.add(Call(
           id: (_activeCallsFiltered[i]["id"] != "0"

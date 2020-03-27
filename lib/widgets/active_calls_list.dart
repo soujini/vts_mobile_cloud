@@ -94,15 +94,26 @@ class ActiveCallsList extends StatelessWidget {
                         FlatButton.icon(
 
                             onPressed: () {
-                             Provider.of<Calls>(context).selectedCall.id = activeCalls.id;
-                             Provider.of<Calls>(context).selectedCall.dispatchStatusName = activeCalls.dispatchStatusName;
-                             Provider.of<Calls>(context).selectedCall.dispatchInstructions_string = activeCalls.dispatchInstructions_string;
+                              Provider
+                                  .of<Calls>(context)
+                                  .selectedCall
+                                  .id = activeCalls.id;
+                              Provider
+                                  .of<Calls>(context)
+                                  .selectedCall
+                                  .dispatchStatusName =
+                                  activeCalls.dispatchStatusName;
+                              Provider
+                                  .of<Calls>(context)
+                                  .selectedCall
+                                  .dispatchInstructions_string =
+                                  activeCalls.dispatchInstructions_string;
 
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
-                                          new AddEditCallScreen()));
+                                      new AddEditCallScreen()));
                             },
                             textColor: Colors.grey,
                             icon: Icon(Icons.edit),
@@ -112,7 +123,11 @@ class ActiveCallsList extends StatelessWidget {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(activeCalls.id, activeCalls.dispatchStatusName, activeCalls.dispatchInstructions_string);
+                                    return
+                                      UpdateStatus(activeCalls.id,
+                                          activeCalls.dispatchStatusName,
+                                          activeCalls
+                                              .dispatchInstructions_string);
                                   });
                             },
                             textColor: Colors.grey,
@@ -120,7 +135,8 @@ class ActiveCallsList extends StatelessWidget {
                             label: Text('Update Status')),
                       ]),
                       Text(
-                          '\$${activeCalls.towedTotalAmount.toStringAsFixed(2)}',
+                          '\$${activeCalls.towedTotalAmount.toStringAsFixed(
+                              2)}',
                           //towedTotalAmount
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -137,6 +153,7 @@ class ActiveCallsList extends StatelessWidget {
                                 Text(
                                     (activeCalls.vehicleYear.toString() +
                                         ' ' +
+                                        activeCalls.vehicleMakeName + ' ' +
                                         activeCalls.vehicleYearMakeModelName),
                                     style: TextStyle(
                                         fontSize: 16,
@@ -195,11 +212,13 @@ class ActiveCallsList extends StatelessWidget {
                                     style: TextStyle(fontSize: 14)),
                                 Text(' '),
                                 new GestureDetector(
-                                onTap: () {
-                                  launch("tel://"+activeCalls.dispatchContactPhone);
-                                },
-                                child: Text((activeCalls.dispatchContactPhone),
-                                    style: TextStyle(fontSize: 14)),
+                                  onTap: () {
+                                    launch("tel://" +
+                                        activeCalls.dispatchContactPhone);
+                                  },
+                                  child: Text(
+                                      (activeCalls.dispatchContactPhone),
+                                      style: TextStyle(fontSize: 14)),
                                 )
 
                               ],
@@ -244,4 +263,7 @@ class ActiveCallsList extends StatelessWidget {
           //Divider()
         ]));
   }
-}
+  }
+
+
+
