@@ -14,7 +14,7 @@ class SystemPriorityModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<SystemPrioritiesVM>(context).list();
+    Provider.of<SystemPrioritiesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class SystemPriorityModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<SystemPrioritiesVM>(context).systemPriorities;
+                      return Provider.of<SystemPrioritiesVM>(context, listen:false).systemPriorities;
 
                     },
                     itemBuilder: (context, suggestion) {

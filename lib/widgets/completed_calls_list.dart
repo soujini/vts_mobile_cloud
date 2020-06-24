@@ -12,7 +12,7 @@ import '../widgets/update_status.dart';
 class CompletedCallsList extends StatelessWidget {
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
-    return await Provider.of<Calls>(context)
+    return await Provider.of<Calls>(context, listen:false)
         .listMiniMobile('completed', 0, PAGE_SIZE,"")
         .catchError((onError) {
       showDialog(
@@ -53,7 +53,7 @@ class CompletedCallsList extends StatelessWidget {
             },
             pageSize: PAGE_SIZE,
             itemBuilder: this._itemBuilder,
-            pageFuture: (pageIndex) => Provider.of<Calls>(context)
+            pageFuture: (pageIndex) => Provider.of<Calls>(context, listen:false)
                 .listMiniMobile('completed', pageIndex, PAGE_SIZE,"")));
   }
 
@@ -93,9 +93,9 @@ class CompletedCallsList extends StatelessWidget {
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
-                              Provider.of<Calls>(context).selectedCall.id = completedCalls.id;
-                              Provider.of<Calls>(context).selectedCall.dispatchStatusName = completedCalls.dispatchStatusName;
-                              Provider.of<Calls>(context).selectedCall.dispatchInstructions_string = completedCalls.dispatchInstructions_string;
+                              Provider.of<Calls>(context, listen:false).selectedCall.id = completedCalls.id;
+                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchStatusName = completedCalls.dispatchStatusName;
+                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchInstructions_string = completedCalls.dispatchInstructions_string;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(

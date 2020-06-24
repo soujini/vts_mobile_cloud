@@ -14,7 +14,7 @@ import '../widgets/update_status.dart';
 class ActiveCallsList extends StatelessWidget {
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
-    return await Provider.of<Calls>(context)
+    return await Provider.of<Calls>(context, listen:false)
         .listMiniMobile('active', 0, PAGE_SIZE,"")
         .catchError((onError) {
       showDialog(
@@ -53,7 +53,7 @@ class ActiveCallsList extends StatelessWidget {
             },
             pageSize: PAGE_SIZE,
             itemBuilder: this._itemBuilder,
-            pageFuture: (pageIndex) => Provider.of<Calls>(context)
+            pageFuture: (pageIndex) => Provider.of<Calls>(context, listen:false)
                 .listMiniMobile('active', pageIndex, PAGE_SIZE,"")));
   }
 
@@ -95,16 +95,16 @@ class ActiveCallsList extends StatelessWidget {
 
                             onPressed: () {
                               Provider
-                                  .of<Calls>(context)
+                                  .of<Calls>(context, listen:false)
                                   .selectedCall
                                   .id = activeCalls.id;
                               Provider
-                                  .of<Calls>(context)
+                                  .of<Calls>(context, listen:false)
                                   .selectedCall
                                   .dispatchStatusName =
                                   activeCalls.dispatchStatusName;
                               Provider
-                                  .of<Calls>(context)
+                                  .of<Calls>(context, listen:false)
                                   .selectedCall
                                   .dispatchInstructions_string =
                                   activeCalls.dispatchInstructions_string;

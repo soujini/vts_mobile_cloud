@@ -14,7 +14,7 @@ class ColorModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<VehicleColorsVM>(context).list();
+    Provider.of<VehicleColorsVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class ColorModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<VehicleColorsVM>(context).vehicleColors;
+                      return Provider.of<VehicleColorsVM>(context, listen:false).vehicleColors;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

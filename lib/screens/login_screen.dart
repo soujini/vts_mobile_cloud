@@ -26,14 +26,14 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       animateButton();
       _formKey.currentState.save(); // Save our form now.
 
-      await Provider.of<UsersVM>(context).validateUser(
+      await Provider.of<UsersVM>(context, listen: false).validateUser(
           3556,
           _user.userName.toUpperCase(),
           _user.password.toUpperCase(),
           _user.pinNumber.toUpperCase());
 
       if (Provider
-          .of<UsersVM>(context)
+          .of<UsersVM>(context, listen:false)
           .userData[0].errorStatus == true) {
         setState(() {
           _state = 2;
@@ -54,7 +54,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     Scaffold.of(context).showSnackBar(
         new SnackBar(
             backgroundColor: Colors.lightGreen,
-          content: Text(Provider.of<UsersVM>(context).userData[0].errorMessage,
+          content: Text(Provider.of<UsersVM>(context, listen:false).userData[0].errorMessage,
               style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
         ))));
 

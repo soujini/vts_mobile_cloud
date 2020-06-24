@@ -14,7 +14,7 @@ class TowTypeModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TowTypesVM>(context).list();
+    Provider.of<TowTypesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class TowTypeModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<TowTypesVM>(context).towTypes;
+                      return Provider.of<TowTypesVM>(context, listen:false).towTypes;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

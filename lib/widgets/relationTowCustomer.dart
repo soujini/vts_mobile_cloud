@@ -35,7 +35,7 @@ class _RelationTowCustomerState extends State<RelationTowCustomer> {
   void _loadData() async {
     // await PlayersViewModel.loadPlayers();
     // await TCViewModel.loadPlayers();
-    await Provider.of<TowCustomersVM>(context).list();
+    await Provider.of<TowCustomersVM>(context, listen:false).list();
 //    print(PlayersViewModel.players);
 //     print(Provider.of<Playerss>(context).towC);
 //    print("blah "+Provider.of<Playerss>(context).towC[0].name.toString());
@@ -76,7 +76,7 @@ class _RelationTowCustomerState extends State<RelationTowCustomer> {
                     clearOnSubmit: false,
                     key: key,
 //                    suggestions: PlayersViewModel.players,
-                    suggestions: Provider.of<TowCustomersVM>(context).tc,
+                    suggestions: Provider.of<TowCustomersVM>(context, listen:false).tc,
                     itemBuilder: (context, item) {
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -13,8 +13,8 @@ class AddCallScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider(builder: (_) => TowCustomersVM()),
-      ChangeNotifierProvider(builder: (_) => StorageCompaniesVM()),
+      ChangeNotifierProvider(create: (_) => TowCustomersVM()),
+      ChangeNotifierProvider(create: (_) => StorageCompaniesVM()),
     ], child: CallAdd());
   }
 }

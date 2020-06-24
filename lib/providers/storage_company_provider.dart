@@ -54,7 +54,7 @@ class StorageCompaniesVM with ChangeNotifier {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://cktsystems.com/vtscloud/WebServices/storageCompanyTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/storageCompanyTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/get",

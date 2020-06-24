@@ -157,7 +157,7 @@ var duplicateData;
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/checkForDuplicateTickets",

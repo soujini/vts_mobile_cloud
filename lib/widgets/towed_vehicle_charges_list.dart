@@ -10,9 +10,9 @@ class TowedVehicleChargesList extends StatelessWidget {
   static const int PAGE_SIZE = 15;
 
   Future<List> _refreshCallsList(BuildContext context) async {
-    var selectedCall = Provider.of<Calls>(context).selectedCall;
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
 
-    return await Provider.of<TowedVehicleChargesVM>(context)
+    return await Provider.of<TowedVehicleChargesVM>(context, listen:false)
         .listMini(0, PAGE_SIZE, selectedCall.id.toString())
         .catchError((onError) {
       showDialog(
@@ -35,7 +35,7 @@ class TowedVehicleChargesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var selectedCall = Provider.of<Calls>(context).selectedCall;
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
@@ -53,7 +53,7 @@ class TowedVehicleChargesList extends StatelessWidget {
             pageSize: PAGE_SIZE,
             itemBuilder: this._itemBuilder,
             pageFuture: (pageIndex) =>
-                Provider.of<TowedVehicleChargesVM>(context).listMini(
+                Provider.of<TowedVehicleChargesVM>(context, listen:false).listMini(
                     pageIndex, PAGE_SIZE, selectedCall.id.toString())));
   }
 
@@ -93,14 +93,14 @@ class TowedVehicleChargesList extends StatelessWidget {
                           context,
                           new MaterialPageRoute(
                               builder: (context) => new ChargesEdit()));
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.towChargesName = towedVehicleCharges.towChargesName;
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.chargesQuantity = towedVehicleCharges.chargesQuantity;
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.discountQuantity = towedVehicleCharges.discountQuantity;
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.chargesRate = towedVehicleCharges.chargesRate;
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.discountRate = towedVehicleCharges.discountRate;
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.discountApply = towedVehicleCharges.discountApply;
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.chargesTaxable = towedVehicleCharges.chargesTaxable;
-                      Provider.of<TowedVehicleChargesVM>(context).selectedCharge.totalCharges = towedVehicleCharges.totalCharges;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.towChargesName = towedVehicleCharges.towChargesName;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.chargesQuantity = towedVehicleCharges.chargesQuantity;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.discountQuantity = towedVehicleCharges.discountQuantity;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.chargesRate = towedVehicleCharges.chargesRate;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.discountRate = towedVehicleCharges.discountRate;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.discountApply = towedVehicleCharges.discountApply;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.chargesTaxable = towedVehicleCharges.chargesTaxable;
+                      Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge.totalCharges = towedVehicleCharges.totalCharges;
                     },
 
                   ),

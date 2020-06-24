@@ -9,9 +9,9 @@ import '../providers/towedVehicleNotes_provider.dart';
 class TowedVehicleNotesList extends StatelessWidget {
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
-    var selectedCall = Provider.of<Calls>(context).selectedCall;
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
 
-    return await Provider.of<TowedVehicleNotesVM>(context)
+    return await Provider.of<TowedVehicleNotesVM>(context, listen:false)
         .listMini(0, PAGE_SIZE,selectedCall.id.toString())
         .catchError((onError) {
       showDialog(
@@ -34,7 +34,7 @@ class TowedVehicleNotesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var selectedCall = Provider.of<Calls>(context).selectedCall;
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
@@ -52,7 +52,7 @@ class TowedVehicleNotesList extends StatelessWidget {
             pageSize: PAGE_SIZE,
             itemBuilder: this._itemBuilder,
             pageFuture: (pageIndex) =>
-                Provider.of<TowedVehicleNotesVM>(context)
+                Provider.of<TowedVehicleNotesVM>(context, listen:false)
                     .listMini(pageIndex, PAGE_SIZE, selectedCall.id.toString())));
   }
 

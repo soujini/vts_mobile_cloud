@@ -14,7 +14,7 @@ class VehicleMakeModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<VehicleMakesVM>(context).list();
+    Provider.of<VehicleMakesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class VehicleMakeModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<VehicleMakesVM>(context).vehicleMakes;
+                      return Provider.of<VehicleMakesVM>(context, listen:false).vehicleMakes;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

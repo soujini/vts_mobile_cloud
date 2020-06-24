@@ -14,7 +14,7 @@ class SystemCityModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<SystemCitiesVM>(context).list();
+    Provider.of<SystemCitiesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class SystemCityModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<SystemCitiesVM>(context).systemCities;
+                      return Provider.of<SystemCitiesVM>(context, listen:false).systemCities;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

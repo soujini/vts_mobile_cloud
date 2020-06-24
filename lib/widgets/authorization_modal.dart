@@ -14,7 +14,7 @@ class TowAuthorizationModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TowAuthorizationsVM>(context).list();
+    Provider.of<TowAuthorizationsVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class TowAuthorizationModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<TowAuthorizationsVM>(context).towAuthorizations;
+                      return Provider.of<TowAuthorizationsVM>(context, listen:false).towAuthorizations;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

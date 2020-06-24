@@ -394,9 +394,9 @@ class _CallEditState extends State<CallEdit> {
   }
 
   bla() async{
-    var selectedCall = Provider.of<Calls>(context).selectedCall;
-    await  Provider.of<Calls>(context).get(selectedCall.id);
-    var x = await Provider.of<Calls>(context).callDetails;
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
+    await  Provider.of<Calls>(context, listen:false).get(selectedCall.id);
+    var x = await Provider.of<Calls>(context, listen:false).callDetails;
 
     setState(() {
 
@@ -853,7 +853,7 @@ class _CallEditState extends State<CallEdit> {
 
   @override
   Widget build(BuildContext context) {
-    var selectedCall = Provider.of<Calls>(context).selectedCall;
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
   //  var callDetails =
   //  print("souji ma "+callDetails.id.toString());
     // TODO: implement build

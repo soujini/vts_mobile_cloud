@@ -14,7 +14,7 @@ class WreckerDriverModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<WreckerDriversVM>(context).list();
+    Provider.of<WreckerDriversVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class WreckerDriverModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<WreckerDriversVM>(context).wreckerDrivers;
+                      return Provider.of<WreckerDriversVM>(context, listen:false).wreckerDrivers;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

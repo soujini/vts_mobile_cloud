@@ -14,7 +14,7 @@ class SearchCallsList extends StatelessWidget {
   SearchCallsList(this.filterFields);
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
-    return await Provider.of<Calls>(context)
+    return await Provider.of<Calls>(context, listen:false)
         .listMiniMobile('search', 0, PAGE_SIZE, filterFields)
         .catchError((onError) {
       showDialog(
@@ -55,7 +55,7 @@ class SearchCallsList extends StatelessWidget {
             },
             pageSize: PAGE_SIZE,
             itemBuilder: this._itemBuilder,
-            pageFuture: (pageIndex) => Provider.of<Calls>(context)
+            pageFuture: (pageIndex) => Provider.of<Calls>(context, listen:false)
                 .listMiniMobile('search', pageIndex, PAGE_SIZE,filterFields)));
   }
 
@@ -94,9 +94,9 @@ class SearchCallsList extends StatelessWidget {
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
-                              Provider.of<Calls>(context).selectedCall.id = searchedCalls.id;
-                              Provider.of<Calls>(context).selectedCall.dispatchStatusName = searchedCalls.dispatchStatusName;
-                              Provider.of<Calls>(context).selectedCall.dispatchInstructions_string = searchedCalls.dispatchInstructions_string;
+                              Provider.of<Calls>(context, listen:false).selectedCall.id = searchedCalls.id;
+                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchStatusName = searchedCalls.dispatchStatusName;
+                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchInstructions_string = searchedCalls.dispatchInstructions_string;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(

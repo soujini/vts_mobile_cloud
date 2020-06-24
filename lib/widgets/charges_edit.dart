@@ -26,7 +26,7 @@ class _ChargesEditState extends State<ChargesEdit> {
 
   getValues() {
     var selectedCharge =
-        Provider.of<TowedVehicleChargesVM>(context).selectedCharge;
+        Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge;
     setState(() {
 //      _call.billTo = id;
 //      _call.billToName = name;
@@ -54,7 +54,7 @@ class _ChargesEditState extends State<ChargesEdit> {
   @override
   Widget build(BuildContext context) {
     var selectedCharge =
-        Provider.of<TowedVehicleChargesVM>(context).selectedCharge;
+        Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge;
     getValues();
     return Scaffold(
         appBar: AppBar(

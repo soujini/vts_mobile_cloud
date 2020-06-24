@@ -14,7 +14,7 @@ class LicenseTypeModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<LicenseTypesVM>(context).list();
+    Provider.of<LicenseTypesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class LicenseTypeModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<LicenseTypesVM>(context).licenseTypes;
+                      return Provider.of<LicenseTypesVM>(context, listen:false).licenseTypes;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

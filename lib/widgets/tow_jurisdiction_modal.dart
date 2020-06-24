@@ -14,7 +14,7 @@ class TowJurisdictionModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TowJurisdictionsVM>(context).list();
+    Provider.of<TowJurisdictionsVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class TowJurisdictionModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<TowJurisdictionsVM>(context).towJurisdictions;
+                      return Provider.of<TowJurisdictionsVM>(context, listen:false).towJurisdictions;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

@@ -73,7 +73,7 @@ class TowAuthorizationsVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://cktsystems.com/vtscloud/WebServices/relationTowAuthorizationTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/relationTowAuthorizationTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/list",

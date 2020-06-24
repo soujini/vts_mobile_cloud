@@ -14,7 +14,7 @@ class VehicleYearMakeModelModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<VehicleYearMakeModelsVM>(context).listMini();
+    Provider.of<VehicleYearMakeModelsVM>(context, listen:false).listMini();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -39,7 +39,7 @@ class VehicleYearMakeModelModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<VehicleYearMakeModelsVM>(context).vehicleYearMakeModels;
+                      return Provider.of<VehicleYearMakeModelsVM>(context, listen:false).vehicleYearMakeModels;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(

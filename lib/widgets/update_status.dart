@@ -221,7 +221,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                                   splashColor: Colors
                                       .lightGreenAccent,
                                   onPressed: () {
-                                    Provider.of<Calls>(context)
+                                    Provider.of<Calls>(context, listen:false)
                                         .update(widget.id,selected_status,widget.dispatchInstructions_string).then((res){
                                       Navigator.pop(context);
                                       Navigator.push(

@@ -44,12 +44,12 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                                 .duplicateData[
                                             "storageCompanyName"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["storageCompanyName"]
                                     : ' ',
                                 textAlign: TextAlign.left,
@@ -70,11 +70,11 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                             .duplicateData["towedStatusName"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["towedStatusName"]
                                     : ' ',
                                 textAlign: TextAlign.left,
@@ -95,11 +95,11 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                             .duplicateData["towedDate"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["towedDate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
@@ -120,12 +120,12 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                                 .duplicateData[
                                             "storageReceivedDate"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["storageReceivedDate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
@@ -146,12 +146,12 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                                 .duplicateData[
                                             "storageReleaseDate"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["storageReleaseDate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
@@ -172,16 +172,16 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                             .duplicateData["VIN"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["VIN"]
                                     : ' ',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Provider.of<ProcessTowedVehiclesVM>(context).duplicateData["VINDuplicate"] == "true" ? Colors.orange : Colors.black,
+                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["VINDuplicate"] == "true" ? Colors.orange : Colors.black,
                                 )),
                           ),
                         ],
@@ -199,18 +199,18 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                                 .duplicateData[
                                             "searchYearMakeModelName"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                                context)
+                                                context, listen:false)
                                             .duplicateData[
                                         "searchYearMakeModelName"]
                                     : ' ',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Provider.of<ProcessTowedVehiclesVM>(context).duplicateData["yearMakeModelDuplicate"] == "true" ? Colors.orange : Colors.black,
+                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["yearMakeModelDuplicate"] == "true" ? Colors.orange : Colors.black,
                                 )),
                           ),
                         ],
@@ -228,11 +228,11 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                             .duplicateData["licensePlate"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["licensePlate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
@@ -253,12 +253,12 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                                 .duplicateData[
                                             "wreckerCompanyName"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["wreckerCompanyName"]
                                     : ' ',
                                 textAlign: TextAlign.left,
@@ -279,16 +279,16 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                             .duplicateData["towedInvoice"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["towedInvoice"]
                                     : ' ',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Provider.of<ProcessTowedVehiclesVM>(context).duplicateData["towedInvoiceDuplicate"] == "true" ? Colors.orange : Colors.black,
+                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["towedInvoiceDuplicate"] == "true" ? Colors.orange : Colors.black,
                                 )),
                           ),
                         ],
@@ -306,11 +306,11 @@ class _DuplicateCallState extends State<DuplicateCall> {
                           ),
                           Expanded(
                             child: Text(
-                                Provider.of<ProcessTowedVehiclesVM>(context)
+                                Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
                                             .duplicateData["stockNumber"] !=
                                         null
                                     ? Provider.of<ProcessTowedVehiclesVM>(
-                                            context)
+                                            context, listen:false)
                                         .duplicateData["stockNumber"]
                                     : ' ',
                                 textAlign: TextAlign.left,

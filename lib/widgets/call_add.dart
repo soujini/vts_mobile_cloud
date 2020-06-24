@@ -109,9 +109,9 @@ class _CallAddState extends State<CallAdd> {
     _towedDateController.text = DateFormat('MM-dd-yyyy').format(_date);
     _towedTimeController.text = DateFormat('kk:mm').format(_date);
 
-    await Provider.of<TowCustomersVM>(context).getDefaults(id);
-    var dd = Provider.of<TowCustomersVM>(context).defaultsData;
-    var ud = Provider.of<UsersVM>(context).userData;
+    await Provider.of<TowCustomersVM>(context, listen:false).getDefaults(id);
+    var dd = Provider.of<TowCustomersVM>(context, listen:false).defaultsData;
+    var ud = Provider.of<UsersVM>(context, listen:false).userData;
     setTowedInvoice(ud[0].storageCompany);
 
     setState(() {
@@ -182,7 +182,7 @@ class _CallAddState extends State<CallAdd> {
         _call.towedToStreet = dd[0].businessStreet;
         _towedToStreetController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedToStreet)).value;
 
-        _call.towedToStreetTwo = Provider.of<TowCustomersVM>(context).defaultsData[0].businessStreetTwo;
+        _call.towedToStreetTwo = Provider.of<TowCustomersVM>(context, listen:false).defaultsData[0].businessStreetTwo;
         _call.towedToCity = dd[0].businessCity;
         _call.towedToState = dd[0].businessState;
         _call.towedToZipCode = dd[0].businessZipCode;
@@ -475,10 +475,10 @@ class _CallAddState extends State<CallAdd> {
   }
 
   setTowedInvoice(storageCompanyId) async {
-    await Provider.of<StorageCompaniesVM>(context).get(storageCompanyId);
+    await Provider.of<StorageCompaniesVM>(context, listen:false).get(storageCompanyId);
 
     setState(() {
-      var towedInvoice = _call.towedInvoice =Provider.of<StorageCompaniesVM>(context).sc["towedInvoice"];
+      var towedInvoice = _call.towedInvoice =Provider.of<StorageCompaniesVM>(context, listen:false).sc["towedInvoice"];
       var newTowedInvoice = int.parse(towedInvoice) + 1;
       _towedInvoiceController.value = new TextEditingController.fromValue( new TextEditingValue(text: newTowedInvoice.toString())).value;
     });
@@ -1411,9 +1411,9 @@ class _CallAddState extends State<CallAdd> {
     final form = _formKey.currentState;
     if (form.validate()) {
       form.save();
-      await Provider.of<ProcessTowedVehiclesVM>(context)
+      await Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
           .checkForDuplicateTickets(_call);
-      if (Provider.of<ProcessTowedVehiclesVM>(context)
+      if (Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
               .duplicateData["errorStatus"] ==
           "true") {
         showDialog(
@@ -1425,7 +1425,7 @@ class _CallAddState extends State<CallAdd> {
         //Add Yes or No Button and Rock it
       } else {
         //Call Save here
-        Provider.of<Calls>(context).create(_call).then((res){
+        Provider.of<Calls>(context, listen:false).create(_call).then((res){
           Navigator.push(
               context,
               new MaterialPageRoute(

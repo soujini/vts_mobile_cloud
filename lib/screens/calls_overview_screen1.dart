@@ -92,7 +92,7 @@ class _CallsScreenState extends State<CallsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final callsData = Provider.of<Calls>(context); //Required for the length
+    final callsData = Provider.of<Calls>(context, listen:false); //Required for the length
         return DefaultTabController(
           length: 3,
           child: Scaffold(

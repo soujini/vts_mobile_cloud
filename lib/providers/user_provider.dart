@@ -353,7 +353,6 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
     final String password = pwd;
     final String pinNumber = pn;
 
-
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
         "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -371,7 +370,7 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://cktsystems.com/vtscloud/WebServices/userTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/userTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/validateUser",
@@ -379,7 +378,7 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
           //"Accept": "text/xml"
         },
         body: envelope);
-
+print(response.body);
     final resBody = xml2json.parse(response.body);
     final jsondata = xml2json.toParker();
     //final data = json.decode(jsondata);

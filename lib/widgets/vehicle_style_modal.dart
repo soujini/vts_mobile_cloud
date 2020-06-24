@@ -15,7 +15,7 @@ class VehicleStyleModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<VehicleStylesVM>(context).list();
+    Provider.of<VehicleStylesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
@@ -40,7 +40,7 @@ class VehicleStyleModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<VehicleStylesVM>(context).vehicleStyles;
+                      return Provider.of<VehicleStylesVM>(context, listen:false).vehicleStyles;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
