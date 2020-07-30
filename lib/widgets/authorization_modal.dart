@@ -14,14 +14,13 @@ class TowAuthorizationModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TowAuthorizationsVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Tow Authorization'),
+          title: Text('SELECT TOW AUTHORIZATION', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
         ),
         body: Container(
-            padding: EdgeInsets.all(10),
+            padding: EdgeInsets.all(15),
             child: Form(
               key: _formKey,
               child: Column(
@@ -39,19 +38,21 @@ class TowAuthorizationModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
+                      await Provider.of<TowAuthorizationsVM>(context, listen:false).listMini(pattern);
                       return Provider.of<TowAuthorizationsVM>(context, listen:false).towAuthorizations;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                          leading: Icon(Icons.check_circle_outline),
+                          leading: Icon(Icons.check_circle_outline, size: 20, color:Colors.grey),
                           title: Column(
                               crossAxisAlignment:  CrossAxisAlignment.start,
                               children: <Widget>[
                                 Padding(
-                                    padding: EdgeInsets.only(bottom: 10, top: 15),
-                                    child: Text(suggestion.towAuthorizationName)),
-                                Divider(height: 5.0, color: Colors.black38),
-                              ] )
+                                    padding: EdgeInsets.only(bottom: 15, top: 13),
+                                    child: Text(suggestion.towAuthorizationName, style:TextStyle(fontSize:14, fontWeight: FontWeight.w400))
+                                ),
+
+                                Divider(color: Colors.black38)])
                       );
                     },
                     onSuggestionSelected: (suggestion) {

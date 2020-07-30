@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/calls_provider.dart';
+import 'package:vts_mobile_cloud/providers/calls_provider.dart';
+import 'package:vts_mobile_cloud/providers/notes_provider.dart';
+import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 
+enum SingingCharacter { Owner, Payment }
 class NotesAdd extends StatefulWidget {
 //  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructions_string);
 
@@ -12,7 +15,46 @@ class NotesAdd extends StatefulWidget {
 }
 
 class _NotesAddState extends State<NotesAdd> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _note = Note();
+  SingingCharacter _character;
+
+  var _vehicleNotes_stringController = new TextEditingController();
+
+//  void _reset() {
+//    setState(() {
+//      _formKey.currentState.reset();
+//    });
+//  }
+
+  save() async {
+    final form = _formKey.currentState;
+
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
+
+    _note.towedVehicle = selectedCall.id;
+    if(_note.paymentNotes == null){
+      _note.paymentNotes=false;
+    }
+    if(_note.ownerNotes == null){
+      _note.ownerNotes=false;
+    }
+    form.save();
+    await Provider.of<NotesVM>(context, listen:false).create(_note).then((res) {
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (context) =>
+              new AddEditCallScreen(3)));
+    });
+  }
+
+
+//      if (form.validate()) {
+//        form.save();
+//        await Provider.of<NotesVM>(context).create(_note);
+//      }
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,75 +74,43 @@ class _NotesAddState extends State<NotesAdd> {
             padding: EdgeInsets.all(20.0),
                      ),
           new ListTile(
-//                leading: Container(
-//                  width: 60,
-//                  // can be whatever value you want
-//                  alignment: Alignment.centerLeft,
-//                  child: Text("Notes *"),
-//                ),
             title: new TextFormField(
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
               keyboardType: TextInputType.multiline,
               minLines: 1,
               maxLines: 3,
-              // controller: _vinController,
+              controller: _vehicleNotes_stringController,
               decoration: new InputDecoration(
                 hintText: "Notes",
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
               ),
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Notes';
                 }
               },
-              // onSaved: (val) => setState(() => _call.VIN = val),
+               onSaved: (val) => setState(() => _note.vehicleNotes_string = val),
             ),
           ),
           ListTile(
               title: const Text('Owner'),
               trailing: Radio(
-                  //value: SingingCharacter.lafayette,
-//                                groupValue: _character,
-//                                onChanged: (SingingCharacter value) {
-//                                  setState(() { _character = value; });
-//                                },
+                  value: SingingCharacter.Owner,
+                                groupValue: _character,
+                                onChanged: (SingingCharacter value) {
+                                  setState(() { _character = value;  _note.paymentNotes=true; });
+                                },
                   )),
           ListTile(
               title: const Text('Payment'),
               trailing: Radio(
-                  //value: SingingCharacter.lafayette,
-//                                groupValue: _character,
-//                                onChanged: (SingingCharacter value) {
-//                                  setState(() { _character = value; });
-//                                },
+                  value: SingingCharacter.Payment,
+                                groupValue: _character,
+                                onChanged: (SingingCharacter value) {
+                                  setState(() { _character = value; _note.ownerNotes=true; });
+                                },
                   )),
         RaisedButton(
-            onPressed: () async {},
-//                      final form = _formKey.currentState;
-//                      if (form.validate()) {
-//                        form.save();
-//                        await Provider.of<ProcessTowedVehiclesVM>(context)
-//                            .checkForDuplicateTickets(_call);
-//                        if (Provider.of<ProcessTowedVehiclesVM>(context)
-//                                .duplicateData["errorStatus"] ==
-//                            "true") {
-//                          showDialog(
-//                              context: context,
-//                              builder: (BuildContext context) {
-//                                return DuplicateCall();
-//                              });
-//
-//                          //Add Yes or No Button and Rock it
-//                        }
-//                        else{
-//                          //Call Save here
-//                          Provider.of<Calls>(context).create(_call);
-//                        }
-//                        _showDialog(context);
-//                      }
-//                    },
+            onPressed: () =>save(),
             child: Text('SAVE')),
         ],
       ),

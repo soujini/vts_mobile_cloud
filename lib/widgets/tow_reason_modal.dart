@@ -14,11 +14,11 @@ class TowReasonModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TowReasonsVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Tow Reason'),
+          title: Text('SELECT TOW REASON', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -39,18 +39,19 @@ class TowReasonModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
+                      await Provider.of<TowReasonsVM>(context, listen:false).listMini(pattern);
                       return Provider.of<TowReasonsVM>(context, listen:false).towReasons;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                          leading: Icon(Icons.assignment_late),
+                          leading: Icon(Icons.assignment_late, size: 20, color:Colors.grey),
                           title: Column(
                               crossAxisAlignment:  CrossAxisAlignment.start,
                               children: <Widget>[
                                 Padding(
-                                    padding: EdgeInsets.only(bottom: 10, top: 15),
-                                    child: Text(suggestion.name)),
-                                Divider(height: 5.0, color: Colors.black38),
+                                    padding: EdgeInsets.only(bottom: 15, top: 13),
+                                    child: Text(suggestion.name, style:TextStyle(fontSize:14, fontWeight: FontWeight.w400))),
+                                Divider(color: Colors.black38),
                               ] )
                       );
                     },

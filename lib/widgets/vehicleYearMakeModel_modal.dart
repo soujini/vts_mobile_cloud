@@ -14,11 +14,11 @@ class VehicleYearMakeModelModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<VehicleYearMakeModelsVM>(context, listen:false).listMini();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Vehicle'),
+          title: Text('SELECT VEHICLE', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -39,25 +39,25 @@ class VehicleYearMakeModelModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
+                      await Provider.of<VehicleYearMakeModelsVM>(context, listen:false).listMini(pattern);
                       return Provider.of<VehicleYearMakeModelsVM>(context, listen:false).vehicleYearMakeModels;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                        leading: Icon(Icons.directions_car),
+                        leading: Icon(Icons.directions_car, size: 20, color:Colors.grey),
                         title: Column(
                             crossAxisAlignment:  CrossAxisAlignment.start,
                             children: <Widget>[
                           Padding(
-                              padding: EdgeInsets.only(bottom: 10, top: 15),
-                              child: Text(suggestion.vehicleYearMakeModelName)),
-                              Divider(height: 5.0, color: Colors.black38),
+                              padding: EdgeInsets.only(bottom: 15, top: 13),
+                              child: Text(suggestion.vehicleYearMakeModelName, style:TextStyle(fontSize:14, fontWeight: FontWeight.w400))),
+                              Divider(color: Colors.black38),
                             ] )
                       );
                     },
                     onSuggestionSelected: (suggestion) {
                       this._typeAheadController1.text = suggestion.vehicleYearMakeModelName;
                       setYearMakeModelName(suggestion);
-                     // setMake(suggestion.id, suggestion.name);
                       Navigator.of(context).pop();
                     },
                   ),

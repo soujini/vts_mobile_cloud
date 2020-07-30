@@ -5,8 +5,11 @@ import '../providers/calls_provider.dart';
 
 import '../widgets/search_calls_list.dart';
 class SearchListScreen extends StatelessWidget {
-  String filerFields="";
-  SearchListScreen(this.filerFields);
+  SearchListScreen(this.filterFields, this.userRole, this.dispatchPaging);
+  String userRole;
+  String filterFields="";
+  var dispatchPaging;
+
 //  static const routeName = '/edit';
 
   @override
@@ -17,7 +20,7 @@ class SearchListScreen extends StatelessWidget {
           title: Text('Search List'),
 
         ),
-            body:SearchCallsList(this.filerFields),
+            body:SearchCallsList(this.filterFields, this.userRole, this.dispatchPaging),
 
 //
 //      theme: new ThemeData(

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vts_mobile_cloud/providers/common_provider.dart';
 import 'package:vts_mobile_cloud/providers/licenseType_provider.dart';
+import 'package:vts_mobile_cloud/providers/notes_provider.dart';
 import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/providers/relationTowCharges_provider.dart';
+import 'package:vts_mobile_cloud/providers/storage_company_provider.dart';
 import 'package:vts_mobile_cloud/providers/systemPriority_provider.dart';
 import 'package:vts_mobile_cloud/providers/vehicleYearMakeModel_provider.dart';
 
-import 'package:vts_mobile_cloud/widgets/loader.dart';
 import 'package:vts_mobile_cloud/widgets/home_page.dart';
 import 'package:vts_mobile_cloud/providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/providers/relationTowAuthorization_provider.dart';
@@ -25,6 +27,7 @@ import 'package:vts_mobile_cloud/providers/vehicleMake_provider.dart';
 import 'package:vts_mobile_cloud/providers/vehicleStyle_provider.dart';
 import 'package:vts_mobile_cloud/providers/towedVehicleNotes_provider.dart';
 import 'package:vts_mobile_cloud/providers/towedVehicleCharges_provider.dart';
+import 'package:vts_mobile_cloud/providers/towedVehiclePictures_provider.dart';
 
 import './screens/login_screen.dart';
 
@@ -42,7 +45,18 @@ class MyApp extends StatefulWidget {
   _MyAppState createState() => _MyAppState();
   // This widget is the root of your application.
 }
+
+//getCurrentDateAndTime(){
+//  final dateAndTime = DateAndTime();
+//  dateAndTime.getCurrentDateAndTime();
+//}
 class _MyAppState extends State<MyApp>{
+
+  getCurrentDateAndTime(){
+    final dateAndTime = DateAndTime();
+    dateAndTime.getCurrentDateAndTime();
+  }
+
 
 //  Map<int, Color> color =
 //  {
@@ -57,24 +71,38 @@ class _MyAppState extends State<MyApp>{
 //    800:Color.fromRGBO(136,14,79, .9),
 //    900:Color.fromRGBO(136,14,79, 1),
 //  };
+//  Map<int, Color> color =
+//  {
+//    50:Color(0xff185695),
+//    100:Color(0xff185695),
+//    200:Color(0xff185695),
+//    300:Color(0xff185695),
+//    400:Color(0xff185695),
+//    500:Color(0xff185695),
+//    600:Color(0xff185695),
+//    700:Color(0xff185695),
+//    800:Color(0xff185695),
+//    900:Color(0xff185695),
+//  };
   Map<int, Color> color =
   {
-    50:Color(0xff185695),
-    100:Color(0xff185695),
-    200:Color(0xff185695),
-    300:Color(0xff185695),
-    400:Color(0xff185695),
-    500:Color(0xff185695),
-    600:Color(0xff185695),
-    700:Color(0xff185695),
-    800:Color(0xff185695),
-    900:Color(0xff185695),
+    50:Color(0xff1C3764),
+    100:Color(0xff1C3764),
+    200:Color(0xff1C3764),
+    300:Color(0xff1C3764),
+    400:Color(0xff1C3764),
+    500:Color(0xff1C3764),
+    600:Color(0xff1C3764),
+    700:Color(0xff1C3764),
+    800:Color(0xff1C3764),
+    900:Color(0xff1C3764),
   };
 
 
   @override
   Widget build(BuildContext context) {
-    MaterialColor colorCustom = MaterialColor(0xff185695, color);
+    getCurrentDateAndTime();
+    MaterialColor colorCustom = MaterialColor(0xff1C3764, color);
     return MultiProvider(
       providers:[
         ChangeNotifierProvider(create: (_)=>UsersVM()),
@@ -99,7 +127,9 @@ class _MyAppState extends State<MyApp>{
         ChangeNotifierProvider(create: (_)=>TowedVehicleNotesVM()),
         ChangeNotifierProvider(create: (_)=>TowedVehicleChargesVM()),
         ChangeNotifierProvider(create: (_)=>TowChargesVM()),
-
+        ChangeNotifierProvider(create: (_)=>NotesVM()),
+        ChangeNotifierProvider(create: (_)=>TowedVehiclePicturesVM()),
+        ChangeNotifierProvider(create: (_)=>StorageCompaniesVM())
       ],
 
  //   return //Provides instance of type Calls
@@ -109,7 +139,9 @@ class _MyAppState extends State<MyApp>{
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: colorCustom,
-          bottomAppBarColor: colorCustom
+          bottomAppBarColor: colorCustom,
+          fontFamily: 'Montserrat',
+        backgroundColor: Colors.red
       ),
       home: (pageMode == "login") ? LoginPage(setScreen: setScreen) : MyHomePage(title: "Fluttter App"),
 
@@ -120,8 +152,5 @@ class _MyAppState extends State<MyApp>{
     setState(() {
       pageMode=mode;
     });
-
   }
 }
-
-

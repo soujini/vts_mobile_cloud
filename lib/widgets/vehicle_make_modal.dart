@@ -14,11 +14,11 @@ class VehicleMakeModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<VehicleMakesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Vehicle Make'),
+          title: Text('SELECT VEHICLE MAKE', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -39,18 +39,19 @@ class VehicleMakeModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
+                      await Provider.of<VehicleMakesVM>(context, listen:false).listMini(pattern);
                       return Provider.of<VehicleMakesVM>(context, listen:false).vehicleMakes;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                          leading: Icon(Icons.directions_car),
+                          leading: Icon(Icons.directions_car, size: 20, color:Colors.grey),
                           title: Column(
                               crossAxisAlignment:  CrossAxisAlignment.start,
                               children: <Widget>[
                                 Padding(
-                                    padding: EdgeInsets.only(bottom: 10, top: 15),
-                                    child: Text(suggestion.name)),
-                                Divider(height: 5.0, color: Colors.black38),
+                                    padding: EdgeInsets.only(bottom: 15, top: 13),
+                                    child: Text(suggestion.name, style:TextStyle(fontSize:14, fontWeight: FontWeight.w400))),
+                                Divider(color: Colors.black38),
                               ] )
                       );
                     },

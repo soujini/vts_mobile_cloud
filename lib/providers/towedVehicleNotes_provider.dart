@@ -85,6 +85,12 @@ bool _convertTobool(value) {
 }
 
 class TowedVehicleNotesVM with ChangeNotifier, SecureStoreMixin {
+  Xml2Json xml2json = new Xml2Json();
+  final String appName = "towing";
+  String userId="";
+  String pinNumber="";
+  String timeZoneName="";
+
   List<TowedVehicleNote> _towedVehicleNotes = [];
   List<TowedVehicleNote> notes;
 
@@ -93,8 +99,6 @@ class TowedVehicleNotesVM with ChangeNotifier, SecureStoreMixin {
   }
 
   Future<List> listMini(int pageIndex, int pageSize, String _towedVehicle) async {
-    Xml2Json xml2json = new Xml2Json();
-
     int iStart = 0;
     int iEnd = 0;
     if (pageIndex == 0) {
@@ -105,13 +109,15 @@ class TowedVehicleNotesVM with ChangeNotifier, SecureStoreMixin {
       iEnd = (iStart + pageSize) - 1;
     }
 
-    final String appName = "towing";
-    final int userId = 1;
     String filterFields = "";
-    String pinNumber="";
-    await getSecureStore('pinNumber', (token) {
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
+
     filterFields = "pinNumber:"+pinNumber+"|towedVehicle:"+_towedVehicle;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
@@ -131,12 +137,11 @@ class TowedVehicleNotesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehicleNotesTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/towedVehicleNotesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 
@@ -146,7 +151,6 @@ class TowedVehicleNotesVM with ChangeNotifier, SecureStoreMixin {
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["items"]
     ["towedVehicleNotesSummarys"];
-
 
     int count = (int.parse(data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["count"]));

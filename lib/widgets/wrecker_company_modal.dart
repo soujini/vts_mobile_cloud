@@ -14,11 +14,11 @@ class WreckerCompanyModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<WreckerCompaniesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Wrecker Company'),
+          title: Text('SELECT WRECKER COMPANY', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -39,17 +39,18 @@ class WreckerCompanyModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
+                      await Provider.of<WreckerCompaniesVM>(context, listen:false).listMini(pattern);
                       return Provider.of<WreckerCompaniesVM>(context, listen:false).wreckerCompanies;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                          leading: Icon(Icons.build),
+                          leading: Icon(Icons.build, size: 20, color:Colors.grey),
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Padding(
-                                  padding: EdgeInsets.only(bottom: 10, top: 15),
-                                  child: Text(suggestion.wreckerCompanyName)),
+                                  padding: EdgeInsets.only(bottom: 15, top: 13),
+                                  child: Text(suggestion.wreckerCompanyName, style:TextStyle(fontSize:14, fontWeight: FontWeight.w400))),
                               Padding(
                                   padding: EdgeInsets.only(bottom: 5, top: 5),
                                   child: Row(children: <Widget>[
@@ -73,9 +74,7 @@ class WreckerCompanyModal extends StatelessWidget {
                                         style: TextStyle(
                                             color: Colors.grey, fontSize: 14))
                                   ])),
-
-
-                              Divider(height: 5.0, color: Colors.black38),
+                              Divider(color: Colors.black38),
                             ],
                           )
 //                      subtitle: Text('\$${suggestion['id']}'),

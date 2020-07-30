@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:xml2json/xml2json.dart';
-import 'dart:convert';
 
 class Call {
+  bool errorStatus;
+  String errorMessage;
   int count;
   int id;
   String pinNumber;
@@ -87,7 +87,8 @@ class Call {
   int towedToState;
   int towBillTo;
   String towBillToName;
-  int towedStatus;
+  String towedStatus;
+  int storageStatus;
   String towedStatusName;
   String dispatchMemberNumber;
   String dispatchLimitAmount;
@@ -141,6 +142,8 @@ class Call {
   String bodyShopRepairAmount;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
+    "errorStatus":errorStatus,
+    "errorMessage":errorMessage,
   "topColorName":topColorName,
   "secondColorName":secondColorName,
   "vehicleMakeName":vehicleMakeName,
@@ -187,7 +190,7 @@ class Call {
   "towedStreetTwo":towedStreetTwo,
   "towedCity":towedCity,
   "towedState":towedState,
-  "towedZipCode":towedZipCode,
+//  "towedZipCode":towedZipCode,
 //  "towTruckNumber":towTruckNumber,
   "towTruck":towTruck,
 //  "towTruckLicensePlate":towTruckLicensePlate,
@@ -231,7 +234,7 @@ class Call {
   "towedToStreetTwo":towedToStreetTwo,
   "towedToCity":towedToCity,
   "towedToState":towedToState,
-  "towedToZipCode":towedToZipCode,
+//  "towedToZipCode":towedToZipCode,
   "towedTrailerNumber":towedTrailerNumber,
   "towedTruckNumber":towedTruckNumber,
   "towedNoCommission":false,
@@ -284,6 +287,7 @@ class Call {
   "bodyShopDriverTransferAmount":0.00,
   "bodyShopDriverRepairAmount":0.00,
   "bodyShopPaymentAmount":bodyShopPaymentAmount,
+    "storageStatus":storageStatus
 //  "lawContactName":lawContactName,
 //  "lawDate":lawDate,
 //  "lawTime":lawTime,
@@ -294,6 +298,8 @@ class Call {
   };
 
   Call({
+  this.errorStatus,
+  this.errorMessage,
     @required this.count,
     @required this.id,
     @required this.dispatchStatusName,
@@ -420,7 +426,8 @@ class Call {
     this.keys,
     this.ownerRelease,
     this.onHold,
-    this.bodyShopRepairAmount
+    this.bodyShopRepairAmount,
+    this.storageStatus
   });
 
   factory Call.fromJson(Map<String, dynamic> json) =>
@@ -432,6 +439,8 @@ class Call {
 
 Call _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
   return Call(
+      errorStatus:_convertTobool(parsedJson["errorStatus"]),
+      errorMessage:parsedJson["errorMessage"],
       topColorName:parsedJson["topColorName"],
       secondColorName:parsedJson["secondColorName"]
 //      vehicleMakeName:parsedJson["vehicleMakeName"] != null ? parsedJson["vehicleMakeName"] : '',
@@ -588,10 +597,12 @@ Call _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
 
 Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
   return Call(
+      errorStatus:_convertTobool(parsedJson["errorStatus"]),
+      errorMessage:parsedJson["errorMessage"],
       id: int.parse(parsedJson["id"]),
       dispatchStatusName: parsedJson["dispatchStatusName"],
       towedTotalAmount: double.parse(parsedJson["towedTotalAmount"]),
-      towReasonName: parsedJson["towReasonName"],
+//      towReasonName: parsedJson["towReasonName"],
       vehicleMakeName: parsedJson["vehicleMakeName"],
       vehicleYearMakeModel: int.parse(parsedJson["vehicleYearMakeModel"]),
       vehicleYearMakeModelName: parsedJson["vehicleYearMakeModelName"],
@@ -631,9 +642,9 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       towedStateName: parsedJson["towedStateName"] != null
           ? parsedJson["towedStateName"]
           : '',
-      towedZipCode: parsedJson["towedZipCode"] != null
-          ? parsedJson["towedZipCode"]
-          : '',
+//      towedZipCode: parsedJson["towedZipCode"] != null
+//          ? parsedJson["towedZipCode"]
+//          : '',
       towedToStreet: parsedJson["towedToStreet"] != null
           ? parsedJson["towedToStreet"]
           : '',
@@ -650,24 +661,25 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       towedToStateName: parsedJson["towedToStateName"] != null
           ? parsedJson["towedToStateName"]
           : '',
-      towedToZipCode: parsedJson["towedToZipCode"] != null
-          ? parsedJson["towedToZipCode"]
-          : '',
+//      towedToZipCode: parsedJson["towedToZipCode"] != null
+//          ? parsedJson["towedToZipCode"]
+//          : '',
       dispatchInstructions_string: parsedJson["dispatchInstructions_string"],
-      towedStatus:int.parse(parsedJson["towedStatus"]),
-      towedStatusName: parsedJson["towedStatusName"] != null
-          ? parsedJson["towedStatusName"]
-          : '',
+//      towedStatus:int.parse(parsedJson["towedStatus"]),
+//      towedStatusName: parsedJson["towedStatusName"] != null
+//          ? parsedJson["towedStatusName"]
+//          : '',
+      towedStatus:parsedJson["towedStatus"] != null ? parsedJson["towedStatus"] : '',
       licensePlate: parsedJson["licensePlate"],
       VIN: parsedJson["VIN"],
       wreckerDriverName: parsedJson["wreckerDriverName"],
       towTruckName: parsedJson["towTruckName"],
-      dispatchReceivedTime: parsedJson["dispatchReceivedTime"],
-      dispatchEnrouteTime: parsedJson["dispatchEnrouteTime"],
-      dispatchOnsiteTime: parsedJson["dispatchOnsiteTime"],
-      dispatchRollingTime: parsedJson["dispatchRollingTime"],
-      dispatchClearedTime: parsedJson["dispatchClearedTime"],
-      dispatchArrivedTime: parsedJson["dispatchArrivedTime"],
+//      dispatchReceivedTime: parsedJson["dispatchReceivedTime"],
+//      dispatchEnrouteTime: parsedJson["dispatchEnrouteTime"],
+//      dispatchOnsiteTime: parsedJson["dispatchOnsiteTime"],
+//      dispatchRollingTime: parsedJson["dispatchRollingTime"],
+//      dispatchClearedTime: parsedJson["dispatchClearedTime"],
+//      dispatchArrivedTime: parsedJson["dispatchArrivedTime"],
 
 //    progressStyleColor: parsedJson["progressStyleColor"],
 //    progressPercentage: parsedJson["progressPercentage"],
@@ -684,11 +696,11 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       towAuthorizationName: parsedJson["towAuthorizationName"] != null
           ? parsedJson["towAuthorizationName"]
           : "",
-      towJurisdiction: int.parse(parsedJson["towJurisdiction"]) != 0 ? int
-          .parse(parsedJson["towJurisdiction"]) : 0,
-      towJurisdictionName: parsedJson["towJurisdictionName"] != null
-          ? parsedJson["towJurisdictionName"]
-          : "",
+//      towJurisdiction: int.parse(parsedJson["towJurisdiction"]) != 0 ? int
+//          .parse(parsedJson["towJurisdiction"]) : 0,
+//      towJurisdictionName: parsedJson["towJurisdictionName"] != null
+//          ? parsedJson["towJurisdictionName"]
+//          : "",
       topColor: parsedJson["topColor"] != "0" ? int.parse(
           parsedJson["topColor"]) : 0,
       topColorName: parsedJson["topColorName"] != null
@@ -704,11 +716,11 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       vehicleLicenseStateName: parsedJson["vehicleLicenseStateName"] != null
           ? parsedJson["vehicleLicenseStateName"]
           : "",
-      vehicleLicenseType: parsedJson["vehicleLicenseType"] != "0" ? int.parse(
-          parsedJson["vehicleLicenseType"]) : 0,
-      vehicleLicenseTypeName: parsedJson["vehicleLicenseTypeName"] != null
-          ? parsedJson["vehicleLicenseTypeName"]
-          : "",
+//      vehicleLicenseType: parsedJson["vehicleLicenseType"] != "0" ? int.parse(
+//          parsedJson["vehicleLicenseType"]) : 0,
+//      vehicleLicenseTypeName: parsedJson["vehicleLicenseTypeName"] != null
+//          ? parsedJson["vehicleLicenseTypeName"]
+//          : "",
       //   towReason: parsedJson["towReason"],
       //   towedState: parsedJson["towedState"],
       wreckerCompany:int.parse(parsedJson["wreckerCompany"]),
@@ -721,11 +733,11 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       //   billToName: parsedJson["billToName"] != null ? parsedJson["billToName"] : '',
       vehicleMake: parsedJson["vehicleMake"] != "0" ? int.parse(
           parsedJson["vehicleMake"]) : 0,
-      vehicleStyle: parsedJson["vehicleStyle"] != "0" ? int.parse(
-          parsedJson["vehicleStyle"]) : 0,
-      vehicleStyleName: parsedJson["vehicleStyleName"] != null
-          ? parsedJson["vehicleStyleName"]
-          : '',
+//      vehicleStyle: parsedJson["vehicleStyle"] != "0" ? int.parse(
+//          parsedJson["vehicleStyle"]) : 0,
+//      vehicleStyleName: parsedJson["vehicleStyleName"] != null
+//          ? parsedJson["vehicleStyleName"]
+//          : '',
       //   dispatchInstructions: parsedJson["dispatchInstructions"],
 //    towedStateName: parsedJson["towedStateName"],
 //    towedZipCode: parsedJson["towedZipCode"],
@@ -751,12 +763,12 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
 //    invoiceRequired: parsedJson["invoiceRequired"],
 //    storageCompany: parsedJson["storageCompany"],
 //    storageCompanyName: parsedJson["storageCompanyName"],
-      towedDiscountRate: parsedJson["towedDiscountRate"] != null
-          ? parsedJson["towedDiscountRate"]
-          : '',
-      towedDiscountAmount: parsedJson["towedDiscountAmount"] != null
-          ? parsedJson["towedDiscountAmount"]
-          : '',
+//      towedDiscountRate: parsedJson["towedDiscountRate"] != null
+//          ? parsedJson["towedDiscountRate"]
+//          : '',
+//      towedDiscountAmount: parsedJson["towedDiscountAmount"] != null
+//          ? parsedJson["towedDiscountAmount"]
+//          : '',
 //    vehicleYearMakeModel: parsedJson["vehicleYearMakeModel"],
 //    towedToCity: parsedJson["towedToCity"],
 //    towedToState: parsedJson["towedToState"],
@@ -774,29 +786,29 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       dispatchLimitMiles: parsedJson["dispatchLimitMiles"] != null
           ? parsedJson["dispatchLimitMiles"]
           : '',
-      towedTrailerNumber: parsedJson["towedTrailerNumber"] != null
-          ? parsedJson["towedTrailerNumber"]
-          : '',
-      towedTruckNumber: parsedJson["towedTruckNumber"] != null
-          ? parsedJson["towedTruckNumber"]
-          : '',
-      vehicleTitle: parsedJson["vehicleTitle"] != null
-          ? parsedJson["vehicleTitle"]
-          : '',
+//      towedTrailerNumber: parsedJson["towedTrailerNumber"] != null
+//          ? parsedJson["towedTrailerNumber"]
+//          : '',
+//      towedTruckNumber: parsedJson["towedTruckNumber"] != null
+//          ? parsedJson["towedTruckNumber"]
+//          : '',
+//      vehicleTitle: parsedJson["vehicleTitle"] != null
+//          ? parsedJson["vehicleTitle"]
+//          : '',
       vehicleOdometer: parsedJson["vehicleOdometer"] != null
           ? parsedJson["vehicleOdometer"]
           : '',
-      vehicleLicenseYear: parsedJson["vehicleLicenseYear"] != null
-          ? parsedJson["vehicleLicenseYear"]
-          : '',
-      wreckerDriverPaid: parsedJson["wreckerDriverPaid"] != null
-          ? parsedJson["wreckerDriverPaid"]
-          : '',
-      wreckerDriverPayment: parsedJson["wreckerDriverPayment"] != null
-          ? parsedJson["wreckerDriverPayment"]
-          : '',
-      towedBonus: _convertTobool(parsedJson["towedBonus"]),
-      towedNoCommission: _convertTobool(parsedJson["towedNoCommission"]),
+//      vehicleLicenseYear: parsedJson["vehicleLicenseYear"] != null
+//          ? parsedJson["vehicleLicenseYear"]
+//          : '',
+//      wreckerDriverPaid: parsedJson["wreckerDriverPaid"] != null
+//          ? parsedJson["wreckerDriverPaid"]
+//          : '',
+//      wreckerDriverPayment: parsedJson["wreckerDriverPayment"] != null
+//          ? parsedJson["wreckerDriverPayment"]
+//          : '',
+//      towedBonus: _convertTobool(parsedJson["towedBonus"]),
+//      towedNoCommission: _convertTobool(parsedJson["towedNoCommission"]),
       dispatchETAMinutes: parsedJson["dispatchETAMinutes"] != null
           ? parsedJson["dispatchETAMinutes"]
           : '',
@@ -805,28 +817,28 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       dispatchPriorityLevelName: parsedJson["dispatchPriorityLevelName"] != null
           ? parsedJson["dispatchPriorityLevelName"]
           : '',
-      dispatchETAMaximum: parsedJson["dispatchETAMaximum"] != null
-          ? parsedJson["dispatchETAMaximum"]
-          : '',
-      dispatchRequestorResponse: parsedJson["dispatchRequestorResponse"] != null
-          ? parsedJson["dispatchRequestorResponse"]
-          : '',
-      dispatchProviderSelectedResponseName: parsedJson["dispatchProviderSelectedResponseName"] !=
-          null ? parsedJson["dispatchProviderSelectedResponseName"] : '',
-      dispatchProviderResponse: parsedJson["dispatchProviderResponse"] != null
-          ? parsedJson["dispatchProviderResponse"]
-          : '',
-      dispatchJobID: parsedJson["dispatchJobID"] != null
-          ? parsedJson["dispatchJobID"]
-          : '',
+//      dispatchETAMaximum: parsedJson["dispatchETAMaximum"] != null
+//          ? parsedJson["dispatchETAMaximum"]
+//          : '',
+//      dispatchRequestorResponse: parsedJson["dispatchRequestorResponse"] != null
+//          ? parsedJson["dispatchRequestorResponse"]
+//          : '',
+//      dispatchProviderSelectedResponseName: parsedJson["dispatchProviderSelectedResponseName"] !=
+//          null ? parsedJson["dispatchProviderSelectedResponseName"] : '',
+//      dispatchProviderResponse: parsedJson["dispatchProviderResponse"] != null
+//          ? parsedJson["dispatchProviderResponse"]
+//          : '',
+//      dispatchJobID: parsedJson["dispatchJobID"] != null
+//          ? parsedJson["dispatchJobID"]
+//          : '',
       dispatchAuthorizationNumber: parsedJson["dispatchAuthorizationNumber"] !=
           null ? parsedJson["dispatchAuthorizationNumber"] : '',
       dispatchResponseID: parsedJson["dispatchResponseID"] != null
           ? parsedJson["dispatchResponseID"]
           : '',
-      dispatchID: parsedJson["dispatchID"] != null
-          ? parsedJson["dispatchID"]
-          : '',
+//      dispatchID: parsedJson["dispatchID"] != null
+//          ? parsedJson["dispatchID"]
+//          : '',
       bodyShop: int.parse(parsedJson["bodyShop"]) != 0 ? int.parse(
           parsedJson["bodyShop"]) : 0,
       bodyShopName: parsedJson["bodyShopName"] != null
@@ -866,10 +878,12 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
           ? parsedJson["bodyShopPaymentAmount"]
           : '',
       junk: _convertTobool(parsedJson["junk"]),
-      repairable: _convertTobool(parsedJson["repairable"]),
-      noCharge: _convertTobool(parsedJson["noCharge"]),
-      dispatchAlarmConfirm: _convertTobool(parsedJson["dispatchAlarmConfirm"]),
-      dispatchCancel: _convertTobool(parsedJson["dispatchCancel"]));
+      storageStatus: int.parse(parsedJson["storageStatus"]),
+      repairable: _convertTobool(parsedJson["repairable"]));
+
+//      noCharge: _convertTobool(parsedJson["noCharge"]),
+//      dispatchAlarmConfirm: _convertTobool(parsedJson["dispatchAlarmConfirm"]),
+//      dispatchCancel: _convertTobool(parsedJson["dispatchCancel"]));
 }
 
 bool _convertTobool(value) {

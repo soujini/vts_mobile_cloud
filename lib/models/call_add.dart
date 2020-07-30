@@ -24,7 +24,7 @@ class Call_Add {
   String towedZipCode;
   String towedStreetTwo;
   int wreckerCompany;
-  int towedStatus;// =>CHECK IN CKT WEB
+  String towedStatus;// =>CHECK IN CKT WEB
   int wreckerDriver;
   int towTruck;
   int towBillTo;
@@ -100,13 +100,12 @@ class Call_Add {
 
   factory Call_Add.fromJsonForAdd(Map<String, dynamic> json) =>
       _towedVehicleCallsFromJsonForAdd(json);
-
 }
 Call_Add _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
   return Call_Add(
     towCustomer: parsedJson['towCustomer'] as int,
     VIN: parsedJson['VIN'] as String,
-    vehicleModel:parsedJson['vehicleModel'] as String,
+      vehicleYearMakeModel:parsedJson['vehicleYearMakeModel'] as int,
       vehicleYear:parsedJson['vehicleYear'] as int,
       vehicleMake:parsedJson['vehicleMake'] as int,
       vehicleStyle:parsedJson['vehicleStyle'] as int,
@@ -128,7 +127,7 @@ Call_Add _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
       towedZipCode:parsedJson['towedZipCode'] as String,
       towedStreetTwo:parsedJson['towedStreetTwo'] as String,
       wreckerCompany:parsedJson['wreckerCompany'] as int,
-      towedStatus:parsedJson['towedStatus'] as int,// =>CHECK IN CKT WEB
+      towedStatus:parsedJson['towedStatus'] as String,// =>CHECK IN CKT WEB
       wreckerDriver:parsedJson['wreckerDriver'] as int,
       towTruck:parsedJson['towTruck'] as int,
       towBillTo:parsedJson['towBillTo'] as int,

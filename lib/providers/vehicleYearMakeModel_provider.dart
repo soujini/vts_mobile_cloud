@@ -58,26 +58,32 @@ class VehicleYearMakeModel {
 }
 
 class VehicleYearMakeModelsVM with ChangeNotifier, SecureStoreMixin {
+  Xml2Json xml2json = new Xml2Json();
+  final String appName = "towing";
+  String userId="";
+  String pinNumber="";
+  String timeZoneName="";
+
   List<VehicleYearMakeModel> _vehicleYearMakeModels = [];
 
   List<VehicleYearMakeModel> get vehicleYearMakeModels {
     return [..._vehicleYearMakeModels]; //gets a copy of the items
   }
 
-  Future listMini() async {
-    Xml2Json xml2json = new Xml2Json();
+  Future listMini(name) async {
     List<VehicleYearMakeModel> tc;
     tc = List<VehicleYearMakeModel>();
-    String pinNumber="";
-    await getSecureStore('pinNumber', (token) {
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
 
-    final String appName = "towing";
-    final int userId = 3556;
-    String filterFields = "pinNumber:"+pinNumber;
+    String filterFields = "vehicleYearMakeModelName:"+name;
     final int iStart = 1;
-    final int iEnd = 10;
+    final int iEnd = 200;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -96,12 +102,11 @@ class VehicleYearMakeModelsVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/vehicleYearMakeModelTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/vehicleYearMakeModelTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",
           "Host": "cktsystems.com"
-//"Accept": "text/xml"
         },
         body: envelope);
 
@@ -111,14 +116,20 @@ class VehicleYearMakeModelsVM with ChangeNotifier, SecureStoreMixin {
 
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["items"]["vehicleYearMakeModelSummarys"];
-//as Map<String,dynamic>;rint
 
-    for (int i = 0; i < extractedData.length; i++) {
-      tc.add(new VehicleYearMakeModel.fromJson(extractedData[i]));
+    final count = await data["soap:Envelope"]["soap:Body"]
+    ["listMiniResponse"]["listMiniResult"]["count"];
+
+    if(count == "1"){
+      tc.add(new VehicleYearMakeModel.fromJson(extractedData));
+    }
+    else if (count != "1" && count != "0"){
+      for (int i = 0; i < extractedData.length; i++) {
+        tc.add(new VehicleYearMakeModel.fromJson(extractedData[i]));
+      }
     }
     _vehicleYearMakeModels = tc;
   }
-
 }
 bool _convertTobool(value) {
   if (value is String) {

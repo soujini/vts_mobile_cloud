@@ -6,7 +6,6 @@ import 'dart:convert';
 import 'calls_provider.dart';
 import '../providers/secureStoreMixin_provider.dart';
 
-
 class TowedVehicleCharge {
   bool errorStatus;
   String errorMessage;
@@ -89,18 +88,180 @@ bool _convertTobool(value) {
 }
 
 class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
+  Xml2Json xml2json = new Xml2Json();
+  final String appName = "towing";
+  String userId="";
+  String pinNumber="";
+  String timeZoneName="";
+
   var selectedCharge = new TowedVehicleCharge();
   List<TowedVehicleCharge> _towedVehicleCharges = [];
   List<TowedVehicleCharge> notes;
+
+  var createResponse;
 
   List<TowedVehicleCharge> get towedVehicleCharges {
     return [..._towedVehicleCharges]; //gets a copy of the items
   }
 
-  Future<List> listMini(int pageIndex, int pageSize,
-      String _towedVehicle) async {
-    Xml2Json xml2json = new Xml2Json();
+  Future<List> create(chargesObj) async {
+    List<String> fieldList;
+    String xmlValues="";
 
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
+
+    fieldList = [
+      "pinNumber:"+pinNumber,
+      "towCharges:"+chargesObj.towCharges.toString(),
+      "chargesRate:"+chargesObj.chargesRate.toString(),
+      'chargesQuantity:'+chargesObj.chargesQuantity.toString(),
+      'discountQuantity:'+chargesObj.discountQuantity.toString(),
+      'discountRate:'+chargesObj.discountRate.toString(),
+      'towedVehicle:'+chargesObj.towedVehicle.toString(),
+      'discountApply:'+chargesObj.discountApply.toString(),
+      'totalCharges:'+chargesObj.totalCharges.toString(),
+    ];
+    xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<create xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<fieldList>${xmlValues}</fieldList>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
+        "</create>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'http://74.95.253.45/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/create",
+          "Host": "cktsystems.com"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["createResponse"]["createResult"];
+
+    createResponse = Map.from(extractedData);
+  }
+
+  Future<void> update(chargesObj) async {
+    List<String> fieldList;
+    String xmlValues="";
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
+
+    fieldList = [
+      "pinNumber:"+pinNumber,
+      "towCharges:"+chargesObj.towCharges.toString(),
+      "chargesRate:"+chargesObj.chargesRate.toString(),
+      'chargesQuantity:'+chargesObj.chargesQuantity.toString(),
+      'discountQuantity:'+chargesObj.discountQuantity.toString(),
+      'discountRate:'+chargesObj.discountRate.toString(),
+      'towedVehicle:'+chargesObj.towedVehicle.toString(),
+      'discountApply:'+chargesObj.discountApply.toString(),
+      'totalCharges:'+chargesObj.totalCharges.toString(),
+    ];
+    xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<update xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<id>${chargesObj.id}</id>"
+        "<fieldList>${xmlValues}</fieldList>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
+        "</update>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'http://74.95.253.45/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/update",
+          "Host": "cktsystems.com"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["updateResponse"]["updateResult"];
+  }
+  Future<List> delete(id,towedVehicle) async {
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+   await  getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
+
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<delete xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<id>${id}</id>"
+        "<pinNumber>${pinNumber}</pinNumber>"
+        "<towedVehicle>${towedVehicle}</towedVehicle>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
+        "</delete>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'http://74.95.253.45/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/delete",
+          "Host": "cktsystems.com"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["deleteResponse"]["deleteResult"];
+  }
+  Future<List> listMini(int pageIndex, int pageSize,String _towedVehicle) async {
     int iStart = 0;
     int iEnd = 0;
     if (pageIndex == 0) {
@@ -110,12 +271,12 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
       iStart = (pageIndex * pageSize) + 1;
       iEnd = (iStart + pageSize) - 1;
     }
-
-    final String appName = "towing";
-    final int userId = 1;
     String filterFields = "";
-    String pinNumber="";
-    await await getSecureStore('pinNumber', (token) {
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
     filterFields = "pinNumber:"+pinNumber+"|towedVehicle:" + _towedVehicle;
@@ -137,12 +298,11 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/towedVehicleChargesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 

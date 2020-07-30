@@ -68,7 +68,7 @@ bool motorClub;
 bool dispatch;
 bool storage;
 bool quickbooks;
-bool dispatchPaging;
+var dispatchPaging;
 bool tomTomTracking;
 bool auctionPrepay;
 bool biddersAuction;
@@ -359,7 +359,7 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
         "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
         "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
         "<soap:Body>"
-        "<validateUser  xmlns=\"http://cktsystems.com/\">"
+        "<validateUser xmlns=\"http://cktsystems.com/\">"
         "<appName>${appName}</appName>"
         "<userId>${userId}</userId>"
         "<userName>${username}</userName>"
@@ -370,38 +370,34 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/userTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/userTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/validateUser",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
-print(response.body);
     final resBody = xml2json.parse(response.body);
     final jsondata = xml2json.toParker();
-    //final data = json.decode(jsondata);
     final data = JsonDecoder().convert(jsondata);
 
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["validateUserResponse"]["validateUserResult"];
-
     final List<User> dd = [];
 
     dd.add(new User.fromJson(extractedData));
     final storage = new FlutterSecureStorage();
     _userData = dd;
-
+    print(extractedData["userRole"]);
+    print(extractedData["userRoleName"]);
+    print(extractedData["dispatchPaging"]);
   //  SecureStoreMixin secureStoreMixin = new SecureStoreMixin();
+    setSecureStore("userId",  extractedData["id"]);
     setSecureStore("pinNumber",  extractedData["pinNumber"]);
     setSecureStore("timeZoneName",  extractedData["timeZoneName"]);
-
-// Store password
-//    await storage.write(key: "username", value: extractedData["userName"]);
-//    await storage.write(key: "password", value:extractedData["password"]);
-//    await storage.write(key: "customerPIN", value: extractedData["userName"]);
-
+    setSecureStore("userRole",  extractedData["userRole"]);
+    setSecureStore("userRoleName",  extractedData["userRoleName"]);
+    setSecureStore("dispatchPaging",  extractedData["dispatchPaging"]);
   }
 }
 
@@ -438,4 +434,3 @@ bool _convertTobool(value) {
 //    message: 'Invalid Phone',
 //    params: '^\\D?(\\d{3})\\D?\\D?(\\d{3})\\D?(\\d{4})$'
 //  }
-//});

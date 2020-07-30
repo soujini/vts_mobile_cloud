@@ -4,7 +4,7 @@ import 'package:vin_decoder/vin_decoder.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
-import 'dart:convert';
+import 'package:vts_mobile_cloud/screens/success_screen.dart';
 import 'package:vts_mobile_cloud/widgets/tow_customers_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_trucks_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_type_modal.dart';
@@ -25,37 +25,27 @@ import 'package:vts_mobile_cloud/providers/user_provider.dart';
 import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/providers/storage_company_provider.dart';
 import 'package:vts_mobile_cloud/widgets/duplicate_call.dart';
-
+import 'dart:async';
 import '../models/call.dart';
-
 
 class CallAdd extends StatefulWidget {
   CallAdd() : super();
+//  method()=>createState().save2();
 
   @override
-  _CallAddState createState() => _CallAddState();
+  CallAddState createState() => CallAddState();
 }
 
-class _CallAddState extends State<CallAdd> {
-  @override
-//  void initState() {
-//    print("IN INIT STATE");
-//
-////    _getThingsOnStartup().then((value){
-////      print('Async done');
-////    });
-//    super.initState();
-//  }
-//
-//  @override
-//  void didChangeDependencies() {
-//    super.didChangeDependencies();
-//  }
+class CallAddState extends State<CallAdd> {
+//  final _formKey = GlobalKey<FormState>();
+  List<GlobalKey<FormState>> _formKey = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _autoValidate = true;
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DateTime _date = DateTime.now();
   final _call = Call();
 
+  var _index = 0;
   var _towCustomerController = new TextEditingController();
   var _modelController = new TextEditingController();
   var _yearController = new TextEditingController();
@@ -82,18 +72,17 @@ class _CallAddState extends State<CallAdd> {
   var _licensePlateController = new TextEditingController();
   var _towedZipCodeController = new TextEditingController();
   var _towedStatusController = new TextEditingController();
+  var _dispatchDateController = new TextEditingController();
+  var _dispatchReceivedTimeController = new TextEditingController();
   var _towedDateController = new TextEditingController();
   var _towedTimeController = new TextEditingController();
   var _towedInvoiceController = new TextEditingController();
 
-  void _reset() {
-    setState(() {
-      _formKey.currentState.reset();
-    });
-
-//    for (FormFieldState<dynamic> field in _formKey)
-//      field.reset();
-  }
+//  void _reset() {
+//    setState(() {
+//      _formKey.currentState.reset();
+//    });
+//  }
 
   _getTowCustomerDefaults(id) async {
     DateTime now = DateTime.now();
@@ -105,7 +94,9 @@ class _CallAddState extends State<CallAdd> {
     //Initial Defaults
     setStyle(1, "Other");
     setLicenseState(43, "TX");
-    setTowedStatus(1, "Call");
+
+    _dispatchDateController.text = DateFormat('MM-dd-yyyy').format(_date);
+    _dispatchReceivedTimeController.text = DateFormat('kk:mm').format(_date);
     _towedDateController.text = DateFormat('MM-dd-yyyy').format(_date);
     _towedTimeController.text = DateFormat('kk:mm').format(_date);
 
@@ -115,10 +106,13 @@ class _CallAddState extends State<CallAdd> {
     setTowedInvoice(ud[0].storageCompany);
 
     setState(() {
-
+      _call.dispatchDate = _dispatchDateController.text;
+      _call.dispatchReceivedTime = _dispatchReceivedTimeController.text;
+      _call.towedDate = _towedDateController.text;
+      _call.towedTime = _towedTimeController.text;
       _call.towBillTo = dd[0].towCustomer;
       _call.towBillToName = dd[0].towCustomerName;
-      _billToController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towBillToName)) .value;
+      _billToController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towBillToName)).value;
       _call.dispatchInstructions =  dd[0].instructions != null ? dd[0].instructions : '';
       _call.dispatchInstructions_string = dd[0].instructions_string != null ? dd[0].instructions_string : '';
       _call.dispatchContact = dd[0].contact != null ? dd[0].contact : '';
@@ -194,7 +188,7 @@ class _CallAddState extends State<CallAdd> {
 
       if (dd[0].towedToStreet != null) {
         _call.towedToStreet = dd[0].towedToStreet;
-        _towedToStreetController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStreet)) .value;
+        _towedToStreetController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStreet)).value;
         _call.towedToStreetTwo = dd[0].towedToStreetTwo;
         _call.towedToCity = dd[0].towedToCity;
         _call.towedToState = dd[0].towedToState;
@@ -214,11 +208,13 @@ class _CallAddState extends State<CallAdd> {
       if (_convertTobool(dd[0].defaultPlate) == true){
         _call.licensePlate = 'TXPLATE';
         _licensePlateController.value = new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.licensePlate))
-            .value;
+                new TextEditingValue(text: _call.licensePlate)).value;
+
       }
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
+
+    //_formKey.currentState.validate();
   }
 
   bool _convertTobool(value) {
@@ -261,46 +257,49 @@ class _CallAddState extends State<CallAdd> {
     var type = await vin.getVehicleTypeAsync();
     print("Type is ${type}");
   }
+  setDispatchDateAndTime(date, time){
 
+  }
+  setTowedDateAndTime(date, time){
+
+  }
   setTowCustomer(id, name) {
     setState(() {
       _call.towCustomer = id;
       _call.towCustomerName = name;
-      _towCustomerController.value =new TextEditingController.fromValue(new TextEditingValue(text: name)) .value;
+      _towCustomerController.value =new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
     });
     _getTowCustomerDefaults(id);
   }
 
-  setTowedStatus(id, name) {
-    setState(() {
-      _call.towedStatus = id;
-      _call.towedStatusName = name;
-      _towedStatusController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
-              .value;
-    });
-    _formKey.currentState.validate();
-  }
+//  setTowedStatus(id, name) {
+//    setState(() {
+//      _call.towedStatus = id;
+//      _call.towedStatusName = name;
+//      _towedStatusController.value =
+//          new TextEditingController.fromValue(new TextEditingValue(text: name))
+//              .value;
+//    });
+//   //_formKey.currentState.validate();
+//  }
 
   setModel(id, name) {
     setState(() {
       _call.vehicleYearMakeModel = id;
       _call.vehicleYearMakeModelName = name;
       _modelController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
-              .value;
+          new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
+
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
   }
 
   setVehicleYear(year) {
     setState(() {
       _call.vehicleYear = year;
-      _yearController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: year.toString()))
-          .value;
+      _yearController.value = new TextEditingController.fromValue(new TextEditingValue(text: year.toString())).value;
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
   }
 
   setMake(id, name) {
@@ -308,10 +307,10 @@ class _CallAddState extends State<CallAdd> {
       _call.vehicleMake = id;
       _call.vehicleMakeName = name;
       _makeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
-              .value;
+          new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
+
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
   }
 
   setStyle(id, name) {
@@ -319,10 +318,10 @@ class _CallAddState extends State<CallAdd> {
       _call.vehicleStyle = id;
       _call.vehicleStyleName = name;
       _styleController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
-              .value;
+          new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
+
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
   }
 
   setTopColor(id, name) {
@@ -333,7 +332,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
   }
 
   setSecondColor(id, name) {
@@ -344,7 +343,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
   }
 
   setLicenseState(id, name) {
@@ -355,7 +354,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+    _formKey[0].currentState.validate();
   }
 
   setTowType(id, name) {
@@ -366,7 +365,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+    _formKey[1].currentState.validate();
   }
 
   setTowReason(id, name) {
@@ -377,7 +376,6 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
   }
 
   setAuthorization(id, name) {
@@ -388,7 +386,6 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
   }
 
   setJurisdiction(id, name) {
@@ -399,7 +396,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+    _formKey[1].currentState.validate();
   }
 
   setCity(id, name) {
@@ -410,7 +407,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+   //_formKey.currentState.validate();
   }
 
   setTowedState(id, name) {
@@ -421,7 +418,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+   //_formKey.currentState.validate();
   }
 
   setCompany(id, name) {
@@ -432,7 +429,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+    _formKey[1].currentState.validate();
   }
 
   setDriver(id, name) {
@@ -443,7 +440,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+   //_formKey.currentState.validate();
   }
 
   setTruck(id, name) {
@@ -454,7 +451,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+   //_formKey.currentState.validate();
   }
 
   setBillTo(id, name) {
@@ -465,7 +462,7 @@ class _CallAddState extends State<CallAdd> {
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
     });
-    _formKey.currentState.validate();
+   //_formKey.currentState.validate();
   }
 
   setYearMakeModelName(yearMakeModelObj) {
@@ -482,73 +479,249 @@ class _CallAddState extends State<CallAdd> {
       var newTowedInvoice = int.parse(towedInvoice) + 1;
       _towedInvoiceController.value = new TextEditingController.fromValue( new TextEditingValue(text: newTowedInvoice.toString())).value;
     });
-    _formKey.currentState.validate();
+   //_formKey.currentState.validate();
+  }
+  _navigate(context){
+//    Navigator.push(context, TestWidget());
+   Navigator.of(context).push(MaterialPageRoute(builder:(context) =>CallAdd() ));
+  }
+  _showDialog(BuildContext context) {
+    Scaffold.of(context).showSnackBar(
+    new SnackBar(
+        backgroundColor: Colors.lightGreen,
+        content: Text('Checking for Duplicates',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+            ))));
+  }
+
+  _showErrorMessage(BuildContext context, errorMessage) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+    backgroundColor: Colors.lightGreen,
+    content: Text(errorMessage,
+    style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+    ))));
+  }
+
+  save2() async{
+    print("printitng from dup call");
+    await Provider.of<Calls>(context, listen: false).create(_call);
+    var response = Provider
+        .of<Calls>(context, listen: false)
+        .createResponse;
+    if (response["errorStatus"] == "false") {
+      _showErrorMessage(context, response["errorMessage"]);
+    }
+    else {
+//      Navigator.pop(context);
+      Navigator.push(
+          context,
+          new MaterialPageRoute(
+              builder: (context) =>
+              new SuccessScreen()
+          ));
+
+      Timer(Duration(milliseconds: 3000), () {
+        Navigator.pop(context);
+        Navigator.pop(context);
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) =>
+                new CallsScreen()));
+      });
+    }
+  }
+
+  save() async {
+    _showDialog(context);
+    await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+        .checkForDuplicateTickets(_call);
+
+    if (Provider
+        .of<ProcessTowedVehiclesVM>(context, listen: false)
+        .duplicateData["errorStatus"] == "true") {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return DuplicateCall(save2: save2);
+          });
+      //Add Yes or No Button and Rock it
+    }
+    else {
+      await Provider.of<Calls>(context, listen: false).create(_call);
+      var response = Provider
+          .of<Calls>(context, listen: false)
+          .createResponse;
+      if (response["errorStatus"] == "false") {
+        _showErrorMessage(context, response["errorMessage"]);
+      }
+      else {
+        Navigator.push(
+            context,
+            new MaterialPageRoute(
+                builder: (context) =>
+                new SuccessScreen()));
+
+        Timer(Duration(milliseconds: 3000), () {
+          Navigator.pop(context);
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) =>
+                  new CallsScreen()));
+        });
+      }
+    }
+  }
+
+//  save() async {
+//    _formKey[0].currentState.save();
+//    _formKey[1].currentState.save();
+//    _formKey[2].currentState.save();
+////    final form_Step1 = _formKey[0].currentState;
+////    final form_Step2 = _formKey[1].currentState;
+////    final form_Step3 = _formKey[2].currentState;
+//    if (_formKey[2].currentState.validate()) {
+////      form_Step1.save();
+////      form_Step2.save();
+////      form_Step3.save();
+//      _showDialog(context);
+//      await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+//          .checkForDuplicateTickets(_call);
+//      if (Provider
+//          .of<ProcessTowedVehiclesVM>(context, listen: false)
+//          .duplicateData["errorStatus"] == "true") {
+//        showDialog(
+//            context: context,
+//            builder: (BuildContext context) {
+//              return DuplicateCall();
+//            });
+//        //Add Yes or No Button and Rock it
+//      }
+//      else {
+//        await Provider.of<Calls>(context, listen: false).create(_call);
+//        var response = Provider
+//            .of<Calls>(context, listen: false)
+//            .createResponse;
+//        if (response["errorStatus"] == "false") {
+//          _showErrorMessage(context, response["errorMessage"]);
+//        }
+//        else {
+//          Navigator.push(
+//              context,
+//              new MaterialPageRoute(
+//                  builder: (context) =>
+//                  new SuccessScreen()));
+//
+//         Timer(Duration(milliseconds: 3000), () {
+//            Navigator.pop(context);
+//            Navigator.push(
+//                context,
+//                new MaterialPageRoute(
+//                    builder: (context) =>
+//                    new CallsScreen()));
+//          });
+//        }
+//      }
+//    }
+//  }
+
+  String validateVIN(String value){
+    Pattern pattern = "^[^iIoOqQ'-]{10,17}\$";
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Please enter a valid VIN';
+    else
+      return null;
+  }
+
+  String validateLocation(String value){
+    if (value.isEmpty)
+      return 'Please enter a Location';
+    else
+      return null;
+  }
+  String validateYear(String value){
+    if (value.isEmpty)
+      return 'Please enter Year';
+    else
+      return null;
+  }
+  String validateInvoice(String value){
+    if (value.isEmpty)
+      return 'Please enter Year';
+    else
+      return null;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          // automaticallyImplyLeading: true,
-          title: Text('Add Call'),
-          actions: <Widget>[
-            new IconButton(
-//              key: this._formKey,
-              icon: new Icon(Icons.save),
-              tooltip: 'Save',
-              onPressed: () => save(),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text('ADD CALL', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          new IconButton(
+            icon: new Icon(Icons.save),
+            tooltip: 'Save',
+            onPressed: () => {FocusScope.of(context).requestFocus(new FocusNode()),save()}
+          ),
+        ],
+      ),
+      body: Container(
+      child:SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+           Container(
+      constraints: BoxConstraints.expand(height: 700),
+      child: Theme(
+        data: ThemeData(
+            canvasColor: Color(0xff1C3764),
+            primaryColor: Color(0xff1C3764)
         ),
-        body: Form(
-            key: this._formKey,
-            child: SingleChildScrollView(
+        child:
+      Stepper(
+        type: StepperType.horizontal,
+        controlsBuilder: (BuildContext context,
+            {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+          _index == 1 || _index == 2 ?
+              FlatButton(
+                  color: Color(0xff1C3764),
+                  textColor: Colors.white,
+                onPressed: onStepCancel,
+                child:const Text('PREVIOUS')
+              ) : const Text(''),
+              FlatButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                onPressed: onStepContinue,
+                child: _index == 0 || _index == 1 ? const Text('NEXT') : const Text('SAVE'),
+              ),
 
-          child: Padding(
-            padding: EdgeInsets.all(10.0),
-            child: Column(
+            ],
+          );
+        },
+        steps: [
+          Step(
+            title: Text("VEHICLE", style:TextStyle(color: _index == 0 ? Colors.green: Color(0xffffffff))),
+            content: Form(
+                key: _formKey[0],
+                autovalidate: _autoValidate,
+              child:Column(
               children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 15,
-                    top: 25,
-                    right: 15,
-                    bottom: 0,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    // Align however you like (i.e .centerRight, centerLeft)
-                    child: Row(children: <Widget>[
-                      new Text("Vehicle Details",
-                          style: new TextStyle(
-                              color: Colors.black,
-                              letterSpacing: 1.0,
-                              fontSize: 20.0)),
-                    ]),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(
-                      left: 15,
-                      top: 10,
-                      right: 15,
-                      bottom: 25,
-                    ),
-                    child: new Divider(
-                      color: Colors.black54,
-                    )),
-
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Customer *"),
-//                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   title: new TextFormField(
+                    readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._towCustomerController,
                       decoration: new InputDecoration(
                         labelText: "Customer *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -571,42 +744,32 @@ class _CallAddState extends State<CallAdd> {
                 ),
 
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("VIN *"),
-//                  ),
-//                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   title: new TextFormField(
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _vinController,
                     decoration: new InputDecoration(
                       labelText: "VIN *",
                       suffixIcon: IconButton(
                         onPressed: () => _getVIN(), //_controller.clear(),
-                        icon: Icon(Icons.autorenew),
+                        icon: Icon(Icons.autorenew, size:14),
                       ),
                     ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter VIN';
-                      }
-                    },
+                  validator: validateVIN,
                     onSaved: (val) => setState(() => _call.VIN = val),
                   ),
                 ),
 
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Model *"),
-//                  ),
-//                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._modelController,
                       decoration: new InputDecoration(
-                        labelText: "Model",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        labelText: "Model *",
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -619,51 +782,42 @@ class _CallAddState extends State<CallAdd> {
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    new VehicleYearMakeModelModal(
-                                        setYearMakeModelName:
-                                            setYearMakeModelName)));
+                                new VehicleYearMakeModelModal(
+                                    setYearMakeModelName:
+                                    setYearMakeModelName)));
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Year *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._yearController,
                       decoration: new InputDecoration(
                         labelText: "Year *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please enter Year';
-                        }
-                      },
+                      validator: validateYear,
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
-                                //    builder: (context) =>
-                                //  new TowCustomersModal(setYear: setYear))
-                                ));
+                              //    builder: (context) =>
+                              //  new TowCustomersModal(setYear: setYear))
+                            ));
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Make *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._makeController,
                       decoration: new InputDecoration(
                         labelText: "Make *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -676,21 +830,19 @@ class _CallAddState extends State<CallAdd> {
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    new VehicleMakeModal(setMake: setMake)));
+                                new VehicleMakeModal(setMake: setMake)));
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Style *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._styleController,
                       decoration: new InputDecoration(
                         labelText: "Style *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -703,21 +855,19 @@ class _CallAddState extends State<CallAdd> {
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    new VehicleStyleModal(setStyle: setStyle)));
+                                new VehicleStyleModal(setStyle: setStyle)));
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Top Color *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._topColorController,
                       decoration: new InputDecoration(
                         labelText: "Top Color *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -725,26 +875,24 @@ class _CallAddState extends State<CallAdd> {
                         }
                       },
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    new ColorModal(setColor: setTopColor)));
+                                new ColorModal(setColor: setTopColor)));
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Bottom Color *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._secondColorController,
                       decoration: new InputDecoration(
                         labelText: "Bottom Color *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -752,46 +900,44 @@ class _CallAddState extends State<CallAdd> {
                         }
                       },
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    new ColorModal(setColor: setSecondColor)));
+                                new ColorModal(setColor: setSecondColor)));
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("License Plate *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _licensePlateController,
                     decoration: new InputDecoration(
                       labelText: "License Plate *",
-                      suffixIcon: Icon(Icons.clear),
+                      suffixIcon: Icon(Icons.clear, size:14),
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Please enter License Plate';
                       }
                     },
+                    onSaved: (val) => {
+                      setState(() => _call.licensePlate = val),
+                      },
                   ),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("License State *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._licenseStateController,
                       decoration: new InputDecoration(
                         labelText: "License State *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -799,7 +945,7 @@ class _CallAddState extends State<CallAdd> {
                         }
                       },
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -807,49 +953,26 @@ class _CallAddState extends State<CallAdd> {
                                     setSystemState: setLicenseState)));
                       }),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 15,
-                    top: 35,
-                    right: 15,
-                    bottom: 0,
-                  ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    // Align however you like (i.e .centerRight, centerLeft)
-                    child: Row(children: <Widget>[
-                      new Text("Tow Details",
-                          style: new TextStyle(
-                              color: Colors.black,
-                              letterSpacing: 1.0,
-                              fontSize: 20.0)),
-                    ]),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(
-                      left: 15,
-                      top: 10,
-                      right: 15,
-                      bottom: 25,
-                    ),
-                    child: new Divider(
-                      color: Colors.black54,
-                    )),
-
-
+              ])
+            ),
+          ),
+          Step(
+              title: Text("TOW", style:TextStyle(color: _index == 1 ? Colors.green: Color(0xffffffff))),
+            content: Form(
+                key: _formKey[1],
+                autovalidate: _autoValidate,
+              child:Column(
+              children: <Widget>[
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Tow Type *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._towTypeController,
                       decoration: new InputDecoration(
                         labelText: "Tow Type *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -857,29 +980,27 @@ class _CallAddState extends State<CallAdd> {
                         }
                       },
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    new TowTypeModal(setTowType: setTowType)));
+                                new TowTypeModal(setTowType: setTowType)));
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Tow Reason"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._towReasonController,
                       decoration: new InputDecoration(
                         labelText: "Tow Reason",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -888,20 +1009,18 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Authorization"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._authorizationController,
                       decoration: new InputDecoration(
                         labelText: "Authorization",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -910,17 +1029,15 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Jurisdiction *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._jurisdictionController,
                       decoration: new InputDecoration(
                         labelText: "Jurisdiction *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -928,7 +1045,6 @@ class _CallAddState extends State<CallAdd> {
                         }
                       },
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -937,14 +1053,11 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Towed Date"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
-                    controller: _towedDateController,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    controller: _dispatchDateController,
                     decoration: new InputDecoration(
                       labelText: "Call Date",
                       suffixIcon: IconButton(
@@ -956,65 +1069,49 @@ class _CallAddState extends State<CallAdd> {
                               //   print('change $date');
                               // },
                               onConfirm: (date) {
-                                String formattedDate =
-                                DateFormat('MM-dd-yyyy').format(date);
-                                _towedDateController.text = formattedDate;
-//                              String formattedTime = DateFormat('kk.mm').format(now);
-//                              String formattedTime2 = DateFormat('kk^mm').format(now);
+                                String formattedDate =DateFormat('MM-dd-yyyy').format(date);
+                                _dispatchDateController.text = formattedDate;
                               },
                               currentTime: DateTime.now(),
                               locale: LocaleType.en);
                         }, //_controller.clear(),
-                        icon: Icon(Icons.date_range),
+                        icon: Icon(Icons.date_range, size:14),
                       ),
                     ),
                     onSaved: (val) => setState(() => _call.dispatchDate = val),
                   ),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Towed Time"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
-                    controller: _towedTimeController,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                    controller: _dispatchReceivedTimeController,
                     decoration: new InputDecoration(
                       labelText: "Received",
                       suffixIcon: IconButton(
                         onPressed: () {
                           DatePicker.showTimePicker(context,
                               showTitleActions: true,
-                              //  minTime: DateTime(2018, 3, 5),
-                              //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                              //   print('change $date');
-                              // },
                               onConfirm: (time) {
                                 String formattedTime =
                                 DateFormat('HH:mm').format(time);
-                                _towedTimeController.text = formattedTime;
-//                              String formattedTime = DateFormat('kk.mm').format(now);
-//                              String formattedTime2 = DateFormat('kk^mm').format(now);
+                                _dispatchReceivedTimeController.text = formattedTime;
                               },
                               currentTime: DateTime.now(),
                               locale: LocaleType.en);
                         }, //_controller.clear(),
-                        icon: Icon(Icons.access_time),
+                        icon: Icon(Icons.access_time, size:14),
                       ),
                     ),
                     onSaved: (val) => setState(() => _call.dispatchReceivedTime = val),
                   ),
                 ),
-
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Towed Date"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedDateController,
                     decoration: new InputDecoration(
                       labelText: "Towed Date",
@@ -1022,34 +1119,26 @@ class _CallAddState extends State<CallAdd> {
                         onPressed: () {
                           DatePicker.showDatePicker(context,
                               showTitleActions: true,
-                              //  minTime: DateTime(2018, 3, 5),
-                              //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                              //   print('change $date');
-                              // },
+
                               onConfirm: (date) {
-                            String formattedDate =
+                                String formattedDate =
                                 DateFormat('MM-dd-yyyy').format(date);
-                            _towedDateController.text = formattedDate;
-//                              String formattedTime = DateFormat('kk.mm').format(now);
-//                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                          },
+                                _towedDateController.text = formattedDate;
+                              },
                               currentTime: DateTime.now(),
                               locale: LocaleType.en);
                         }, //_controller.clear(),
-                        icon: Icon(Icons.date_range),
+                        icon: Icon(Icons.date_range, size:14),
                       ),
                     ),
                     onSaved: (val) => setState(() => _call.towedDate = val),
                   ),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Towed Time"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedTimeController,
                     decoration: new InputDecoration(
                       labelText: "Towed Time",
@@ -1057,83 +1146,46 @@ class _CallAddState extends State<CallAdd> {
                         onPressed: () {
                           DatePicker.showTimePicker(context,
                               showTitleActions: true,
-                              //  minTime: DateTime(2018, 3, 5),
-                              //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                              //   print('change $date');
-                              // },
                               onConfirm: (time) {
-                            String formattedTime =
+                                String formattedTime =
                                 DateFormat('HH:mm').format(time);
-                            _towedTimeController.text = formattedTime;
-//                              String formattedTime = DateFormat('kk.mm').format(now);
-//                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                          },
+                                _towedTimeController.text = formattedTime;
+                              },
                               currentTime: DateTime.now(),
                               locale: LocaleType.en);
                         }, //_controller.clear(),
-                        icon: Icon(Icons.access_time),
+                        icon: Icon(Icons.access_time, size:14),
                       ),
                     ),
                     onSaved: (val) => setState(() => _call.towedTime = val),
                   ),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Location *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedStreetController,
                     decoration: new InputDecoration(
                       labelText: "Location *",
                     ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter location';
-                      }
-                    },
+                    validator: validateLocation,
                     onSaved: (val) => setState(() => _call.towedStreet = val),
                   ),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("City"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
-                      controller: this._towedCityController,
-                      decoration: new InputDecoration(
-                        labelText: "City",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
-                      ),
-                      onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                        Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                                builder: (context) =>
-                                    new SystemCityModal(setCity: setCity)));
-                      }),
-                ),
-                new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("State"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
-                  title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._towedStateController,
                       decoration: new InputDecoration(
                         labelText: "State",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -1142,13 +1194,30 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Zip Code"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      controller: this._towedCityController,
+                      decoration: new InputDecoration(
+                        labelText: "City",
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                      ),
+                      onTap: () {
+
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) =>
+                                new SystemCityModal(setCity: setCity)));
+                      }),
+                ),
+                new ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
+                  title: new TextFormField(
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedZipCodeController,
                     decoration: new InputDecoration(
                       labelText: "Zip Code",
@@ -1157,13 +1226,10 @@ class _CallAddState extends State<CallAdd> {
                   ),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Destination"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedToStreetController,
                     decoration: new InputDecoration(
                       labelText: "Destination",
@@ -1172,17 +1238,15 @@ class _CallAddState extends State<CallAdd> {
                   ),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Company *"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._companyController,
                       decoration: new InputDecoration(
                         labelText: "Company *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: (value) {
                         if (value.isEmpty) {
@@ -1190,7 +1254,6 @@ class _CallAddState extends State<CallAdd> {
                         }
                       },
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -1198,35 +1261,30 @@ class _CallAddState extends State<CallAdd> {
                                     setCompany: setCompany)));
                       }),
                 ),
-                new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Towed Status"),
+//                new ListTile(
+//                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+//                  dense:true,
+//                  title: new TextFormField(
+//                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+//                    controller: _towedStatusController,
+//                    decoration: new InputDecoration(
+//                      labelText: "Towed Status",
+//                    ),
 //                  ),
-                  //trailing: Icon(Icons.shopping_cart),
-                  title: new TextFormField(
-                    controller: _towedStatusController,
-                    decoration: new InputDecoration(
-                      labelText: "Towed Status",
-                    ),
-                  ),
-                ),
+//                ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Driver"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._driverController,
                       decoration: new InputDecoration(
                         labelText: "Driver",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -1235,206 +1293,143 @@ class _CallAddState extends State<CallAdd> {
                       }),
                 ),
                 new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Truck"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
                   title: new TextFormField(
+                          readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._truckController,
                       decoration: new InputDecoration(
                         labelText: "Truck",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                    new TowTrucksModal(setTruck: setTruck)));
+                                new TowTrucksModal(setTruck: setTruck)));
                       }),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 15,
-                    top: 35,
-                    right: 15,
-                    bottom: 0,
+              ])
+            )
+          ),
+          Step(
+              title: Text("BILLING", style:TextStyle(color: _index == 2 ? Colors.green: Color(0xffffffff))),
+            content: Form(
+                key: _formKey[2],
+                autovalidate: _autoValidate,
+                child:Column(
+                    children: <Widget>[
+                  new ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                    dense:true,
+                    title: new TextFormField(
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        controller: this._billToController,
+                        decoration: new InputDecoration(
+                          labelText: "Bill To *",
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                        ),
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'Please select Bill To Customer';
+                          }
+                        },
+                        onTap: () {
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => new TowCustomersModal(
+                                      setTowCustomer: setBillTo)));
+                        }),
                   ),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    // Align however you like (i.e .centerRight, centerLeft)
-                    child: Row(children: <Widget>[
-                      new Text("Billing Details",
-                          style: new TextStyle(
-                              color: Colors.black,
-                              letterSpacing: 1.0,
-                              fontSize: 20.0)),
-                    ]),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.only(
-                      left: 15,
-                      top: 10,
-                      right: 15,
-                      bottom: 25,
-                    ),
-                    child: new Divider(
-                      color: Colors.black54,
-                    )),
-                new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("Bill To"),
-//                  ),
-                  //trailing: Icon(Icons.shopping_cart),
-                  title: new TextFormField(
-                      controller: this._billToController,
-                      decoration: new InputDecoration(
-                        labelText: "Bill To",
-                        suffixIcon: Icon(Icons.arrow_forward_ios),
-                      ),
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Please select Bill To Customer';
-                        }
-                      },
-                      onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => new TowCustomersModal(
-                                    setTowCustomer: setBillTo)));
-                      }),
-                ),
-                new ListTile(
+                  new ListTile(
+                    contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                    dense:true,
 //                  leading: Container(
 //                    width: 100, // can be whatever value you want
 //                    alignment: Alignment.centerLeft,
 //                    child: Text("Invoice # *"),
 //                  ),
-                  //trailing: Icon(Icons.shopping_cart),
-                  title: new TextFormField(
-                    controller: _towedInvoiceController,
-                    decoration: new InputDecoration(
-                      labelText: "Invoice # *",
+                    //trailing: Icon(Icons.shopping_cart),
+                    title: new TextFormField(
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      controller: _towedInvoiceController,
+                      decoration: new InputDecoration(
+                        labelText: "Invoice # *",
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter Invoice #';
+                        } else {
+                          return null;
+                        }
+                      },
+                      onSaved: (val) => setState(() => _call.towedInvoice = val),
                     ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter Invoice #';
-                      } else {
-                        return null;
-                      }
-                    },
-                    onSaved: (val) => setState(() => _call.towedInvoice = val),
                   ),
-                ),
-                new ListTile(
-//                  leading: Container(
-//                    width: 100, // can be whatever value you want
-//                    alignment: Alignment.centerLeft,
-//                    child: Text("PO # *"),
+//                  new ListTile(
+//                    contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+//                    dense:true,
+//                    title: new TextFormField(
+//                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+//                      decoration: new InputDecoration(
+//                        labelText: "PO # *",
+//                      ),
+//                      validator: (value) {
+//                        if (value.isEmpty) {
+//                          return 'Please enter PO #';
+//                        }
+//                      },
+//                      onSaved: (val) => setState(() => _call.towedPONumber = val),
+//                    ),
 //                  ),
-                  //trailing: Icon(Icons.shopping_cart),
-                  title: new TextFormField(
-                    decoration: new InputDecoration(
-                      labelText: "PO # *",
-                    ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please enter PO #';
-                      }
-                    },
-                    onSaved: (val) => setState(() => _call.towedPONumber = val),
-                  ),
-                ),
-//            Padding(
-//                padding: EdgeInsets.only( left: 15,
-//                  top: 25,
-//                  right: 15,
-//                  bottom:25,),
-//            child:Row(
-//                children: <Widget>[
-//            Expanded(
-//                  child:RaisedButton(onPressed: () {
-////                    final form = _formKey.currentState;
-//                    _formKey.currentState.reset();
-//
-//                  }, child: Text('Clear')),
-//                ) ,
-//                  Spacer(),
-       //         Expanded(
-//                RaisedButton(
-//                    onPressed: () async {
-//                      final form = _formKey.currentState;
-//                      if (form.validate()) {
-//                        form.save();
-//                        await Provider.of<ProcessTowedVehiclesVM>(context)
-//                            .checkForDuplicateTickets(_call);
-//                        if (Provider.of<ProcessTowedVehiclesVM>(context)
-//                                .duplicateData["errorStatus"] ==
-//                            "true") {
-//                          showDialog(
-//                              context: context,
-//                              builder: (BuildContext context) {
-//                                return DuplicateCall();
-//                              });
-//
-//                          //Add Yes or No Button and Rock it
-//                        }
-//                        else{
-//                          //Call Save here
-//                          Provider.of<Calls>(context).create(_call);
-//                        }
-//                        _showDialog(context);
-//                      }
-//                    },
-//                    child: Text('Save')),
-        ])))
-            //  ],
-
-
-        ));
-  }
-
-  _showDialog(BuildContext context) {
-    Scaffold.of(context)
-        .showSnackBar(SnackBar(content: Text('Checking for Duplicates')));
-  }
-
-  save() async {
-    final form = _formKey.currentState;
-    if (form.validate()) {
-      form.save();
-      await Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
-          .checkForDuplicateTickets(_call);
-      if (Provider.of<ProcessTowedVehiclesVM>(context, listen:false)
-              .duplicateData["errorStatus"] ==
-          "true") {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return DuplicateCall();
-            });
-
-        //Add Yes or No Button and Rock it
-      } else {
-        //Call Save here
-        Provider.of<Calls>(context, listen:false).create(_call).then((res){
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) =>
-                  new CallsScreen()));
-        });
-
-      }
-      _showDialog(context);
+                ]))
+          ),
+        ],
+        currentStep: _index,
+        onStepTapped: (index) {
+          setState(() {
+            _index = index;
+          });
+        },
+        onStepCancel: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+    if(_index != 0) {
+      setState(() {
+        _index = _index - 1;
+      });
     }
+        },
+        onStepContinue: () {
+          FocusScope.of(context).requestFocus(new FocusNode());
+          if(_index != 2){
+              setState(() {
+                if(_formKey[_index].currentState.validate()) {
+                  _formKey[_index].currentState.save();
+                _index = _index +1;
+                }
+                else{
+                  _index = _index;
+                }
+              });
+        }
+          else{
+    if(_formKey[_index].currentState.validate()) {
+      _formKey[_index].currentState.save();
+      save();
+    }
+          }
+          },
+      ),
+    )),
+//            SizedBox(height: 100)
+          ],
+        ),
+      )),
+    );
   }
 }

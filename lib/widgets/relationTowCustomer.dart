@@ -1,21 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:autocomplete_textfield/autocomplete_textfield.dart';
-import 'package:flutter_typeahead/cupertino_flutter_typeahead.dart';
-
-import 'package:vts_mobile_cloud/providers/relationTowAuthorization_provider.dart';
 import 'package:vts_mobile_cloud/providers/relationTowCustomer_provider.dart';
-import 'package:vts_mobile_cloud/providers/relationTowJurisdiction_provider.dart';
-import 'package:vts_mobile_cloud/providers/relationTowTruck_provider.dart';
-import 'package:vts_mobile_cloud/providers/relationTowType_provider.dart';
-import 'package:vts_mobile_cloud/providers/relationWreckerCompany_provider.dart';
-import 'package:vts_mobile_cloud/providers/relationWreckerDriver_provider.dart';
-import 'package:vts_mobile_cloud/providers/systemState_provider.dart';
-import 'package:vts_mobile_cloud/providers/systemCity_provider.dart';
-import 'package:vts_mobile_cloud/providers/towReason_provider.dart';
-import 'package:vts_mobile_cloud/providers/vehicleColor_provider.dart';
-import 'package:vts_mobile_cloud/providers/vehicleMake_provider.dart';
-import 'package:vts_mobile_cloud/providers/vehicleStyle_provider.dart';
+
 
 class RelationTowCustomer extends StatefulWidget {
   @override
@@ -57,7 +44,6 @@ class _RelationTowCustomerState extends State<RelationTowCustomer> {
     return Center(
             child: new Column(children: <Widget>[
               new Column(children: <Widget>[
-                //searchTextField = AutoCompleteTextField<Players>(
                 searchTextField = AutoCompleteTextField<TowCustomer>(
                     style: new TextStyle(color: Colors.black, fontSize: 16.0),
                     decoration: new InputDecoration(

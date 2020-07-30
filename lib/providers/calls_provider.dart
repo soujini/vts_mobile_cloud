@@ -7,9 +7,14 @@ import 'package:intl/intl.dart';
 import '../models/call.dart';
 import '../models/call_add.dart';
 import '../providers/secureStoreMixin_provider.dart';
+import '../providers/common_provider.dart';
 
 class Calls with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  final String appName = "towing";
+  String userId="";
+  String pinNumber="";
+  String timeZoneName="";
 
   int _activeCount = 0;
   int _completedCount = 0;
@@ -23,19 +28,20 @@ class Calls with ChangeNotifier, SecureStoreMixin {
   List<Call> _cancelledCalls = [];
   List<Call> _searchedCalls = [];
   List<Call> _callDetails =[];
+  var createResponse;
+  var updateResponse;
+
+  final dateAndTime = DateAndTime();
 
   get activeCount {
-    //getter
     return _activeCount; //gets a copy of the items
   }
 
   get completedCount {
-    //getter
     return _completedCount; //gets a copy of the items
   }
 
   get cancelledCount {
-    //getter
     return _cancelledCount; //gets a copy of the items
   }
 
@@ -49,40 +55,158 @@ class Calls with ChangeNotifier, SecureStoreMixin {
   }
 
   List<Call> get completedCalls {
-    //getter
     return [..._completedCalls]; //gets a copy of the items
   }
 
   List<Call> get cancelledCalls {
-    //getter
     return [..._cancelledCalls]; //gets a copy of the items
   }
   List<Call> get searchedCalls {
-    //getter
     return [..._searchedCalls]; //gets a copy of the items
+  }
+  Future<List> updateCall(_call) async {
+    final int id = _call.id;
+    List<String> fieldList = new List<String>();
+    List<String> filteredFieldList = new List<String>();
+    String tabUpdate = "Call";
+    String fieldName="";
+    bool moveStatus=false;
+    String dispatchInstructions_string=_call.dispatchInstructions_string;//Need to be updated
+    String xmlValues="";
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('MM-dd-yyyy').format(now);
+    String formattedTime = DateFormat('kk.mm').format(now);
+    String formattedTime2 = DateFormat('kk^mm').format(now);
+
+    await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+    await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+    await  getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
+    fieldList = [
+      "towBillTo:"+_call.towBillTo.toString(),
+      'towedInvoice:'+_call.towedInvoice.toString(),
+      "towedPONumber:"+_call.towedPONumber.toString(),
+      "dispatchMemberNumber:"+_call.dispatchMemberNumber.toString(),
+      "dispatchLimitAmount:"+_call.dispatchLimitAmount.toString(),
+      "dispatchLimitMiles:"+_call.dispatchLimitMiles.toString(),
+      "VIN:"+_call.VIN.toString(),
+      "vehicleYearMakeModel:"+_call.vehicleYearMakeModel.toString(),
+      'vehicleYear:'+_call.vehicleYear.toString(),
+      'vehicleMake:'+_call.vehicleMake.toString(),
+      "topColor:"+_call.topColor.toString() ,
+      "secondColor:"+_call.secondColor.toString(),
+      "licensePlate:"+_call.licensePlate.toString(),
+      "vehicleLicenseState:"+_call.vehicleLicenseState.toString(),
+      "vehicleOdometer:"+_call.vehicleOdometer.toString(),
+      "towType:"+_call.towType.toString(),
+      'towAuthorization:'+_call.towAuthorization.toString(),
+      "dispatchDate:"+_call.dispatchDate.toString(),
+      "dispatchReceivedTime:"+_call.dispatchReceivedTime.toString(),
+      "towedStreet:"+_call.towedStreet.toString(),
+      "towedStreetTwo:"+_call.towedStreetTwo.toString(),
+      "towedCity:"+_call.towedCity.toString(),
+      "towedState:"+_call.towedState.toString(),
+      "towedZipCode:"+_call.towedZipCode.toString(),
+      "towedToStreet:"+_call.towedToStreet.toString(),
+      "towedToStreetTwo:"+_call.towedToStreetTwo.toString(),
+      "towedToCity:"+_call.towedToCity.toString(),
+      "towedToState:"+_call.towedToState.toString(),
+      "towedToZipCode:"+_call.towedToZipCode.toString(),
+      "wreckerCompany:"+_call.wreckerCompany.toString(),
+      "wreckerDriver:"+_call.wreckerDriver.toString(),
+      "towTruck:"+_call.towTruck.toString(),
+      "towCustomer:"+_call.towCustomer.toString(),
+      "dispatchContact:"+_call.dispatchContact.toString(),
+      "dispatchContactPhone:"+_call.dispatchContactPhone.toString(),
+      "dispatchPriorityLevel:"+_call.dispatchPriorityLevel.toString(),
+      "dispatchETAMaximum:"+_call.dispatchETAMaximum.toString(),
+//      "dispatchResponseID:"+call.dispatchResponseID.toString(),
+//      "dispatchAuthorizationNumber:"+call.dispatchAuthorizationNumber.toString(),
+//      "dispatchProviderResponse:"+call.dispatchProviderResponse.toString(),
+      "towedStatus:C",
+      "pinNumber:"+pinNumber,
+//      "vehicleStyle:"+call.vehicleStyle.toString(),
+//      "towReason:"+call.towReason.toString(),
+//      "towJurisdiction:"+call.towJurisdiction.toString(),
+//      "towedDate:"+call.towedDate.toString(),
+//      "towedTime:"+call.towedTime.toString(),
+      "systemRuntimeType:2"
+    ];
+
+    filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != "").toList();
+
+    xmlValues = filteredFieldList.map((v) => '<string>$v</string>').join();
+
+
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<update xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<id>${id}</id>"
+        "<fieldList>${xmlValues}</fieldList>"
+        "<tabUpdate>${tabUpdate}</tabUpdate>"
+        "<fieldName>${fieldName}</fieldName>"
+        "<moveStatus>${moveStatus}</moveStatus>"
+        "<dispatchInstructions_string>${dispatchInstructions_string}</dispatchInstructions_string>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
+        "</update>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/update",
+          "Host": "cktsystems.com",
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["updateResponse"]["updateResult"];
+
+    updateResponse = Map.from(extractedData);
   }
 
   Future<List> create(call) async {
-
-    final String appName = "towing";
-    final int userId = 3556;
     List<String> fieldList;
     String xmlValues="";
-    String dispatchInstructions_string="bind this instruction";
-    String timeZoneName= "";
+    String dispatchInstructions_string="";
 
-    await getSecureStore('timeZoneName', (token) {
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+   await  getSecureStore('timeZoneName', (token) {
       timeZoneName=token;
     });
+
+    await dateAndTime.getCurrentDateAndTime();
+
     var objText = jsonEncode(call);
-    print(objText);
 
    Call_Add user = Call_Add.fromJsonForAdd(jsonDecode(objText));
 
     fieldList = [
       "towCustomer:"+call.towCustomer.toString(),
       "VIN:"+call.VIN.toString(),
-//      "vehicleModel:"+call.vehicleModel.toString(),
+      "vehicleYearMakeModel:"+call.vehicleYearMakeModel.toString(),
       'vehicleYear:'+call.vehicleYear.toString(),
       'vehicleMake:'+call.vehicleMake.toString(),
       "vehicleStyle:"+call.vehicleStyle.toString(),
@@ -98,6 +222,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "dispatchReceivedTime:"+call.dispatchReceivedTime.toString(),
       "towedDate:"+call.towedDate.toString(),
       "towedTime:"+call.towedTime.toString(),
+      "storageReceivedDate:"+dateAndTime.date.toString(),
+      "storageReceivedTime:"+dateAndTime.time.toString(),
+      "towedToStreet:"+call.towedToStreet.toString(),
       "towedStreet:"+call.towedStreet.toString(),
       "towedCity:"+call.towedCity.toString(),
       "towedState:"+call.towedState.toString(),
@@ -110,11 +237,10 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "towBillTo:"+call.towBillTo.toString(),
       'towedInvoice:'+call.towedInvoice.toString(),//newTowedInvoice =>Check
       "towedPONumber:"+call.towedPONumber.toString(),
-      "pinNumber:PIN0000074",
+      "pinNumber:"+pinNumber,
        "systemRuntimeType:2"
     ];
     xmlValues = fieldList.map((v) => '<string>$v</string>').join();
-    print(xmlValues);
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
         "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -132,12 +258,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/create",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 
@@ -147,14 +272,10 @@ class Calls with ChangeNotifier, SecureStoreMixin {
 
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["createResponse"]["createResult"];
-    print("result of create "+extractedData.toString());
 
+    createResponse = Map.from(extractedData);
   }
-
-  Future<String> update(int call_id, String field_name, String _dispatchInstructions_string) async {
-    print("dispatch instructions "+_dispatchInstructions_string);
-    final String appName = "towing";
-    final int userId = 1;
+  Future<String> update(int call_id, String field_name, String _dispatchInstructions_string, String mode, bool moveStatus, int towType) async {
     final int id = call_id;
     List<String> fieldList = new List<String>();
     String tabUpdate = "Call";
@@ -162,41 +283,48 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     bool moveStatus=false;
     String dispatchInstructions_string=_dispatchInstructions_string;//Need to be updated
     String xmlValues="";
-    String pinNumber;
-    String timeZoneName;
-
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('MM-dd-yyyy').format(now);
     String formattedTime = DateFormat('kk.mm').format(now);
     String formattedTime2 = DateFormat('kk^mm').format(now);
-    await getSecureStore('pinNumber', (token) {
+
+    await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+    await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
-    await getSecureStore('timeZoneName', (token) {
+    await  getSecureStore('timeZoneName', (token) {
       timeZoneName=token;
     });
+
+    var geoLocator = GeoLocator();
+    await geoLocator.getCurrentPosition();
+
     if(fieldName == "Dispatch")
     {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchDate:"+formattedDate,
         "dispatchDispatchTime:"+formattedTime,
-        "towedStatus:C"
+        "towedStatus:C",
+        "lastLatitude:"+geoLocator.latitude,
+        "lastLongitude:"+geoLocator.longitude
       ];
       fieldName = "Dispatch - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
-      print("sue b do me do   "+xmlValues);
     }
     if(fieldName == "Enroute")
     {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchEnrouteTime:"+formattedTime,
-        "towedStatus:C"
+        "towedStatus:C",
+        "lastLatitude:"+geoLocator.latitude,
+        "lastLongitude:"+geoLocator.longitude
       ];
       fieldName = "Enroute - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
-      print("sue b do me do   "+xmlValues);
     }
 
     else  if(fieldName == "Onsite")
@@ -204,40 +332,56 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchOnsiteTime:"+formattedTime,
-        "towedStatus:C"
+        "towedStatus:C",
+        "lastLatitude:"+geoLocator.latitude,
+        "lastLongitude:"+geoLocator.longitude
       ];
       fieldName = "Onsite - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
-      print("sue b do me do   "+xmlValues);
-
     }
     else  if(fieldName == "Rolling")
     {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchRollingTime:"+formattedTime,
-        "towedStatus:C"
+        "towedStatus:C",
+        "lastLatitude:"+geoLocator.latitude,
+        "lastLongitude:"+geoLocator.longitude
       ];
       fieldName = "Rolling - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
-      print("sue b do me do   "+xmlValues);
     }
     else  if(fieldName == "Arrived")
     {
       fieldList = [
         "pinNumber:"+pinNumber,
         "dispatchArrivedTime:"+formattedTime,
-        "towedStatus:C"
+        "towedStatus:C",
+        "lastLatitude:"+geoLocator.latitude,
+        "lastLongitude:"+geoLocator.longitude
       ];
       fieldName = "Arrived - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     }
     else  if(fieldName == "Cleared")
     {
+      var towedStatus;
+      if(mode == "tow"){
+        towedStatus='T';
+        moveStatus=true;
+      }
+      else if(mode == "impound"){
+        towedStatus='I';
+        moveStatus=true;
+      }
       fieldList = [
         "pinNumber:"+pinNumber,
-        "dispatchClearedTime:"+formattedTime,
-        "towedStatus:C"
+        "towedStatus:"+towedStatus,
+        "dispatchProviderResponse:",
+        "dispatchProviderSelectedResponse:0",
+        "towType:"+towType.toString(),
+        "lastLatitude:"+geoLocator.latitude,
+        "lastLongitude:"+geoLocator.longitude
       ];
       fieldName = "Cleared - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
@@ -264,34 +408,21 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/update",
           "Host": "cktsystems.com",
-          //"Accept": "text/xml"
         },
         body: envelope);
 
-
-
     final resBody = xml2json.parse(response.body);
-//    final jsondata = xml2json.toParker();
-//
-//   final data = json.decode(jsondata);
-    print("response.body "+response.body);
-//    final extractedData = await data["soap:Envelope"]["soap:Body"]
-//    ["listMiniMobileResponse"]["listMiniMobileResult"]["items"]
-//    ["towedVehicleSummarys"];
-  //listMiniMobile('active', 0, 15,"");
-//    this.listMiniMobile("active", 1, 50, "");
     return response.body;
-
   }
   Future<List> get(id) async {
-
-    final String appName = "towing";
-    final int userId = 1;
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -308,12 +439,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/get",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 
@@ -325,10 +455,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
 
     getCallDetails(extractedData);
     return callDetails;
-   // _callDetails.dispatchStatusName = extractedData["dipstachStatusName"];
-//    _callDetails.add(
-//    new Call(
-//    dispatchStatusName:  extractedData["dipstachStatusName"]));
   }
   Future<List> listMiniMobile(String mode, int pageIndex, int pageSize, String _filterFields) async {
     int iStart = 0;
@@ -340,16 +466,16 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       iStart = (pageIndex * pageSize) + 1;
       iEnd = (iStart + pageSize) - 1;
     }
-
-    final String appName = "towing";
-    final int userId = 3556;
     String filterFields = "";
     String towedStatus;
     final bool listAfterInsert = true;
     final bool currentDayList = true;
     bool activeDispatch = true;
-    String pinNumber;
-    await await getSecureStore('pinNumber', (token) {
+
+    await getSecureStore('userId', (token) {
+      userId=token;
+    });
+    await getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
 
@@ -392,12 +518,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx?op=listMiniMobile',
+        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx?op=listMiniMobile',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMiniMobile",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 
@@ -670,7 +795,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       }
     }
       _activeCalls = activeCalls;
-      notifyListeners();
+//      notifyListeners();
   }
   getCompletedCalls(_completedCallsFiltered, count) {
     final List<Call> completedCalls = [];
@@ -1367,7 +1492,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       _searchedCalls = cancelledCalls;
       notifyListeners();
   }
-
   Color getProgressStyleColor(dispatchStatus) {
     Color color;
     switch (dispatchStatus) {
@@ -1417,7 +1541,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     }
     return color;
   }
-
   double getProgressStylePercentage(dispatchStatus) {
     switch (dispatchStatus) {
       case 'R':

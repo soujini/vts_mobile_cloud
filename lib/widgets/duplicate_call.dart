@@ -1,18 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vts_mobile_cloud/providers/calls_provider.dart';
+import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
+import 'package:vts_mobile_cloud/screens/success_screen.dart';
 import '../providers/processTowedVehicle_provider.dart';
+import 'call_add.dart';
+import '../models/call.dart';
+import 'dart:async';
 
 class DuplicateCall extends StatefulWidget {
-  DuplicateCall();
+  final Function save2;
+  DuplicateCall({Key key, this.save2}) : super(key: key);
 
-  @override
-  State<StatefulWidget> createState() {
-    return _DuplicateCallState();
-  }
+  _DuplicateCallState createState()=>_DuplicateCallState();
+
+//  final Function addCall;
+//
+//  TowReasonModal({Key key, this.setTowReason}) : super(key: key);
+
+//  @override
+//  State<StatefulWidget> createState() {
+//    return _DuplicateCallState();
+//  }
 }
+
+
 
 class _DuplicateCallState extends State<DuplicateCall> {
   final _formKey = GlobalKey<FormState>();
+
+  _showErrorMessage(BuildContext context, errorMessage) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+            backgroundColor: Colors.lightGreen,
+            content: Text(errorMessage,
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+                ))));
+  }
+
+//  save2() async{
+//    Navigator.pop(context);
+//    await Provider.of<Calls>(context, listen: false).create(widget._call);
+//    var response = Provider
+//        .of<Calls>(context, listen: false)
+//        .createResponse;
+//    if (response["errorStatus"] == "false") {
+//      _showErrorMessage(context, response["errorMessage"]);
+//    }
+//    else {
+////      Navigator.pop(context);
+//      Navigator.push(
+//          context,
+//          new MaterialPageRoute(
+//              builder: (context) =>
+//              new SuccessScreen()));
+//
+//      Timer(Duration(milliseconds: 3000), () {
+//        Navigator.pop(context);
+//        Navigator.push(
+//            context,
+//            new MaterialPageRoute(
+//                builder: (context) =>
+//                new CallsScreen()));
+//      });
+////
+//    }
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +78,10 @@ class _DuplicateCallState extends State<DuplicateCall> {
           Padding(
             padding: EdgeInsets.all(20.0),
             child: Text('DUPLICATE VEHICLE',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize:16, fontWeight: FontWeight.bold, color:Color(0xff1C3764))),
           ),
           Padding(
-              padding: EdgeInsets.all(0.0),
+              padding: EdgeInsets.all(15.0),
               child: Column(
                 children: <Widget>[
                   Padding(
@@ -40,6 +93,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -53,7 +107,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["storageCompanyName"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
@@ -65,7 +119,8 @@ class _DuplicateCallState extends State<DuplicateCall> {
                             child: Text('Towed Status',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Colors.grey,
+                                      color: Colors.grey,
+                                      fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -78,7 +133,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["towedStatusName"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
@@ -91,6 +146,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -103,7 +159,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["towedDate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
@@ -116,6 +172,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -129,7 +186,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["storageReceivedDate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
@@ -142,6 +199,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -155,7 +213,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["storageReleaseDate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
@@ -167,7 +225,8 @@ class _DuplicateCallState extends State<DuplicateCall> {
                             child: Text('VIN',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Colors.grey
+                                  color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -181,7 +240,8 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                     : ' ',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["VINDuplicate"] == "true" ? Colors.orange : Colors.black,
+                                  fontSize:14,
+                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["VINDuplicate"] == "true" ? Colors.red : Colors.black,
                                 )),
                           ),
                         ],
@@ -195,6 +255,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -210,7 +271,8 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                     : ' ',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["yearMakeModelDuplicate"] == "true" ? Colors.orange : Colors.black,
+                                  fontSize: 14,
+                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["yearMakeModelDuplicate"] == "true" ? Colors.red : Colors.black,
                                 )),
                           ),
                         ],
@@ -224,6 +286,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -236,7 +299,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["licensePlate"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
@@ -249,6 +312,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -262,7 +326,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["wreckerCompanyName"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
@@ -275,6 +339,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -288,7 +353,8 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                     : ' ',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
-                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["towedInvoiceDuplicate"] == "true" ? Colors.orange : Colors.black,
+                                  fontSize: 14,
+                                  color: Provider.of<ProcessTowedVehiclesVM>(context, listen:false).duplicateData["towedInvoiceDuplicate"] == "true" ? Colors.red : Colors.black,
                                 )),
                           ),
                         ],
@@ -302,6 +368,7 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                   color: Colors.grey,
+                                  fontSize:14,
                                 )),
                           ),
                           Expanded(
@@ -314,12 +381,12 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                         .duplicateData["stockNumber"]
                                     : ' ',
                                 textAlign: TextAlign.left,
-                                style: TextStyle()),
+                                style: TextStyle( fontSize:14)),
                           ),
                         ],
                       )),
                   Padding(
-                      padding: EdgeInsets.only(bottom: 20),
+                      padding: EdgeInsets.only(top: 20, bottom: 20),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -327,30 +394,47 @@ class _DuplicateCallState extends State<DuplicateCall> {
                                 'A similar vehicle already exists! Do you still wish to Add?',
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: Colors.green,
+                                    color: Color(0xff1C3764),
                                     fontSize: 15,
                                     fontWeight: FontWeight.bold)),
                           ),
                         ],
                       )),
                   Padding(
-                      padding: EdgeInsets.only(bottom: 10),
+                      padding: EdgeInsets.only(bottom: 15, top:15),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Expanded(
-                            child: FlatButton(
+                          //Expanded(
+
+                             FlatButton(
+                               shape: RoundedRectangleBorder(
+                                   borderRadius: BorderRadius.circular(0.0),
+                                   side: BorderSide(color: Colors.grey)
+                               ),
+                              color: Colors.white,
+                              textColor: Colors.grey,
                               child: Text('CANCEL', style: TextStyle( fontWeight: FontWeight.w500)),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             ),
-                          ),
-                          Expanded(
-                            child: FlatButton(
+                         // ),
+                        //  Expanded(
+                             FlatButton(
+                               shape: RoundedRectangleBorder(
+                                   borderRadius: BorderRadius.circular(0.0),
+                                   side: BorderSide(color: Colors.green)
+                               ),
+                              color: Colors.white,
+                              textColor: Colors.green,
                               child: Text('ADD CALL', style: TextStyle( fontWeight: FontWeight.w500)),
-                              onPressed: () {},
+                              onPressed: () {
+                                  widget.save2();
+                                  Navigator.pop(context);
+                              },
                             ),
-                          ),
+                          //),
                         ],
                       )),
                 ],

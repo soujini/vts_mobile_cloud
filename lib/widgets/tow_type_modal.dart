@@ -14,11 +14,11 @@ class TowTypeModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TowTypesVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Tow Type'),
+          title: Text('SELECT TOW TYPE', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -39,23 +39,21 @@ class TowTypeModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
+                      await Provider.of<TowTypesVM>(context, listen:false).listMini(pattern);
                       return Provider.of<TowTypesVM>(context, listen:false).towTypes;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                          leading: Icon(Icons.rv_hookup),
+                          leading: Icon(Icons.rv_hookup, size: 20, color:Colors.grey),
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Padding(
-                                  padding: EdgeInsets.only(bottom: 10, top: 15),
-                                  child: Text(suggestion.towTypeName)),
+                                  padding: EdgeInsets.only(bottom: 15, top: 13),
+                                  child: Text(suggestion.towTypeName, style:TextStyle(fontSize:14, fontWeight: FontWeight.w400))),
                               Padding(
                                   padding: EdgeInsets.only(bottom: 5, top: 5),
                                   child: Row(children: <Widget>[
-//                                    Text("Authorization  ",
-//                                        style: TextStyle(
-//                                            color: Colors.black, fontSize: 14)),
                                     Text(suggestion.towAuthorizationName,
                                         style: TextStyle(
                                             color: Colors.grey, fontSize: 14))
@@ -79,9 +77,7 @@ class TowTypeModal extends StatelessWidget {
                                       style: TextStyle(
                                           color: Colors.grey, fontSize: 14)),
                                     ])),
-
-
-                              Divider(height: 5.0, color: Colors.black38),
+                              Divider(color: Colors.black38),
                             ],
                           )
 //                      subtitle: Text('\$${suggestion['id']}'),

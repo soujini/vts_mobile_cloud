@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:vts_mobile_cloud/providers/secureStoreMixin_provider.dart';
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 
@@ -24,7 +25,13 @@ StorageCompany _towCustomerFromJson(Map<String, dynamic> parsedJson) {
       towedInvoice: int.parse(parsedJson['towedInvoice']));
 }
 
-class StorageCompaniesVM with ChangeNotifier {
+class StorageCompaniesVM with ChangeNotifier, SecureStoreMixin {
+  Xml2Json xml2json = new Xml2Json();
+  final String appName = "towing";
+  String userId="";
+  String pinNumber="";
+  String timeZoneName="";
+
   var _storageCompanyData;
   var sc;
 
@@ -32,12 +39,10 @@ class StorageCompaniesVM with ChangeNotifier {
     return _storageCompanyData;
   }
 
-  Future get(storageCompanyId) async {
-    Xml2Json xml2json = new Xml2Json();
-
-    final String appName = "towing";
-    final int userId = 3556;
-    int id = storageCompanyId;
+  Future get(int storageCompanyId) async {
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -48,18 +53,17 @@ class StorageCompaniesVM with ChangeNotifier {
         "<get xmlns=\"http://cktsystems.com/\">"
         "<appName>${appName}</appName>"
         "<userId>${userId}</userId>"
-        "<id>${id}</id>"
+        "<id>${storageCompanyId}</id>"
         "</get>"
         "</soap:Body>"
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/storageCompanyTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/storageCompanyTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/get",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 
@@ -71,6 +75,5 @@ class StorageCompaniesVM with ChangeNotifier {
     ["getResponse"]["getResult"];
 
     sc = Map.from(extractedData);
-
   }
 }

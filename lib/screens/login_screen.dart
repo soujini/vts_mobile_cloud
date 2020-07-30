@@ -57,7 +57,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
           content: Text(Provider.of<UsersVM>(context, listen:false).userData[0].errorMessage,
               style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
         ))));
-
   }
 
   @override
@@ -96,12 +95,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       ),
                       child: TextFormField(
                           onEditingComplete: () {
-                            this.submit(context);
-                            FocusScope.of(context).requestFocus(new FocusNode());
+//                            this.submit(context);
+//                            FocusScope.of(context).requestFocus(new FocusNode());
+//                            FocusScope.of(context).unfocus();
                           },
                           decoration: new InputDecoration(
                             prefixIcon: Icon(Icons.account_circle,
-                                color: Color(0XffC4CFDB)),
+                                color: Color(0XffB5B5BF)),
                             fillColor: Colors.white,
                             filled: true,
                             focusedBorder: UnderlineInputBorder(
@@ -109,7 +109,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                     color: Colors.green, width: 3.0)),
                             hintText: 'USERNAME',
                             hintStyle: TextStyle(
-                                fontSize: 16.0, color: Color(0XffC4CFDB)),
+                                fontSize: 16.0, color: Color(0XffB5B5BF)),
                           ),
                           style: new TextStyle(
                               letterSpacing: 1.0,
@@ -122,7 +122,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             }
                             return null;
                           },
-                          onSaved: (String value) {
+                          onChanged: (String value) {
                             _user.userName = value;
                           })),
                   Padding(
@@ -135,13 +135,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                     child: TextFormField(
                         onEditingComplete: () {
-                          this.submit(context);
-                          FocusScope.of(context).requestFocus(new FocusNode());
+//                          this.submit(context);
+//                          FocusScope.of(context).requestFocus(new FocusNode());
                         },
                         obscureText: true,
                         decoration: new InputDecoration(
                           prefixIcon:
-                              Icon(Icons.lock_open, color: Color(0XffC4CFDB)),
+                              Icon(Icons.lock_open, color: Color(0XffB5B5BF)),
                           fillColor: Colors.white,
                           filled: true,
                           focusedBorder: UnderlineInputBorder(
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   BorderSide(color: Colors.green, width: 3.0)),
                           hintText: 'PASSWORD',
                           hintStyle: TextStyle(
-                              fontSize: 16.0, color: Color(0XffC4CFDB)),
+                              fontSize: 16.0, color: Color(0XffB5B5BF)),
                         ),
                         style: new TextStyle(
                             letterSpacing: 1.0,
@@ -162,7 +162,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           }
                           return null;
                         },
-                        onSaved: (String value) {
+                        onChanged: (String value) {
                           _user.password = value;
                         }),
                   ),
@@ -176,13 +176,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                     child: TextFormField(
                         onEditingComplete: () {
-                          this.submit(context);
-                          FocusScope.of(context).requestFocus(new FocusNode());
+//                          this.submit(context);
+//                          FocusScope.of(context).requestFocus(new FocusNode());
                         },
 //                        onSubmitted: (value) {},
                         decoration: new InputDecoration(
                           prefixIcon:
-                              Icon(Icons.dialpad, color: Color(0XffC4CFDB)),
+                              Icon(Icons.dialpad, color: Color(0XffB5B5BF)),
                           fillColor: Colors.white,
                           filled: true,
                           focusedBorder: UnderlineInputBorder(
@@ -190,7 +190,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                                   BorderSide(color: Colors.green, width: 3.0)),
                           hintText: 'CUSTOMER PIN',
                           hintStyle: TextStyle(
-                              fontSize: 16.0, color: Color(0XffC4CFDB)),
+                              fontSize: 16.0, color: Color(0XffB5B5BF)),
                         ),
                         style: new TextStyle(
                             letterSpacing: 1.0,
@@ -203,7 +203,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                           }
                           return null;
                         },
-                        onSaved: (String value) {
+                        onChanged: (String value) {
                           _user.pinNumber = value;
                         }),
                   ),

@@ -7,6 +7,7 @@ import 'package:vts_mobile_cloud/widgets/tow_type_modal.dart';
 import 'package:vts_mobile_cloud/widgets/authorization_modal.dart';
 import 'package:vts_mobile_cloud/widgets/wrecker_company_modal.dart';
 import 'package:vts_mobile_cloud/widgets/wrecker_driver_modal.dart';
+import '../providers/secureStoreMixin_provider.dart';
 
 import '../widgets/search_calls_list.dart';
 
@@ -17,7 +18,7 @@ class SearchCallScreen extends StatefulWidget {
   }
 }
 
-class SearchCallScreenState extends State<SearchCallScreen> {
+class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixin {
   DateTime now = DateTime.now();
 
   List<RadioModel> searchOption = new List<RadioModel>();
@@ -30,6 +31,8 @@ class SearchCallScreenState extends State<SearchCallScreen> {
   var selectedTypeIndex;
   var selectedModalOption=0;
   final myController = TextEditingController();
+  String userRole;
+  var dispatchPaging;
 
   @override
   void dispose() {
@@ -42,23 +45,25 @@ class SearchCallScreenState extends State<SearchCallScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    searchOption.add(new RadioModel(false, 'CALL DATE', ''));
-    searchOption.add(new RadioModel(false, 'PLATE #', ''));
-    searchOption.add(new RadioModel(false, 'PO#', ''));
-    searchOption.add(new RadioModel(false, 'INVOICE', ''));
-    searchOption.add(new RadioModel(false, 'DRIVER', ''));
-    searchOption.add(new RadioModel(false, 'COMPANY', ''));
-    searchOption.add(new RadioModel(false, 'AUTHORIZATION', ''));
-    searchOption.add(new RadioModel(false, 'TOW TYPE', ''));
+    getRole();
+    getDispatchPaging();
+    searchOption.add(new RadioModel(false, 'Call Date', ''));
+    searchOption.add(new RadioModel(false, 'Plate #', ''));
+    searchOption.add(new RadioModel(false, 'PO #', ''));
+    searchOption.add(new RadioModel(false, 'Invoice', ''));
+    searchOption.add(new RadioModel(false, 'Driver', ''));
+    searchOption.add(new RadioModel(false, 'Company', ''));
+    searchOption.add(new RadioModel(false, 'Authorization', ''));
+    searchOption.add(new RadioModel(false, 'Tow type', ''));
 
-    searchOptionType.add(new RadioModel(false, 'ALL', ''));
-    searchOptionType.add(new RadioModel(false, 'RECEIVED', ''));
-    searchOptionType.add(new RadioModel(false, 'DISPATCH', ''));
-    searchOptionType.add(new RadioModel(false, 'ENROUTE', ''));
-    searchOptionType.add(new RadioModel(false, 'ONSITE', ''));
-    searchOptionType.add(new RadioModel(false, 'ROLLING', ''));
-    searchOptionType.add(new RadioModel(false, 'ARRIVED', ''));
-    searchOptionType.add(new RadioModel(false, 'CLEARED', ''));
+    searchOptionType.add(new RadioModel(false, 'All', ''));
+    searchOptionType.add(new RadioModel(false, 'Received', ''));
+    searchOptionType.add(new RadioModel(false, 'Dispatch', ''));
+    searchOptionType.add(new RadioModel(false, 'Enroute', ''));
+    searchOptionType.add(new RadioModel(false, 'Onsite', ''));
+    searchOptionType.add(new RadioModel(false, 'Rolling', ''));
+    searchOptionType.add(new RadioModel(false, 'Arrived', ''));
+    searchOptionType.add(new RadioModel(false, 'Cleared', ''));
   }
 
   setDriver(id, name) {
@@ -91,8 +96,6 @@ class SearchCallScreenState extends State<SearchCallScreen> {
               .value;
     });
   }
-
-
   setAuthorization(id, name) {
     selectedModalOption=id;
     setState(() {
@@ -104,12 +107,27 @@ class SearchCallScreenState extends State<SearchCallScreen> {
     });
   }
 
+  getRole() async{
+   await  getSecureStore('userRole', (token) {
+      setState(() {
+        userRole=token;
+      });
+    });
+  }
+  getDispatchPaging() async{
+   await  getSecureStore('dispatchPaging', (token) {
+      setState(() {
+        dispatchPaging=token;
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
        // home: Scaffold(
             appBar: AppBar(
-              title: Text("Search Calls"),
+              title: Text('SEARCH CALLS', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
             ),
             body: SingleChildScrollView(
               child:Center(
@@ -117,9 +135,8 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                 Row(children: <Widget>[
                   Padding(
                     padding:EdgeInsets.all(20.0),
-                        child:   Text("SEARCH OPTION (Choose any one)"),
+                        child:   Text("SEARCH OPTION (Choose any one)", style:TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Color(0xff1c3764))),
                   )
-
                 ]),
                 SizedBox(
                   height: 125,
@@ -172,21 +189,20 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                   ),
 
                 ),
-
-//                Text("asdasdhajdsaskd "+selectedOptionIndex.toString()),
                 Padding(
-                  padding:EdgeInsets.all(20.0),
+                  padding:EdgeInsets.all(0.0),
                   child:(selectedOptionIndex == 1 || selectedOptionIndex == 2 || selectedOptionIndex == 3) ?
                   SizedBox(
                   height: 75,
                   child: TextField(
                       controller: myController,
                       decoration:
-                      InputDecoration(labelText: 'Enter Value for Search Option')
+                      InputDecoration(labelText: 'Enter Value for Search Option', labelStyle: TextStyle())
+
                   ),
                 ) : (selectedOptionIndex == 0)
                       ?
-                  ListTile(
+                  new ListTile(
                     title: new TextFormField(
                       controller: myController,
                       decoration: new InputDecoration(
@@ -317,8 +333,9 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                 ),
                 Row(children: <Widget>[
                   Padding(
-                    padding:EdgeInsets.all(20.0),
-                    child:   Text("SEARCH TYPE (Choose any one)"),
+                    padding:EdgeInsets.all(10.0),
+                    child:   Text("SEARCH TYPE (Choose any one)", style: TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold, color:Color(0xff1c3764))),
                   )
 
                 ]),
@@ -366,21 +383,16 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                     }),
                   ),
                 ),
-
-
                 SizedBox(
-                    //                    padding: EdgeInsets.all(8.0),
-
-//                        width: 100,
                     height: 50,
                     child: FlatButton(
-//                      color: selected_status == "Accept" ? Color(0xff12406F): Colors.white,
-//                      textColor: selected_status == "Accept" ? Colors.white: Colors.black,
+                        color: Color(0xff1C3764),
+                        textColor: Colors.white,
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(10.0),
-                            side: BorderSide(color: Color(0xff333333))),
+                            side: BorderSide(color: Color(0xff1C3764))),
                         disabledTextColor: Colors.black,
-                        padding: EdgeInsets.all(0.0),
+                        padding: EdgeInsets.all(8.0),
                         splashColor: Colors.blueAccent,
                         onPressed: () {
                           if(selectedOptionIndex == 0){
@@ -406,7 +418,7 @@ class SearchCallScreenState extends State<SearchCallScreen> {
                               context,
                               new MaterialPageRoute(
                                   builder: (context) =>
-                                      SearchListScreen(filterFields)));
+                                      SearchListScreen(filterFields, userRole, dispatchPaging)));
                         },
                         child: Text('FIND')))
               ]),

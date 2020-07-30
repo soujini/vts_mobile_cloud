@@ -3,13 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/calls_provider.dart';
 import '../screens/vehicle_info.dart';
 import '../screens/add_edit_call.dart';
 import '../widgets/update_status.dart';
 
 class CancelledCallsList extends StatelessWidget {
+  CancelledCallsList(this.userRole, this.dispatchPaging);
+  final userRole;
+   var dispatchPaging;
+
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
     return await Provider.of<Calls>(context, listen:false)
@@ -20,7 +24,7 @@ class CancelledCallsList extends StatelessWidget {
           builder: ((context) => AlertDialog(
             title: Text("An error occured!"),
             content:
-            Text("Oops something went wrong " + onError.toString()),
+            Text("Oops! Something went wrong!" + onError.toString()),
             actions: <Widget>[
               FlatButton(
                 child: Text("OK"),
@@ -44,9 +48,6 @@ class CancelledCallsList extends StatelessWidget {
             showRetry: false,
             loadingBuilder: (context) {
               return Loader();
-              //              return CircularProgressIndicator(
-////                backgroundColor: Colors.green,
-//              );
             },
             noItemsFoundBuilder: (context) {
               return Text('No Items Found');
@@ -68,7 +69,7 @@ class CancelledCallsList extends StatelessWidget {
         child: Column(children: <Widget>[
           Card(
               child: Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -77,46 +78,41 @@ class CancelledCallsList extends StatelessWidget {
                           radius: 40.0,
                           lineWidth: 5.0,
                           percent: cancelledCalls.progressPercentage,
-//                                        header: new Text("Icon header"),
                           center: new Icon(Icons.directions_car,
-                              size: 15.0, color: Colors.black),
+                              size: 12.0, color: Colors.black),
                           backgroundColor: Colors.black12,
                           progressColor: cancelledCalls.progressStyleColor,
                         ),
                         Expanded(child: SizedBox()),
                         Text((cancelledCalls.dispatchStatusName.toUpperCase()),
-                            // .toUpperCase(),
                             style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
                                 color: cancelledCalls.progressStyleColor)),
-                        //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
-                              Provider.of<Calls>(context, listen:false).selectedCall.id = cancelledCalls.id;
-                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchStatusName = cancelledCalls.dispatchStatusName;
-                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchInstructions_string = cancelledCalls.dispatchInstructions_string;
+                              Provider.of<Calls>(context, listen:false).selectedCall = cancelledCalls;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
-                                      new AddEditCallScreen()));
+                                      new AddEditCallScreen(0)));
                             },
                             textColor: Colors.grey,
-                            icon: Icon(Icons.edit),
-                            label: Text('Edit Call')),
+                            icon: Icon(Icons.edit, size:14),
+                            label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                         FlatButton.icon(
                             onPressed: () {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(int.parse(cancelledCalls.id),cancelledCalls.dispatchStatusName, cancelledCalls.dispatchInstructions_string);
+                                    return UpdateStatus(cancelledCalls.id,cancelledCalls.dispatchStatusName, cancelledCalls.dispatchInstructions_string, userRole, dispatchPaging, cancelledCalls.towType);
                                   });
                               // showDialogUpdateStatus(context);
                             },
                             textColor: Colors.grey,
-                            icon: Icon(Icons.update),
-                            label: Text('Update Status')),
+                            icon: Icon(Icons.update, size:14),
+                            label: Text('Update Status', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                       ]),
                       Text(
                           '\$${cancelledCalls.towedTotalAmount.toStringAsFixed(2)}',
@@ -124,11 +120,15 @@ class CancelledCallsList extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
-                              fontSize: 14)),
-                      Text((cancelledCalls.towReasonName),
-                          style: TextStyle(color: Colors.grey, fontSize: 14)),
+                              fontSize: 12)),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5),
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: (Column(
+                              children: <Widget>[
+                                Text((cancelledCalls.towReasonName.toUpperCase()),
+                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))),]))),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
                           children: <Widget>[
                             new Row(
@@ -136,24 +136,31 @@ class CancelledCallsList extends StatelessWidget {
                                 Text(
                                     (cancelledCalls.vehicleYear.toString() +
                                         ' ' +
+                                        cancelledCalls.vehicleMakeName + ' ' +
                                         cancelledCalls.vehicleYearMakeModelName),
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color:Color(0xff303030))),
                                 Text(' '),
                                 Text(('(' + cancelledCalls.color + ')'),
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color:Color(0xff303030))),
                               ],
                             ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: (Column(
+                                children: <Widget>[
                             new Row(
                               children: <Widget>[
                                 Text((cancelledCalls.towedInvoice),
                                     style: TextStyle(
                                         color: Colors.grey, fontSize: 14)),
                               ],
-                            ),
+                            )]))),
                           ],
                         )),
                       ),
@@ -164,74 +171,79 @@ class CancelledCallsList extends StatelessWidget {
                             new Row(
                               children: <Widget>[
                                 Text((cancelledCalls.towCustomerName),
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500, color:Color(0xff303030))),
                                 Text(' '),
                                 Text((cancelledCalls.dispatchDate),
-                                    style: TextStyle(fontSize: 14)),
-
-//                                          Text(
-//                                              (DateFormat('MM-dd-yyyy')
-//                                                  .format(cancelledCalls
-//                                                  .dispatchDate)),
-//                                              style: TextStyle(
-//                                                  fontSize: 14)),
-                                Text(' '),
-//                                          Text(
-//                                              ('(' +
-//                                                  DateFormat('H:mm')
-//                                                      .format(cancelledCalls[
-//                                                  index]
-//                                                      .dispatchDispatchTime) +
-//                                                  ')'),
-//                                              style: TextStyle(
-//                                                  color: Colors.grey,
-//                                                  fontSize: 14)),
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color:Color(0xffB5B5B4))),
                               ],
                             ),
                             new Row(
                               children: <Widget>[
                                 Text((cancelledCalls.dispatchContact),
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500, color:Color(0xff303030),)),
                                 Text(' '),
-                                Text((cancelledCalls.dispatchContactPhone),
-                                    style: TextStyle(fontSize: 14)),
+                                Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: (Column(
+                                        children: <Widget>[
+                                          new GestureDetector(
+                                            onTap: () {
+                                              launch("tel://" +
+                                                  cancelledCalls.dispatchContactPhone);
+                                            },
+                                            child: Text(
+                                                (cancelledCalls.dispatchContactPhone),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color:Color(0xff6C89BA),)),
+                                          )]))),
                               ],
                             ),
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (cancelledCalls.towedStreet +
-                                        ' ' +
-                                        cancelledCalls.towedStreetTwo +
-                                        ' ' +
-                                        cancelledCalls.towedCityName +
-                                        ' ' +
-                                        cancelledCalls.towedStateName +
-                                        ' ' +
-                                        cancelledCalls.towedZipCode),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
-                              ],
-                            ),
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (cancelledCalls.towedToStreet +
-                                        ' ' +
-                                        cancelledCalls.towedToStreetTwo +
-                                        ' ' +
-                                        cancelledCalls.towedToCityName +
-                                        ' ' +
-                                        cancelledCalls.towedToStateName +
-                                        ' ' +
-                                        cancelledCalls.towedToZipCode),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
-                              ],
-                            ),
+
+
                           ],
                         )),
                       ),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: (Column(
+                            children: <Widget>[
+                              new Row(
+                                children: <Widget>[
+                                  Text(
+                                      (cancelledCalls.towedStreet != null ? cancelledCalls.towedStreet :''  +
+                                          ' ' +
+                                          cancelledCalls.towedStreetTwo != null ? cancelledCalls.towedStreetTwo :''  +
+                                          ' ' +
+                                          cancelledCalls.towedCityName != null ? cancelledCalls.towedCityName :''  +
+                                          ' ' +
+                                          cancelledCalls.towedStateName != null ? cancelledCalls.towedStateName :''  +
+                                          ' ' +
+                                          cancelledCalls.towedZipCode  != null ? cancelledCalls.towedZipCode :''),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
+                                ],
+                              ),
+                            ]))),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: (Column(
+                            children: <Widget>[
+                              new Row(
+                                children: <Widget>[
+                                  Text(
+                                      (cancelledCalls.towedToStreet != null ? cancelledCalls.towedToStreet :''  +
+                                          ' ' +
+                                          cancelledCalls.towedToStreetTwo != null ? cancelledCalls.towedToStreetTwo :''  +
+                                          ' ' +
+                                          cancelledCalls.towedToCityName != null ? cancelledCalls.towedToCityName :''  +
+                                          ' ' +
+                                          cancelledCalls.towedToStateName != null ? cancelledCalls.towedToStateName :''  +
+                                          ' ' +
+                                          cancelledCalls.towedToZipCode  != null ? cancelledCalls.towedToZipCode :''),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
+                                ],
+                              ),
+                            ])))
                     ],
                   ))),
           //Divider()

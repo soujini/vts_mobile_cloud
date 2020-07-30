@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vts_mobile_cloud/providers/towedVehiclePictures_provider.dart';
+import '../providers/calls_provider.dart';
 import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 
 class PhotosAdd extends StatefulWidget {
   @override
@@ -12,11 +16,12 @@ class PhotosAdd extends StatefulWidget {
 }
 
 class _PhotosAddState extends State<PhotosAdd> {
+  final _formKey = GlobalKey<FormState>();
+  final _picture = TowedVehiclePicture();
   File _image;
-
+  final _picker = ImagePicker();
   List<RadioModel> searchOption = new List<RadioModel>();
   String filterFields = "";
-
   String searchOptionField = "";
   var selectedOptionIndex;
   final myController = TextEditingController();
@@ -32,14 +37,14 @@ class _PhotosAddState extends State<PhotosAdd> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    searchOption.add(new RadioModel(false, 'REAR VIEW', ''));
-    searchOption.add(new RadioModel(false, 'LEFT SIDE VIEW', ''));
-    searchOption.add(new RadioModel(false, 'FRONT VIEW', ''));
-    searchOption.add(new RadioModel(false, 'RIGHT SIDE VIEW', ''));
-    searchOption.add(new RadioModel(false, 'DRIVER\'S LICENSE', ''));
-    searchOption.add(new RadioModel(false, 'PHOTO ID', ''));
-    searchOption.add(new RadioModel(false, 'PASSPORT', ''));
-    searchOption.add(new RadioModel(false, 'INSURANCE CARD', ''));
+    searchOption.add(new RadioModel(false, 'REAR VIEW', '4'));
+    searchOption.add(new RadioModel(false, 'LEFT SIDE VIEW', '2'));
+    searchOption.add(new RadioModel(false, 'FRONT VIEW', '1'));
+    searchOption.add(new RadioModel(false, 'RIGHT SIDE VIEW', '3'));
+    searchOption.add(new RadioModel(false, 'DRIVER\'S LICENSE', '5'));
+    searchOption.add(new RadioModel(false, 'PHOTO ID', '6'));
+    searchOption.add(new RadioModel(false, 'PASSPORT', '7'));
+    searchOption.add(new RadioModel(false, 'INSURANCE CARD', '8'));
 
   }
   Future<void> _optionsDialogBox() {
@@ -66,29 +71,66 @@ class _PhotosAddState extends State<PhotosAdd> {
           );
         });
   }
-
   Future openCamera() async{
     Navigator.of(context, rootNavigator: true).pop();
-    var picture = await ImagePicker.pickImage(
-      source: ImageSource.camera,
-    );
+     final PickedFile pickedFile = await _picker.getImage(source: ImageSource.camera);
     setState(() {
-
-      _image = picture;
+      _image = File(pickedFile.path.toString());
+      List<int> imageBytes = _image.readAsBytesSync();
+      _picture.base64Photo = base64.encode(imageBytes);
     });
   }
-
-    openGallery() async{
+    Future openGallery() async{
       Navigator.of(context, rootNavigator: true).pop();
-    var gallery = await ImagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
+    final PickedFile pickedFile = await _picker.getImage(source: ImageSource.gallery);
     setState(() {
-
-      _image = gallery;
+      _image = File(pickedFile.path);
+      List<int> imageBytes = _image.readAsBytesSync();
+      _picture.base64Photo = base64.encode(imageBytes);
     });
   }
+  Future save() async{
+    final form = _formKey.currentState;
+    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
+    _picture.towedVehicle = selectedCall.id;
+//    _picture.vehicleNotes= "";
+print(selectedOptionIndex);
+if(selectedOptionIndex == 0){
+  _picture.vehiclePictureType=4;
+}
+else if(selectedOptionIndex == 1){
+      _picture.vehiclePictureType=2;
+    }
+else if(selectedOptionIndex == 2){
+  _picture.vehiclePictureType=1;
+}
+else if(selectedOptionIndex == 3){
+  _picture.vehiclePictureType=3;
+}
+else if(selectedOptionIndex == 4){
+  _picture.vehiclePictureType=5;
+}
+else if(selectedOptionIndex == 5){
+  _picture.vehiclePictureType=6;
+}
+else if(selectedOptionIndex == 6){
+  _picture.vehiclePictureType=7;
+}
+else if(selectedOptionIndex == 7){
+  _picture.vehiclePictureType=8;
+}
 
+//   form.save();
+//    print(form);
+    await Provider.of<TowedVehiclePicturesVM>(context, listen:false).create(_picture);
+//    .then((res) {
+//      Navigator.push(
+//          context,
+//          new MaterialPageRoute(
+//              builder: (context) =>
+//              new AddEditCallScreen()));
+//    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,9 +168,9 @@ class _PhotosAddState extends State<PhotosAdd> {
                               _optionsDialogBox();
                               setState(() {
                                 selectedOptionIndex = index;
-                                myController.value =
-                                    new TextEditingController.fromValue(new TextEditingValue(text: ""))
-                                        .value;
+                                myController.value = new TextEditingController.fromValue(new TextEditingValue(text: "")).value;
+
+//                                _picture.vehiclePictureType=new TextEditingController.fromValue(new TextEditingValue(text: "")).value;
                               });
 //                              if (index == 0) {
 //                                searchOptionField = "dispatchDate:";
@@ -189,7 +231,7 @@ class _PhotosAddState extends State<PhotosAdd> {
                         disabledTextColor: Colors.black,
                         padding: EdgeInsets.all(0.0),
                         splashColor: Colors.blueAccent,
-                        onPressed: () {
+                        onPressed:  () =>save(),
 //                          if(selectedOptionIndex == 0){
 //                            filterFields = searchOptionField +
 //                                myController.text +
@@ -210,7 +252,7 @@ class _PhotosAddState extends State<PhotosAdd> {
 //
 //                          }
 
-                        },
+
                         child: Text('SAVE')))
               ]),
             )));

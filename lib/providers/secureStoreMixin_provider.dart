@@ -12,7 +12,7 @@ MyClass extends StatelessWidget with SecureStoreMixin {
   }
 
   exampleGet(){
-     getSecureStore('jwt', (token) { print(token); });
+    await  getSecureStore('jwt', (token) { print(token); });
   }
 }
 

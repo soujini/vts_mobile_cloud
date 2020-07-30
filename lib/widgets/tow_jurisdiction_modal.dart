@@ -14,11 +14,11 @@ class TowJurisdictionModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<TowJurisdictionsVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Tow Jurisdiction'),
+          title: Text('SELECT TOW JURISDICTION', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -39,18 +39,19 @@ class TowJurisdictionModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
+                      await Provider.of<TowJurisdictionsVM>(context, listen:false).listMini(pattern);
                       return Provider.of<TowJurisdictionsVM>(context, listen:false).towJurisdictions;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
-                          leading: Icon(Icons.account_balance),
+                          leading: Icon(Icons.account_balance,size: 20, color:Colors.grey),
                           title: Column(
                               crossAxisAlignment:  CrossAxisAlignment.start,
                               children: <Widget>[
                                 Padding(
-                                    padding: EdgeInsets.only(bottom: 10, top: 15),
+                                    padding: EdgeInsets.only(bottom: 15, top: 13),
                                     child: Text(suggestion.towJurisdictionName)),
-                                Divider(height: 5.0, color: Colors.black38),
+                                Divider(color: Colors.black38),
                               ] )
                       );
                     },

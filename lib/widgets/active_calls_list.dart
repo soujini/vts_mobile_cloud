@@ -12,7 +12,11 @@ import '../widgets/update_status.dart';
 
 
 class ActiveCallsList extends StatelessWidget {
+  ActiveCallsList(this.userRole, this.dispatchPaging);
+  String userRole;
+  var dispatchPaging;
   static const int PAGE_SIZE = 15;
+
   Future<List> _refreshCallsList(BuildContext context) async {
     return await Provider.of<Calls>(context, listen:false)
         .listMiniMobile('active', 0, PAGE_SIZE,"")
@@ -22,7 +26,7 @@ class ActiveCallsList extends StatelessWidget {
           builder: ((context) => AlertDialog(
                 title: Text("An error occured!"),
                 content:
-                    Text("Oops something went wrong " + onError.toString()),
+                    Text("Oops! Something went wrong!" + onError.toString()),
                 actions: <Widget>[
                   FlatButton(
                     child: Text("OK"),
@@ -67,8 +71,9 @@ class ActiveCallsList extends StatelessWidget {
         },
         child: Column(children: <Widget>[
           Card(
+            elevation: 0,
               child: Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -79,45 +84,28 @@ class ActiveCallsList extends StatelessWidget {
                           percent: activeCalls.progressPercentage,
 //                                        header: new Text("Icon header"),
                           center: new Icon(Icons.directions_car,
-                              size: 15.0, color: Colors.black),
+                              size: 12.0, color: Colors.black),
                           backgroundColor: Colors.black12,
                           progressColor: activeCalls.progressStyleColor,
                         ),
                         Expanded(child: SizedBox()),
                         Text((activeCalls.dispatchStatusName.toUpperCase()),
-                            // .toUpperCase(),
                             style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
                                 color: activeCalls.progressStyleColor)),
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
-
                             onPressed: () {
-                              Provider
-                                  .of<Calls>(context, listen:false)
-                                  .selectedCall
-                                  .id = activeCalls.id;
-                              Provider
-                                  .of<Calls>(context, listen:false)
-                                  .selectedCall
-                                  .dispatchStatusName =
-                                  activeCalls.dispatchStatusName;
-                              Provider
-                                  .of<Calls>(context, listen:false)
-                                  .selectedCall
-                                  .dispatchInstructions_string =
-                                  activeCalls.dispatchInstructions_string;
-
+                              Provider.of<Calls>(context, listen:false).selectedCall = activeCalls;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
-                                      new AddEditCallScreen()));
+                                      new AddEditCallScreen(0)));
                             },
-                            textColor: Colors.grey,
-                            icon: Icon(Icons.edit),
-                            label: Text('Edit Call')),
+                            icon: Icon(Icons.edit, size:14),
+                            label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                         FlatButton.icon(
                             onPressed: () {
                               showDialog(
@@ -127,12 +115,11 @@ class ActiveCallsList extends StatelessWidget {
                                       UpdateStatus(activeCalls.id,
                                           activeCalls.dispatchStatusName,
                                           activeCalls
-                                              .dispatchInstructions_string);
+                                              .dispatchInstructions_string, userRole, dispatchPaging, activeCalls.towType);
                                   });
                             },
-                            textColor: Colors.grey,
-                            icon: Icon(Icons.update),
-                            label: Text('Update Status')),
+                            icon: Icon(Icons.update, size:14),
+                            label: Text('Update Status', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                       ]),
                       Text(
                           '\$${activeCalls.towedTotalAmount.toStringAsFixed(
@@ -141,11 +128,15 @@ class ActiveCallsList extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
-                              fontSize: 14)),
-                      Text((activeCalls.towReasonName),
-                          style: TextStyle(color: Colors.grey, fontSize: 14)),
+                              fontSize: 12)),
+    Padding(
+    padding: EdgeInsets.symmetric(vertical: 5),
+    child: (Column(
+    children: <Widget>[
+                      Text((activeCalls.towReasonName.toUpperCase()),
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))),]))),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5),
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
                           children: <Widget>[
                             new Row(
@@ -156,22 +147,28 @@ class ActiveCallsList extends StatelessWidget {
                                         activeCalls.vehicleMakeName + ' ' +
                                         activeCalls.vehicleYearMakeModelName),
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color:Color(0xff303030))),
                                 Text(' '),
                                 Text(('(' + activeCalls.color + ')'),
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color:Color(0xff303030))),
                               ],
                             ),
+    Padding(
+    padding: EdgeInsets.symmetric(vertical: 5),
+    child: (Column(
+    children: <Widget>[
                             new Row(
                               children: <Widget>[
                                 Text((activeCalls.towedInvoice),
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
+                                        fontWeight: FontWeight.w500, fontSize: 12,  color:Color(0xffB5B5B4))),
                               ],
-                            ),
+                            )]))),
                           ],
                         )),
                       ),
@@ -182,35 +179,21 @@ class ActiveCallsList extends StatelessWidget {
                             new Row(
                               children: <Widget>[
                                 Text((activeCalls.towCustomerName),
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500, color:Color(0xff303030))),
                                 Text(' '),
                                 Text((activeCalls.dispatchDate),
-                                    style: TextStyle(fontSize: 14)),
-
-//                                          Text(
-//                                              (DateFormat('MM-dd-yyyy')
-//                                                  .format(activeCalls
-//                                                  .dispatchDate)),
-//                                              style: TextStyle(
-//                                                  fontSize: 14)),
-                                Text(' '),
-//                                          Text(
-//                                              ('(' +
-//                                                  DateFormat('H:mm')
-//                                                      .format(activeCalls[
-//                                                  index]
-//                                                      .dispatchDispatchTime) +
-//                                                  ')'),
-//                                              style: TextStyle(
-//                                                  color: Colors.grey,
-//                                                  fontSize: 14)),
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color:Color(0xffB5B5B4))),
                               ],
                             ),
                             new Row(
                               children: <Widget>[
                                 Text((activeCalls.dispatchContact),
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500, color:Color(0xff303030),)),
                                 Text(' '),
+                                Padding(
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                child: (Column(
+                                children: <Widget>[
                                 new GestureDetector(
                                   onTap: () {
                                     launch("tel://" +
@@ -218,49 +201,61 @@ class ActiveCallsList extends StatelessWidget {
                                   },
                                   child: Text(
                                       (activeCalls.dispatchContactPhone),
-                                      style: TextStyle(fontSize: 14)),
-                                )
+                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color:Color(0xff6C89BA),)),
+                                )]))),
 
                               ],
                             ),
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (activeCalls.towedStreet +
-                                        ' ' +
-                                        activeCalls.towedStreetTwo +
-                                        ' ' +
-                                        activeCalls.towedCityName +
-                                        ' ' +
-                                        activeCalls.towedStateName +
-                                        ' ' +
-                                        activeCalls.towedZipCode),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
-                              ],
-                            ),
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (activeCalls.towedToStreet +
-                                        ' ' +
-                                        activeCalls.towedToStreetTwo +
-                                        ' ' +
-                                        activeCalls.towedToCityName +
-                                        ' ' +
-                                        activeCalls.towedToStateName +
-                                        ' ' +
-                                        activeCalls.towedToZipCode),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
-                              ],
-                            ),
+
                           ],
                         )),
                       ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5),
+                child: (Column(
+                    children: <Widget>[
+                      new Row(
+                        children: <Widget>[
+                          Text(
+                              (activeCalls.towedStreet != null ? activeCalls.towedStreet :''  +
+                                  ' ' +
+                                  activeCalls.towedStreetTwo != null ? activeCalls.towedStreetTwo:'' +
+                                  ' ' +
+                                  activeCalls.towedCityName != null ? activeCalls.towedCityName:'' +
+                                  ' ' +
+                                  activeCalls.towedStateName != null ? activeCalls.towedStateName:'' +
+                                  ' ' +
+                                  activeCalls.towedZipCode  != null ? activeCalls.towedZipCode:''),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
+                        ],
+                      ),
+                    ]))
+            ),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: (Column(
+                              children: <Widget>[
+                                new Row(
+                                  children: <Widget>[
+                                    Text(
+                                        (activeCalls.towedToStreet != null ? activeCalls.towedToStreet :''  +
+                                            ' ' +
+                                            activeCalls.towedToStreetTwo != null ? activeCalls.towedToStreetTwo :''  +
+                                            ' ' +
+                                            activeCalls.towedToCityName != null ? activeCalls.towedToCityName :''  +
+                                            ' ' +
+                                            activeCalls.towedToStateName != null ? activeCalls.towedToStateName :''  +
+                                            ' ' +
+                                            activeCalls.towedToZipCode != null ? activeCalls.towedToZipCode :''),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
+                                  ],
+                                ),
+                              ]))
+                      ),
                     ],
                   ))),
-          //Divider()
         ]));
   }
   }

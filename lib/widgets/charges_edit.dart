@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vts_mobile_cloud/providers/calls_provider.dart';
+import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
+import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import 'package:vts_mobile_cloud/widgets/tow_charges_modal.dart';
 import '../providers/towedVehicleCharges_provider.dart';
 
 class ChargesEdit extends StatefulWidget {
-//  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructions_string);
-
   @override
   State<StatefulWidget> createState() {
     return _ChargesEditState();
@@ -14,47 +15,114 @@ class ChargesEdit extends StatefulWidget {
 
 class _ChargesEditState extends State<ChargesEdit> {
   final _formKey = GlobalKey<FormState>();
+  var _charge = TowedVehicleCharge();
+  var _enableDiscountApply = false;
 
-  var _towChargesNameController = new TextEditingController();
+  var _towChargesController = new TextEditingController();
   var _chargesQuantityController = new TextEditingController();
   var _discountQuantityController = new TextEditingController();
   var _chargesRateController = new TextEditingController();
   var _discountRateController = new TextEditingController();
-  var _discountApplyController = new TextEditingController();
-  var _chargesTaxableController = new TextEditingController();
   var _totalChargesController = new TextEditingController();
 
   getValues() {
-    var selectedCharge =
-        Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge;
+    enableDisableDiscount();
+    _charge = Provider.of<TowedVehicleChargesVM>(context, listen: false)
+        .selectedCharge;
+
     setState(() {
-//      _call.billTo = id;
-//      _call.billToName = name;
-      _towChargesNameController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: selectedCharge.towChargesName))
+      _towChargesController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _charge.towChargesName))
           .value;
       _chargesQuantityController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: selectedCharge.chargesQuantity))
+              new TextEditingValue(text: _charge.chargesQuantity))
           .value;
       _discountQuantityController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: selectedCharge.discountQuantity))
+              new TextEditingValue(text: _charge.discountQuantity))
           .value;
       _chargesRateController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: selectedCharge.chargesRate))
+              new TextEditingValue(text: _charge.chargesRate))
           .value;
       _discountRateController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: selectedCharge.discountRate))
+              new TextEditingValue(text: _charge.discountRate))
           .value;
       _totalChargesController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: selectedCharge.totalCharges))
+              new TextEditingValue(text: _charge.totalCharges))
           .value;
+    });
+  }
+
+  enableDisableDiscount() {
+    var _selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
+    var storageStatus = _selectedCall[0].storageStatus;
+    var towedStatus = _selectedCall[0].towedStatus;
+    if (storageStatus != 2 && towedStatus != 'X') {
+      _enableDiscountApply = true;
+    } else {
+      _enableDiscountApply = false;
+    }
+  }
+
+//  setTowCharge(id, name) {
+//    getAndSetDefaultCharges(id);
+//    setState(() {
+//      _charge.towCharges = id;
+//      _towChargesController.value =
+//          new TextEditingController.fromValue(new TextEditingValue(text: name))
+//              .value;
+//    });
+//    _formKey.currentState.validate();
+//  }
+
+  getAndSetDefaultCharges(towCharges) async {
+    var selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
+    var towCustomer = selectedCall[0].towCustomer;
+    var towType = selectedCall[0].towType;
+
+    enableDisableDiscount();
+
+    await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+        .getDefaultCharges(towCharges, towCustomer, towType);
+    var defaultCharges =
+        Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+            .defaultCharges[0];
+    setState(() {
+      _charge.chargesQuantity = defaultCharges.chargesQuantity;
+      _charge.discountQuantity = defaultCharges.discountQuantity;
+      _charge.chargesRate = defaultCharges.chargesRate;
+
+      _chargesQuantityController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: defaultCharges.chargesQuantity))
+          .value;
+      _discountQuantityController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: defaultCharges.discountQuantity))
+          .value;
+      _chargesRateController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: defaultCharges.chargesRate))
+          .value;
+    });
+  }
+
+  save() async {
+    final form = _formKey.currentState;
+    var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+    _charge.towedVehicle = selectedCall.id;
+
+    form.save();
+    print(_charge.id);
+    await Provider.of<TowedVehicleChargesVM>(context, listen: false)
+        .update(_charge)
+        .then((res) {
+      Navigator.push(context,
+          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(4)));
     });
   }
 
   @override
   Widget build(BuildContext context) {
     var selectedCharge =
-        Provider.of<TowedVehicleChargesVM>(context, listen:false).selectedCharge;
+        Provider.of<TowedVehicleChargesVM>(context, listen: false)
+            .selectedCharge;
     getValues();
     return Scaffold(
         appBar: AppBar(
@@ -75,85 +143,68 @@ class _ChargesEditState extends State<ChargesEdit> {
               ),
               new ListTile(
                 title: new TextFormField(
-                    controller: this._towChargesNameController,
-                    //  controller: this._modelController,
-                    decoration: new InputDecoration(
-                      labelText: 'Charge',
-                      suffixIcon: Icon(Icons.arrow_forward_ios),
-                    ),
-                    validator: (value) {
-                      if (value.isEmpty) {
-                        return 'Please select VehicleCharge';
-                      }
-                    },
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => new TowChargesModal(
-                                  setTowCharge: setTowCharge)));
-                    }),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  enabled: false,
+                  controller: this._towChargesController,
+                  decoration: new InputDecoration(
+                    labelText: 'Charge',
+                  ),
+                ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   controller: this._chargesQuantityController,
                   keyboardType: TextInputType.number,
-                  // controller: _vinController,
                   decoration: new InputDecoration(
                     labelText: 'Quantity',
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
                   ),
 //                  validator: (value) {
 //                    if (value.isEmpty) {
 //                      return 'Please enter Charges';
 //                    }
                   //  },
-                  // onSaved: (val) => setState(() => _call.VIN = val),
+                  onSaved: (val) =>
+                      setState(() => _charge.chargesQuantity = val),
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   controller: this._discountQuantityController,
                   keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
                   ),
 //                  validator: (value) {
 //                    if (value.isEmpty) {
 //                      return 'Please enter Charges';
 //                    }
                   //  },
-                  // onSaved: (val) => setState(() => _call.VIN = val),
+                  onSaved: (val) =>
+                      setState(() => _charge.discountQuantity = val),
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   keyboardType: TextInputType.number,
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
                     labelText: 'Rate',
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
                   ),
 //                  validator: (value) {
 //                    if (value.isEmpty) {
 //                      return 'Please enter Charges';
 //                    }
                   //  },
-                  // onSaved: (val) => setState(() => _call.VIN = val),
+                  onSaved: (val) => setState(() => _charge.chargesRate = val),
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  enabled: false,
                   keyboardType: TextInputType.number,
                   controller: _discountRateController,
                   decoration: new InputDecoration(
@@ -164,7 +215,7 @@ class _ChargesEditState extends State<ChargesEdit> {
 //                      return 'Please enter Charges';
 //                    }
                   //  },
-                  // onSaved: (val) => setState(() => _call.VIN = val),
+                  onSaved: (val) => setState(() => _charge.discountRate = val),
                 ),
               ),
               new ListTile(
@@ -173,9 +224,13 @@ class _ChargesEditState extends State<ChargesEdit> {
                 trailing: Checkbox(
                   //To set the default value of a checkbox, just set `value` to `true` if u want it checked by default or `false` if unchecked by default
                   value: selectedCharge.discountApply,
-                  onChanged: (bool val) {
-                    //noCharge
-                  },
+                  onChanged: _enableDiscountApply
+                      ? (val) {
+                          setState(() {
+                            _charge.discountApply = val;
+                          });
+                        }
+                      : null,
                 ),
               ),
               new ListTile(
@@ -183,61 +238,30 @@ class _ChargesEditState extends State<ChargesEdit> {
                     style: new TextStyle(color: Colors.black54, fontSize: 16)),
                 trailing: Checkbox(
                   //To set the default value of a checkbox, just set `value` to `true` if u want it checked by default or `false` if unchecked by default
-                  value: selectedCharge.chargesTaxable,
+                  //value: selectedCharge.chargesTaxable,
+                  value: false,
                   onChanged: (bool val) {
-                    //noCharge
+                    setState(() {
+                      _charge.chargesTaxable = val;
+                    });
                   },
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  enabled: false,
                   keyboardType: TextInputType.number,
                   controller: _totalChargesController,
                   decoration: new InputDecoration(
                     labelText: 'Total Charges',
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
-                  //  },
-                  // onSaved: (val) => setState(() => _call.VIN = val),
+//                   onSaved: (val) => setState(() => _charge.totalCharges = val),
                 ),
               ),
-              RaisedButton(
-                  onPressed: () async {},
-//                      final form = _formKey.currentState;
-//                      if (form.validate()) {
-//                        form.save();
-//                        await Provider.of<ProcessTowedVehiclesVM>(context)
-//                            .checkForDuplicateTickets(_call);
-//                        if (Provider.of<ProcessTowedVehiclesVM>(context)
-//                                .duplicateData["errorStatus"] ==
-//                            "true") {
-//                          showDialog(
-//                              context: context,
-//                              builder: (BuildContext context) {
-//                                return DuplicateCall();
-//                              });
-//
-//                          //Add Yes or No Button and Rock it
-//                        }
-//                        else{
-//                          //Call Save here
-//                          Provider.of<Calls>(context).create(_call);
-//                        }
-//                        _showDialog(context);
-//                      }
-//                    },
-                  child: Text('SAVE')),
+              RaisedButton(onPressed: () => save(), child: Text('SAVE')),
             ],
           ),
         ))));
   }
-
-  setTowCharge() {}
 }

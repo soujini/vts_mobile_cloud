@@ -3,13 +3,17 @@ import 'package:provider/provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../providers/calls_provider.dart';
 import '../screens/vehicle_info.dart';
 import '../screens/add_edit_call.dart';
 import '../widgets/update_status.dart';
 
 class CompletedCallsList extends StatelessWidget {
+  CompletedCallsList(this.userRole, this.dispatchPaging);
+  final String userRole;
+  var dispatchPaging;
+
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
     return await Provider.of<Calls>(context, listen:false)
@@ -20,7 +24,7 @@ class CompletedCallsList extends StatelessWidget {
           builder: ((context) => AlertDialog(
             title: Text("An error occured!"),
             content:
-            Text("Oops, something went wrong!" + onError.toString()),
+            Text("Oops! Something went wrong!" + onError.toString()),
             actions: <Widget>[
               FlatButton(
                 child: Text("OK"),
@@ -68,7 +72,7 @@ class CompletedCallsList extends StatelessWidget {
         child: Column(children: <Widget>[
           Card(
               child: Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: EdgeInsets.all(15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -79,7 +83,7 @@ class CompletedCallsList extends StatelessWidget {
                           percent: completedCalls.progressPercentage,
 //                                        header: new Text("Icon header"),
                           center: new Icon(Icons.directions_car,
-                              size: 15.0, color: Colors.black),
+                              size: 12.0, color: Colors.black),
                           backgroundColor: Colors.black12,
                           progressColor: completedCalls.progressStyleColor,
                         ),
@@ -87,36 +91,32 @@ class CompletedCallsList extends StatelessWidget {
                         Text((completedCalls.dispatchStatusName.toUpperCase()),
                             // .toUpperCase(),
                             style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
                                 color: completedCalls.progressStyleColor)),
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
-                              Provider.of<Calls>(context, listen:false).selectedCall.id = completedCalls.id;
-                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchStatusName = completedCalls.dispatchStatusName;
-                              Provider.of<Calls>(context, listen:false).selectedCall.dispatchInstructions_string = completedCalls.dispatchInstructions_string;
+                              Provider.of<Calls>(context, listen:false).selectedCall = completedCalls;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
-                                      new AddEditCallScreen()));
+                                      new AddEditCallScreen(0)));
                             },
-                            textColor: Colors.grey,
-                            icon: Icon(Icons.edit),
-                            label: Text('Edit Call')),
+                            icon: Icon(Icons.edit, size:14),
+                            label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                         FlatButton.icon(
                             onPressed: () {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(int.parse(completedCalls.id), completedCalls.dispatchStatusName, completedCalls.dispatchInstructions_string);
+                                    return UpdateStatus(completedCalls.id, completedCalls.dispatchStatusName, completedCalls.dispatchInstructions_string, userRole, dispatchPaging, completedCalls.towtype);
                                   });
                               // showDialogUpdateStatus(context);
                             },
-                            textColor: Colors.grey,
-                            icon: Icon(Icons.update),
-                            label: Text('Update Status')),
+                            icon: Icon(Icons.update, size:14),
+                            label: Text('Update Status', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                       ]),
                       Text(
                           '\$${completedCalls.towedTotalAmount.toStringAsFixed(2)}',
@@ -124,11 +124,15 @@ class CompletedCallsList extends StatelessWidget {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
-                              fontSize: 14)),
-                      Text((completedCalls.towReasonName),
-                          style: TextStyle(color: Colors.grey, fontSize: 14)),
+                              fontSize: 12)),
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5),
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: (Column(
+                            children: <Widget>[
+                      Text((completedCalls.towReasonName),
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))),]))),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
                           children: <Widget>[
                             new Row(
@@ -136,24 +140,31 @@ class CompletedCallsList extends StatelessWidget {
                                 Text(
                                     (completedCalls.vehicleYear.toString() +
                                         ' ' +
+                                        completedCalls.vehicleMakeName + ' ' +
                                         completedCalls.vehicleYearMakeModelName),
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color:Color(0xff303030))),
                                 Text(' '),
                                 Text(('(' + completedCalls.color + ')'),
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold)),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color:Color(0xff303030))),
                               ],
                             ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 5),
+                              child: (Column(
+                                children: <Widget>[
                             new Row(
                               children: <Widget>[
                                 Text((completedCalls.towedInvoice),
                                     style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
+                                        fontWeight: FontWeight.w500, fontSize: 12,  color:Color(0xffB5B5B4))),
                               ],
-                            ),
+                            )]))),
                           ],
                         )),
                       ),
@@ -164,74 +175,79 @@ class CompletedCallsList extends StatelessWidget {
                             new Row(
                               children: <Widget>[
                                 Text((completedCalls.towCustomerName),
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500, color:Color(0xff303030))),
                                 Text(' '),
                                 Text((completedCalls.dispatchDate),
-                                    style: TextStyle(fontSize: 14)),
-
-//                                          Text(
-//                                              (DateFormat('MM-dd-yyyy')
-//                                                  .format(completedCalls
-//                                                  .dispatchDate)),
-//                                              style: TextStyle(
-//                                                  fontSize: 14)),
-                                Text(' '),
-//                                          Text(
-//                                              ('(' +
-//                                                  DateFormat('H:mm')
-//                                                      .format(completedCalls[
-//                                                  index]
-//                                                      .dispatchDispatchTime) +
-//                                                  ')'),
-//                                              style: TextStyle(
-//                                                  color: Colors.grey,
-//                                                  fontSize: 14)),
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color:Color(0xffB5B5B4))),
                               ],
                             ),
                             new Row(
                               children: <Widget>[
                                 Text((completedCalls.dispatchContact),
-                                    style: TextStyle(fontSize: 14)),
+                                    style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500, color:Color(0xff303030),)),
                                 Text(' '),
-                                Text((completedCalls.dispatchContactPhone),
-                                    style: TextStyle(fontSize: 14)),
+                                Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 5),
+                                    child: (Column(
+                                        children: <Widget>[
+                                          new GestureDetector(
+                                            onTap: () {
+                                              launch("tel://" +
+                                                  completedCalls.dispatchContactPhone);
+                                            },
+                                            child: Text(
+                                                (completedCalls.dispatchContactPhone),
+                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color:Color(0xff6C89BA),)),
+                                          )]))),
                               ],
                             ),
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (completedCalls.towedStreet +
-                                        ' ' +
-                                        completedCalls.towedStreetTwo +
-                                        ' ' +
-                                        completedCalls.towedCityName +
-                                        ' ' +
-                                        completedCalls.towedStateName +
-                                        ' ' +
-                                        completedCalls.towedZipCode),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
-                              ],
-                            ),
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (completedCalls.towedToStreet +
-                                        ' ' +
-                                        completedCalls.towedToStreetTwo +
-                                        ' ' +
-                                        completedCalls.towedToCityName +
-                                        ' ' +
-                                        completedCalls.towedToStateName +
-                                        ' ' +
-                                        completedCalls.towedToZipCode),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
-                              ],
-                            ),
+
+
                           ],
                         )),
                       ),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: (Column(
+                            children: <Widget>[
+                              new Row(
+                                children: <Widget>[
+                                  Text(
+                                      (completedCalls.towedStreet != null ? completedCalls.towedStreet :''  +
+                                          ' ' +
+                                          completedCalls.towedStreetTwo != null ? completedCalls.towedStreetTwo:'' +
+                                          ' ' +
+                                          completedCalls.towedCityName != null ? completedCalls.towedCityName:'' +
+                                          ' ' +
+                                          completedCalls.towedStateName != null ? completedCalls.towedStateName:'' +
+                                          ' ' +
+                                          completedCalls.towedZipCode  != null ? completedCalls.towedZipCode:''),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
+                                ],
+                              ),
+                            ]))),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 5),
+                          child: (Column(
+                              children: <Widget>[
+                                new Row(
+                                  children: <Widget>[
+                                    Text(
+                                        (completedCalls.towedToStreet != null ? completedCalls.towedToStreet :''  +
+                                            ' ' +
+                                            completedCalls.towedToStreetTwo != null ? completedCalls.towedToStreetTwo :''  +
+                                            ' ' +
+                                            completedCalls.towedToCityName != null ? completedCalls.towedToCityName :''  +
+                                            ' ' +
+                                            completedCalls.towedToStateName != null ? completedCalls.towedToStateName :''  +
+                                            ' ' +
+                                            completedCalls.towedToZipCode != null ? completedCalls.towedToZipCode :''),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
+                                  ],
+                                ),
+                              ]))),
                     ],
                   ))),
           //Divider()

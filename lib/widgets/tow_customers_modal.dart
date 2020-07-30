@@ -1,23 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/calls_provider.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-
 import 'package:vts_mobile_cloud/providers/relationTowCustomer_provider.dart';
 
 class TowCustomersModal extends StatelessWidget {
-//  int id=0;
-//  String dispatchStatusName="";
-//  String dispatchInstructions_string="";
-//  TowCustomersModal();
-
-//  @override
-//  State<StatefulWidget> createState() {
-//    return _TowCustomersModalState();
-//  }
-//}
-//
-//class _TowCustomersModalState extends State<TowCustomersModal> {
   final Function setTowCustomer;
 
   TowCustomersModal({Key key, this.setTowCustomer}) : super(key: key);
@@ -30,18 +16,12 @@ class TowCustomersModal extends StatelessWidget {
 
   initState() {}
 
-//  void _loadData() async {
-//    await Provider.of<TowCustomersVM>(context).list();
-//  }
-
   @override
   Widget build(BuildContext context) {
-    // _loadData();
-    Provider.of<TowCustomersVM>(context, listen:false).list();
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Select Tow Customer'),
+          title: Text('SELECT TOW CUSTOMER', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
         ),
         body: Container(
             padding: EdgeInsets.all(10),
@@ -62,18 +42,19 @@ class TowCustomersModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      return Provider.of<TowCustomersVM>(context, listen:false).tc;
+                      await Provider.of<TowCustomersVM>(context, listen:false).listMini(pattern);
+                      return Provider.of<TowCustomersVM>(context, listen:false).towCustomers;
                     },
                     itemBuilder: (context, suggestion) {
                       return ListTile(
                           leading:
-                               Icon(Icons.perm_identity),
+                          Icon(Icons.perm_identity, size: 20, color:Colors.grey),
                           title: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Padding(
                                   padding: EdgeInsets.only(bottom: 10, top: 15),
-                                  child: Text(suggestion.towCustomerName)),
+                                  child: Text(suggestion.towCustomerName, style:TextStyle(fontSize:14, fontWeight: FontWeight.w400))),
                               Padding(
                                   padding: EdgeInsets.only(bottom: 5, top: 5),
                                   child: Text(suggestion.businessStreet,
@@ -84,12 +65,12 @@ class TowCustomersModal extends StatelessWidget {
                                   child: Text(
                                       suggestion.businessCityStateZipName,
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 14))),
-                              Divider(height: 5.0, color: Colors.black38),
+                                          color: Colors.grey, fontSize: 14 ))),
+                              Divider(color: Colors.black38),
                             ],
                           )
 //                      subtitle: Text('\$${suggestion['id']}'),
-                          );
+                      );
                     },
                     onSuggestionSelected: (suggestion) {
                       this._typeAheadController1.text =

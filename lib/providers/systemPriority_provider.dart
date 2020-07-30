@@ -10,13 +10,11 @@ class SystemPriority {
   int id;
   String name;
 
-
   SystemPriority({
     this.errorStatus,
     this.errorMessage,
     this.id,
     this.name,
-
   });
 
   factory SystemPriority.fromJson(Map<String, dynamic> parsedJson) {
@@ -25,12 +23,16 @@ class SystemPriority {
       errorMessage:parsedJson['errorMessage']  as String,
       id:(parsedJson['id'] != null ? int.parse(parsedJson['id']): 0),
       name: parsedJson['name'],
-
     );
   }
 }
 
 class SystemPrioritiesVM with ChangeNotifier, SecureStoreMixin {
+  Xml2Json xml2json = new Xml2Json();
+  final String appName = "towing";
+  String userId="";
+  String pinNumber="";
+  String timeZoneName="";
 
   List<SystemPriority> _systemPriorities = [];
 
@@ -39,16 +41,16 @@ class SystemPrioritiesVM with ChangeNotifier, SecureStoreMixin {
   }
 
   Future list() async {
-    Xml2Json xml2json = new Xml2Json();
     List<SystemPriority> systemPriorities;
     systemPriorities =  List<SystemPriority>();
 
-    final String appName = "towing";
-    final int userId = 3556;
     String filterFields = "";
     bool exact=true;
-    String pinNumber="";
-    await getSecureStore('pinNumber', (token) {
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
 
@@ -70,12 +72,65 @@ class SystemPrioritiesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/systemPriorityLevelTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/systemPriorityLevelTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/list",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["listResponse"]["listResult"]["systemPriorityLevelSummarys"];
+
+    for (int i = 0; i < extractedData.length; i++) {
+      systemPriorities.add(new SystemPriority.fromJson(extractedData[i]));
+    }
+    _systemPriorities = systemPriorities;
+  }
+  Future listMini(name) async {
+    _systemPriorities = [];
+    List<SystemPriority> systemPriorities;
+    systemPriorities =  List<SystemPriority>();
+
+    final int iStart=1;
+    final int iEnd=200;
+    String filterFields = "";
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+
+    filterFields = "name:"+name;
+
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<listMini xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<filterFields>${filterFields}</filterFields>"
+        "<iStart>${iStart}</iStart>"
+        "<iEnd>${iEnd}</iEnd>"
+        "</listMini>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'http://74.95.253.45/vtscloud/WebServices/systemPriorityLevelTable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/listMini",
+          "Host": "cktsystems.com"
         },
         body: envelope);
 
@@ -83,19 +138,21 @@ class SystemPrioritiesVM with ChangeNotifier, SecureStoreMixin {
     final jsondata = xml2json.toParker();
     final data = json.decode(jsondata);
 
-
-
     final extractedData = await data["soap:Envelope"]["soap:Body"]
-    ["listResponse"]["listResult"]["systemPriorityLevelSummarys"];
-    //as Map<String,dynamic>;rint
+    ["listMiniResponse"]["listMiniResult"]["items"]["systemPriorityLevelSummarys"];
 
-    for (int i = 0; i < extractedData.length; i++) {
-      systemPriorities.add(new SystemPriority.fromJson(extractedData[i]));
+    final count = await data["soap:Envelope"]["soap:Body"]
+    ["listMiniResponse"]["listMiniResult"]["count"];
+
+    if(count == "1"){
+      systemPriorities.add(new SystemPriority.fromJson(extractedData));
+    }
+    else if (count != "1" && count != "0"){
+      for (int i = 0; i < extractedData.length; i++) {
+        systemPriorities.add(new SystemPriority.fromJson(extractedData[i]));
+      }
     }
     _systemPriorities = systemPriorities;
-    print(response.body);
-    print(_systemPriorities.length);
-    //notifyListeners();
   }
 }
 

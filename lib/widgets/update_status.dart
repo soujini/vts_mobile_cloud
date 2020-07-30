@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
 import '../providers/calls_provider.dart';
-
+import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 
 class UpdateStatus extends StatefulWidget {
   int id=0;
   String dispatchStatusName="";
-  String dispatchInstructions_string="";
-  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructions_string);
+  String dispatchInstructionsString="";
+  String userRole;
+  var dispatchPaging;
+  int towType;
+  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructionsString, this.userRole, this.dispatchPaging, this.towType);
 
   @override
   State<StatefulWidget> createState() {
@@ -18,13 +21,174 @@ class UpdateStatus extends StatefulWidget {
 
 class _UpdateStatusState extends State<UpdateStatus> {
   final _formKey = GlobalKey<FormState>();
-  bool pressAttention = false;
-  String selected_status="";
 
+  bool pressAttention = false;
+  String selectedStatus="";
+
+  smsDriver(BuildContext context) async{
+    await Provider.of<ProcessTowedVehiclesVM>(context, listen:false).processDriverSMSMessage(widget.id);
+    var response = Provider.of<ProcessTowedVehiclesVM>(context, listen:false).smsResult;
+    if(response[0].errorStatus == false){
+     Navigator.of(context).pop();
+      showErrorSuccessDialog(context,response[0].errorMessage);
+    }
+    else{
+      showErrorSuccessDialog(context,"SMS sent to the driver");
+    }
+  }
+//  _showDialog(context,message) {
+//    BuildContext ctx = context.findAncestorWidgetOfExactType();
+//    var x = context.ancestorWidgetOfExactType(Scaffold);
+//    x.showSnackBar(SnackBar(content: Text(message)));
+////    Scaffold.of(ctx)
+////        .showSnackBar(SnackBar(content: Text(message)));
+////    Navigator.push(context,
+////        new MaterialPageRoute(builder: (context) => new CallsScreen()));
+//  }
+
+  showSMSDriverDialog(){
+      //Show dialog to send sms to driver
+      Navigator.of(context).pop();
+      showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          // user must tap button!
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('SMS DRIVER'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text(
+                        'Are you sure you want to SMS driver  '),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Yes'),
+                  onPressed: () {
+//                    Navigator.of(context).pop();
+                    smsDriver(context);
+
+                  },
+                ),
+                FlatButton(
+                  child: Text('No'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.push(context,
+                        new MaterialPageRoute(builder: (context) => new CallsScreen()));
+                  },
+                ),
+              ],
+            );
+          });
+  }
+
+  showMoveToTowOrImpoundDialog() async{
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Clear Ticket'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(
+                      "Are you sure you want to move this ticket to Tow or Impound?"),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Tow'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setStatus("tow",true);
+                },
+              ),
+              FlatButton(
+                child: Text('Impound'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  setStatus("impound",true);
+                },
+              ),
+              FlatButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  showErrorSuccessDialog(context, message){
+    showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('MESSAGE'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text(
+                      message),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(context,
+                      new MaterialPageRoute(builder: (context) => new CallsScreen()));
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  checkStatus(){
+//    Navigator.pop(context); //closes update status
+
+    if(selectedStatus.toUpperCase() == 'CLEARED') {
+      showMoveToTowOrImpoundDialog();
+    }
+    else{
+      setStatus( "",false);
+    }
+  }
+
+  setStatus(String mode, bool moveStatus){
+       Provider.of<Calls>(context, listen: false)
+           .update(
+           widget.id, selectedStatus, widget.dispatchInstructionsString, mode, moveStatus,widget.towType)
+           .then((res) {
+         if(selectedStatus == 'Dispatch' && widget.dispatchPaging == true) {
+           showSMSDriverDialog();
+         }
+
+         else{
+           Navigator.pop(context);
+           Navigator.push(context,
+               new MaterialPageRoute(builder: (context) => new CallsScreen()));
+         }
+       });
+  }
 
 @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+     return AlertDialog(
         content: Form(
           key: _formKey,
           child: Column(
@@ -33,8 +197,8 @@ class _UpdateStatusState extends State<UpdateStatus> {
               Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Text(
-                    'UPDATE STATUS', style: TextStyle(fontSize: 20,
-                    fontWeight: FontWeight.bold)),
+                    'UPDATE STATUS', style: TextStyle(fontSize: 16,
+                    fontWeight: FontWeight.bold, color:Color(0xff1C3764))),
               ),
 //              Padding(
 //                  padding: EdgeInsets.all(8.0),
@@ -42,7 +206,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
 //                      width: 125,
 //                      height: 40,
 //                      child: FlatButton(
-//                          color:  selected_status == "Accept" ? Color(0xff12406F): Colors.white,
+//                          color:  selectedStatus == "Accept" ? Color(0xff12406F): Colors.white,
 //                          textColor: getCurrentStatusColor("Accept"),
 //                          shape: new RoundedRectangleBorder(
 //                              borderRadius: new BorderRadius.circular(
@@ -52,17 +216,19 @@ class _UpdateStatusState extends State<UpdateStatus> {
 //                          splashColor: Colors.blueAccent,
 //                          onPressed: () {
 //                            setState(() =>
-//                            selected_status="Accept");
+//                            selectedStatus="Accept");
 //                          },
 //                          child: Text('ACCEPT')))
 //              ),
-              Padding(
+            Visibility(
+              visible:widget.dispatchStatusName == "Dispatch" || widget.dispatchStatusName == "Received" || widget.dispatchStatusName == "Enroute" ? true : false,
+              child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 125,
                       height: 40,
                       child: FlatButton(
-                          color: selected_status == "Dispatch" ? Color(0xff12406F): Colors.white,
+                          color: selectedStatus == "Dispatch" ? Color(0xff12406F): Colors.white,
                           textColor:getCurrentStatusColor("Dispatch"),
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(
@@ -72,17 +238,19 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             setState(() =>
-                            selected_status="Dispatch");
+                            selectedStatus="Dispatch");
                           },
                           child: Text('DISPATCH')))
-              ),
-              Padding(
+              )),
+            Visibility(
+                visible:widget.dispatchStatusName == "Enroute" || widget.dispatchStatusName == "Dispatch" || widget.dispatchStatusName == "Onsite" ? true : false,
+              child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 125,
                       height: 40,
                       child: FlatButton(
-                          color: selected_status == "Enroute" ? Color(0xff12406F): Colors.white,
+                          color: selectedStatus == "Enroute" ? Color(0xff12406F): Colors.white,
                           textColor:getCurrentStatusColor("Enroute"),
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(
@@ -92,17 +260,19 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             setState(() =>
-                            selected_status="Enroute");
+                            selectedStatus="Enroute");
                           },
                           child: Text('ENROUTE')))
-              ),
-              Padding(
+              )),
+            Visibility(
+              visible:widget.dispatchStatusName == "Onsite" || widget.dispatchStatusName == "Enroute" || widget.dispatchStatusName == "Rolling" ? true : false,
+              child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 125,
                       height: 40,
                       child: FlatButton(
-                          color: selected_status == "Onsite" ? Color(0xff12406F): Colors.white,
+                          color: selectedStatus == "Onsite" ? Color(0xff12406F): Colors.white,
                           textColor: getCurrentStatusColor("Onsite"),
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(
@@ -113,17 +283,19 @@ class _UpdateStatusState extends State<UpdateStatus> {
 
                           onPressed: () {
                             setState(() =>
-                            selected_status="Onsite");
+                            selectedStatus="Onsite");
                           },
                           child: Text('ONSITE')))
-              ),
-              Padding(
+              )),
+            Visibility(
+              visible:widget.dispatchStatusName == "Rolling" || widget.dispatchStatusName == "Onsite" || widget.dispatchStatusName == "Arrived" ? true : false,
+              child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 125,
                       height: 40,
                       child: FlatButton(
-                          color: selected_status == "Rolling" ? Color(0xff12406F): Colors.white,
+                          color: selectedStatus == "Rolling" ? Color(0xff12406F): Colors.white,
                           textColor: getCurrentStatusColor("Rolling"),
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(
@@ -133,17 +305,19 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             setState(() =>
-                            selected_status="Rolling");
+                            selectedStatus="Rolling");
                           },
                           child: Text('ROLLING')))
-              ),
-              Padding(
+              )),
+            Visibility(
+                visible:widget.dispatchStatusName == "Arrived" || widget.dispatchStatusName == "Rolling" || widget.dispatchStatusName == "Cleared" ? true : false,
+              child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 125,
                       height: 40,
                       child: FlatButton(
-                          color: selected_status == "Arrived" ? Color(0xff12406F): Colors.white,
+                          color: selectedStatus == "Arrived" ? Color(0xff12406F): Colors.white,
                           textColor: getCurrentStatusColor("Arrived"),
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(
@@ -153,17 +327,19 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
                           onPressed: () {
                             setState(() =>
-                            selected_status="Arrived");
+                            selectedStatus="Arrived");
                           },
                           child: Text('ARRIVED')))
-              ),
-              Padding(
+              )),
+            Visibility(
+                visible:widget.dispatchStatusName == "Cleared" || widget.dispatchStatusName == "Arrived" && widget.userRole != "3" ? true : false,
+              child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
                       width: 125,
                       height: 40,
                       child: FlatButton(
-                          color: selected_status == "Cleared" ? Color(0xff12406F): Colors.white,
+                          color: selectedStatus == "Cleared" ? Color(0xff12406F): Colors.white,
                           textColor: getCurrentStatusColor("Cleared"),
                           shape: new RoundedRectangleBorder(
                               borderRadius: new BorderRadius.circular(
@@ -174,11 +350,13 @@ class _UpdateStatusState extends State<UpdateStatus> {
 
                           onPressed: () {
                             setState(() =>
-                            selected_status="Cleared");
+                            selectedStatus="Cleared");
                           },
                           child: Text('CLEARED')))
-              ),
-              Padding(
+              )),
+            Visibility(
+                visible:true,
+              child:Padding(
                   padding: const EdgeInsets.all(8.0),
 
                   child: Row(
@@ -211,31 +389,20 @@ class _UpdateStatusState extends State<UpdateStatus> {
                               width: 100,
                               height: 50,
                               child: FlatButton(
-                                  color: Color(0xff6ACA25),
+//                                  color: Color(0xff6ACA25),
+                                  color: Color(0xff1C3764),
                                   textColor: Colors.white,
                                   shape: new RoundedRectangleBorder(
                                       borderRadius: new BorderRadius
                                           .circular(10.0)),
                                   disabledTextColor: Colors.black,
                                   padding: EdgeInsets.all(8.0),
-                                  splashColor: Colors
-                                      .lightGreenAccent,
-                                  onPressed: () {
-                                    Provider.of<Calls>(context, listen:false)
-                                        .update(widget.id,selected_status,widget.dispatchInstructions_string).then((res){
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                          context,
-                                          new MaterialPageRoute(
-                                              builder: (context) =>
-                                              new CallsScreen()));
-                                    });
-//
-                                  },
+                                  splashColor: Colors.blueAccent,
+                                  onPressed: () => checkStatus(),
                                   child: Align(
                                       alignment: Alignment
                                           .center,
-                                      child: Text('SET TO \n'+ selected_status.toUpperCase(),
+                                      child: Text('SET TO \n'+ selectedStatus.toUpperCase(),
                                           textAlign: TextAlign.center)
                                   )
                               )
@@ -243,7 +410,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                     ],
 
                   )
-              )
+              ))
             ],
           ),
         ));

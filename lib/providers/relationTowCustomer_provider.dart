@@ -4,7 +4,6 @@ import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import '../providers/secureStoreMixin_provider.dart';
 
-
 class TowCustomer {
   String errorStatus;
   String errorMessage;
@@ -207,9 +206,15 @@ bool _convertTobool(value) {
 }
 
 class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
+  Xml2Json xml2json = new Xml2Json();
+  final String appName = "towing";
+  String userId="";
+  String pinNumber="";
+  String timeZoneName="";
+
   List<TowCustomer> _towCustomers = [];
   List<TowCustomer> _defaultsData = [];
-  List<TowCustomer> get towC {
+  List<TowCustomer> get towCustomers {
     return [..._towCustomers]; //gets a copy of the items
   }
 
@@ -218,14 +223,12 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
   }
 
   List<TowCustomer> tc;
-  Future getDefaults(int a) async{
-    Xml2Json xml2json = new Xml2Json();
+  Future getDefaults(int towCustomer) async{
 
-    final String appName = "towing";
-    final int userId = 3556;
-    final int towCustomer = a;
-    String pinNumber="";
-    await getSecureStore('pinNumber', (token) {
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
 
@@ -245,21 +248,17 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/relationTowCustomerTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/relationTowCustomerTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/getDefaults",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 
     final resBody = xml2json.parse(response.body);
     final jsondata = xml2json.toParker();
-    //final data = json.decode(jsondata);
     final data = JsonDecoder().convert(jsondata);
-    print(data);
-
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["getDefaultsResponse"]["getDefaultsResult"];
 
@@ -268,16 +267,14 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
     _defaultsData=dd;
   }
 
-
   Future list() async {
-    Xml2Json xml2json = new Xml2Json();
     tc = new List<TowCustomer>();
-
-    final String appName = "towing";
-    final int userId = 3556;
     String filterFields = "";
-    String pinNumber="";
-    await getSecureStore('pinNumber', (token) {
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
 
@@ -298,12 +295,11 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/relationTowCustomerTable.asmx',
+        'http://74.95.253.45/vtscloud/WebServices/relationTowCustomerTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/list",
           "Host": "cktsystems.com"
-          //"Accept": "text/xml"
         },
         body: envelope);
 
@@ -319,5 +315,69 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
     }
     _towCustomers = tc;
 
+  }
+  Future listMini(name) async {
+    _towCustomers = [];
+    List<TowCustomer> tc;
+    tc =  List<TowCustomer>();
+
+    final int iStart=1;
+    final int iEnd=200;
+    String filterFields = "";
+
+   await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+   await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+
+    filterFields = "pinNumber:"+pinNumber;
+
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<listMini xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<filterFields>${filterFields}</filterFields>"
+        "<name>${name}</name>"
+        "<iStart>${iStart}</iStart>"
+        "<iEnd>${iEnd}</iEnd>"
+        "</listMini>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'http://74.95.253.45/vtscloud/WebServices/relationTowCustomerTable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/listMini",
+          "Host": "cktsystems.com"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["listMiniResponse"]["listMiniResult"]["items"]["relationTowCustomerSummarys"];
+
+    final count = await data["soap:Envelope"]["soap:Body"]
+    ["listMiniResponse"]["listMiniResult"]["count"];
+
+    if(count == "1"){
+      tc.add(new TowCustomer.fromJson(extractedData));
+    }
+    else if (count != "1" && count != "0"){
+      for (int i = 0; i < extractedData.length; i++) {
+        tc.add(new TowCustomer.fromJson(extractedData[i]));
+      }
+    }
+    _towCustomers = tc;
   }
 }
