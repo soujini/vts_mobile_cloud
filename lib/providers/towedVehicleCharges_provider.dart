@@ -111,6 +111,9 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
    await  getSecureStore('userId', (token) {
       userId=token;
     });
+    await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
    await  getSecureStore('timeZoneName', (token) {
       timeZoneName=token;
     });

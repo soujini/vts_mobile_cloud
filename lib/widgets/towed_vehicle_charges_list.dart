@@ -75,7 +75,8 @@ class TowedVehicleChargesList extends StatelessWidget {
 
 //    return GestureDetector(
 //        onTap: () {},
-    return Column(children: <Widget>[
+    return SingleChildScrollView(
+        child:Column(children: <Widget>[
       Card(
         child: Padding(
             padding: EdgeInsets.all(10),
@@ -306,6 +307,6 @@ class TowedVehicleChargesList extends StatelessWidget {
             )),
         //Divider()
       )
-    ]);
+    ]));
   }
 }
