@@ -3,10 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vts_mobile_cloud/providers/towedVehiclePictures_provider.dart';
+import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import '../providers/calls_provider.dart';
 import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
+import 'package:vts_mobile_cloud/widgets/loader.dart';
+
 
 class PhotosAdd extends StatefulWidget {
   @override
@@ -25,6 +28,7 @@ class _PhotosAddState extends State<PhotosAdd> {
   String searchOptionField = "";
   var selectedOptionIndex;
   final myController = TextEditingController();
+  bool isLoading=false;
 
   @override
   void dispose() {
@@ -90,11 +94,13 @@ class _PhotosAddState extends State<PhotosAdd> {
     });
   }
   Future save() async{
+    this.setState(() {
+      isLoading=true;
+    });
     final form = _formKey.currentState;
     var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
     _picture.towedVehicle = selectedCall.id;
 //    _picture.vehicleNotes= "";
-print(selectedOptionIndex);
 if(selectedOptionIndex == 0){
   _picture.vehiclePictureType=4;
 }
@@ -122,14 +128,17 @@ else if(selectedOptionIndex == 7){
 
 //   form.save();
 //    print(form);
-    await Provider.of<TowedVehiclePicturesVM>(context, listen:false).create(_picture);
-//    .then((res) {
-//      Navigator.push(
-//          context,
-//          new MaterialPageRoute(
-//              builder: (context) =>
-//              new AddEditCallScreen()));
-//    });
+    await Provider.of<TowedVehiclePicturesVM>(context, listen:false).create(_picture)
+   .then((res) {
+      this.setState(() {
+        isLoading=false;
+      });
+     Navigator.push(
+         context,
+         new MaterialPageRoute(
+             builder: (context) =>
+             new AddEditCallScreen(0)));
+   });
   }
 
   @override
@@ -139,7 +148,7 @@ else if(selectedOptionIndex == 7){
         appBar: AppBar(
           title: Text("Add Photo"),
         ),
-        body: SingleChildScrollView(
+        body:  isLoading == true? Center(child:Loader()): SingleChildScrollView(
             child:Center(
               child: Column(children: <Widget>[
                 Row(children: <Widget>[
@@ -291,7 +300,7 @@ class RadioItem extends StatelessWidget {
           ),
           new Container(
             margin: new EdgeInsets.only(left: 1.0),
-            child: new Text(_item.text),
+            // child: new Text(_item.text),
           )
         ],
       ),

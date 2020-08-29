@@ -133,8 +133,9 @@ class ActiveCallsList extends StatelessWidget {
     padding: EdgeInsets.symmetric(vertical: 5),
     child: (Column(
     children: <Widget>[
+      activeCalls.towReasonName != null && activeCalls.towReasonName != ''?
                       Text((activeCalls.towReasonName.toUpperCase()),
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))),]))),
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))):Row(),]))),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
@@ -232,6 +233,7 @@ class ActiveCallsList extends StatelessWidget {
                       ),
                     ]))
             ),
+                      activeCalls.towedToStreet != null && activeCalls.towedToStreet != ''?
                       Padding(
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
@@ -253,7 +255,7 @@ class ActiveCallsList extends StatelessWidget {
                                   ],
                                 ),
                               ]))
-                      ),
+                      ):Row(),
                     ],
                   ))),
         ]));

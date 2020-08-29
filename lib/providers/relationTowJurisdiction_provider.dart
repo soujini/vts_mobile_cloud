@@ -77,7 +77,7 @@ class TowJurisdictionsVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/relationTowJurisdictionTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/relationTowJurisdictionTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/list",
@@ -132,7 +132,7 @@ class TowJurisdictionsVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/relationTowJurisdictionTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/relationTowJurisdictionTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",

@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import '../providers/secureStoreMixin_provider.dart';
 
 class User{
@@ -370,7 +369,7 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/userTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/userTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/validateUser",
@@ -410,9 +409,6 @@ bool _convertTobool(value) {
   } else
     return value;
 }
-
-
-
 
 //validations
 //String zipCode = ko.observable("").extend({

@@ -67,14 +67,24 @@ class TowedVehicleNotesList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(children: [
-                    Text(towedVehicleNotes.vehicleNotes_string),
+                    Text(towedVehicleNotes.vehicleNotes_string, style: new TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.0)),
                   ]),
+                  Padding(
+                      padding: EdgeInsets.only(top:10),
+                  child: Row(children: [
+                    Text("Created"  + ' on '+towedVehicleNotes.vehicleCreatedDate + ' at '+towedVehicleNotes.vehicleCreatedTime +"\n"),
+
+                  ])),
                   Row(children: [
-                    Text("CREATED"  + ' on '+towedVehicleNotes.vehicleCreatedDate + ' at '+towedVehicleNotes.vehicleCreatedTime + ' by '+towedVehicleNotes.vehicleCreatedByUserName)
+                    Text("By "+towedVehicleNotes.vehicleCreatedByUserName)
                   ]),
+                  towedVehicleNotes.vehicleModifiedDate != null && towedVehicleNotes.vehicleModifiedDate != ''?
                   Row(children: [
-                    Text("MODIFIED"  + ' on '+towedVehicleNotes.vehicleModifiedDate)
-                  ]),
+                    Text("Modified"  + ' on '+towedVehicleNotes.vehicleModifiedDate)
+                  ]):Row(),
                 ],
               )),
       //Divider()

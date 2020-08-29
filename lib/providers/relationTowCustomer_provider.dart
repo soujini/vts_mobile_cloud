@@ -248,7 +248,7 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/relationTowCustomerTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/relationTowCustomerTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/getDefaults",
@@ -295,7 +295,7 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/relationTowCustomerTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/relationTowCustomerTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/list",
@@ -352,7 +352,7 @@ class TowCustomersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/relationTowCustomerTable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/relationTowCustomerTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",

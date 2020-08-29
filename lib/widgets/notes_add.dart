@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:vts_mobile_cloud/providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/providers/notes_provider.dart';
 import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
+import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 enum SingingCharacter { Owner, Payment }
 class NotesAdd extends StatefulWidget {
+  bool isLoading = false;
 //  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructions_string);
 
   @override
@@ -28,6 +30,9 @@ class _NotesAddState extends State<NotesAdd> {
 //  }
 
   save() async {
+    this.setState(() {
+      widget.isLoading=true;
+    });
     final form = _formKey.currentState;
 
     var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
@@ -41,11 +46,14 @@ class _NotesAddState extends State<NotesAdd> {
     }
     form.save();
     await Provider.of<NotesVM>(context, listen:false).create(_note).then((res) {
+      this.setState(() {
+        widget.isLoading=false;
+      });
       Navigator.push(
           context,
           new MaterialPageRoute(
               builder: (context) =>
-              new AddEditCallScreen(3)));
+              new AddEditCallScreen(4)));
     });
   }
 
@@ -62,10 +70,10 @@ class _NotesAddState extends State<NotesAdd> {
     return Scaffold(
         appBar: AppBar(
         // automaticallyImplyLeading: true,
-        title: Text('Add Notes'),
+          title: Text('ADD NOTES', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
     ),
     body: Container(
-        child: Form(
+        child: widget.isLoading == true ? Center(child:Loader()) :Form(
       key: _formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -109,9 +117,15 @@ class _NotesAddState extends State<NotesAdd> {
                                   setState(() { _character = value; _note.ownerNotes=true; });
                                 },
                   )),
-        RaisedButton(
-            onPressed: () =>save(),
-            child: Text('SAVE')),
+          FlatButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0.0),
+                  side: BorderSide(color: Color(0xff1c3764))
+              ),
+              color: Color(0xff1c3764),
+              textColor: Colors.white,
+              onPressed: () => save(),
+              child: Text('SAVE')),
         ],
       ),
     )));

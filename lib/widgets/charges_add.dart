@@ -1,23 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vts_mobile_cloud/providers/secureStoreMixin_provider.dart';
 import 'package:vts_mobile_cloud/providers/towedVehicleCharges_provider.dart';
 import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/widgets/tow_charges_modal.dart';
 import '../providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
+import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class ChargesAdd extends StatefulWidget {
 //  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructions_string);
-
+  bool isLoading=false;
   @override
   State<StatefulWidget> createState() {
     return _ChargesAddState();
   }
 }
 
-class _ChargesAddState extends State<ChargesAdd> {
+class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
   final _formKey = GlobalKey<FormState>();
   final _charge = TowedVehicleCharge();
+  String userRole;
 
   var _towChargesController = new TextEditingController();
   var _chargesQuantityController = new TextEditingController();
@@ -68,7 +71,17 @@ class _ChargesAddState extends State<ChargesAdd> {
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
                 ))));
   }
+  getRole() async{
+    await  getSecureStore('userRole', (token) {
+      setState(() {
+        userRole=token;
+      });
+    });
+  }
   save() async {
+    this.setState(() {
+      widget.isLoading=true;
+    });
     final form = _formKey.currentState;
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     _charge.towedVehicle = selectedCall.id;
@@ -80,16 +93,22 @@ class _ChargesAddState extends State<ChargesAdd> {
     await Provider.of<TowedVehicleChargesVM>(context, listen: false).create(_charge);
     var response = Provider.of<TowedVehicleChargesVM>(context, listen: false).createResponse;
     if (response["errorStatus"] == "false") {
+      this.setState(() {
+        widget.isLoading=true;
+      });
       _showErrorMessage(context, response["errorMessage"]);
     }
     else{
+      this.setState(() {
+        widget.isLoading=true;
+      });
       Navigator.push(context,
           new MaterialPageRoute(builder: (context) => new AddEditCallScreen(5)));
     }
-//        .then((res) {
-//      Navigator.push(context,
-//          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(5)));
-//    });
+  }
+  void initState(){
+    super.initState();
+    getRole();
   }
 
   @override
@@ -97,9 +116,9 @@ class _ChargesAddState extends State<ChargesAdd> {
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Add Charges'),
+          title: Text('ADD CHARGES', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
         ),
-        body: Container(
+        body: widget.isLoading == true? Center(child:Loader()):Container(
             child: SingleChildScrollView(
                 // child: AlertDialog(
                 //content:
@@ -197,9 +216,9 @@ class _ChargesAddState extends State<ChargesAdd> {
               FlatButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(0.0),
-                      side: BorderSide(color: Colors.green)
+                      side: BorderSide(color: Color(0xff1c3764))
                   ),
-                  color: Colors.green,
+                  color: Color(0xff1c3764),
                   textColor: Colors.white,
                   onPressed: () => save(),
                   child: Text('SAVE')),

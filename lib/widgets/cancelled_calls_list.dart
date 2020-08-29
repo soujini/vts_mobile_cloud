@@ -125,8 +125,9 @@ class CancelledCallsList extends StatelessWidget {
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
                               children: <Widget>[
+                                cancelledCalls.towReasonName != null && cancelledCalls.towReasonName != ''?
                                 Text((cancelledCalls.towReasonName.toUpperCase()),
-                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))),]))),
+                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))):Row(),]))),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
@@ -223,6 +224,7 @@ class CancelledCallsList extends StatelessWidget {
                                 ],
                               ),
                             ]))),
+                      cancelledCalls.towedToStreet != null && cancelledCalls.towedToStreet != ''?
                       Padding(
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
@@ -243,7 +245,7 @@ class CancelledCallsList extends StatelessWidget {
                                           fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
                                 ],
                               ),
-                            ])))
+                            ]))) :Row()
                     ],
                   ))),
           //Divider()

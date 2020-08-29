@@ -5,8 +5,11 @@ import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import 'package:vts_mobile_cloud/widgets/tow_charges_modal.dart';
 import '../providers/towedVehicleCharges_provider.dart';
+import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class ChargesEdit extends StatefulWidget {
+  bool isLoading =false;
+
   @override
   State<StatefulWidget> createState() {
     return _ChargesEditState();
@@ -104,17 +107,22 @@ class _ChargesEditState extends State<ChargesEdit> {
   }
 
   save() async {
+    this.setState(() {
+      widget.isLoading=true;
+    });
     final form = _formKey.currentState;
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     _charge.towedVehicle = selectedCall.id;
 
     form.save();
-    print(_charge.id);
     await Provider.of<TowedVehicleChargesVM>(context, listen: false)
         .update(_charge)
         .then((res) {
+      this.setState(() {
+        widget.isLoading=false;
+      });
       Navigator.push(context,
-          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(4)));
+          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(5)));
     });
   }
 
@@ -127,9 +135,9 @@ class _ChargesEditState extends State<ChargesEdit> {
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Edit Charge'),
+          title: Text('EDIT CHARGES', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
         ),
-        body: Container(
+        body: widget.isLoading == true? Center(child:Loader()):Container(
             child: SingleChildScrollView(
                 // child: AlertDialog(
                 //content:
@@ -259,7 +267,15 @@ class _ChargesEditState extends State<ChargesEdit> {
 //                   onSaved: (val) => setState(() => _charge.totalCharges = val),
                 ),
               ),
-              RaisedButton(onPressed: () => save(), child: Text('SAVE')),
+              FlatButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0.0),
+                      side: BorderSide(color: Color(0xff1c3764))
+                  ),
+                  color: Color(0xff1c3764),
+                  textColor: Colors.white,
+                  onPressed: () => save(),
+                  child: Text('SAVE')),
             ],
           ),
         ))));

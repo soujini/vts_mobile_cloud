@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
 import '../providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
+import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class UpdateStatus extends StatefulWidget {
   int id=0;
@@ -11,6 +12,7 @@ class UpdateStatus extends StatefulWidget {
   String userRole;
   var dispatchPaging;
   int towType;
+  bool isLoading=false;
   UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructionsString, this.userRole, this.dispatchPaging, this.towType);
 
   @override
@@ -170,14 +172,17 @@ class _UpdateStatusState extends State<UpdateStatus> {
   }
 
   setStatus(String mode, bool moveStatus){
+    setState(() =>widget.isLoading=true);
+
+
        Provider.of<Calls>(context, listen: false)
            .update(
            widget.id, selectedStatus, widget.dispatchInstructionsString, mode, moveStatus,widget.towType)
            .then((res) {
+         setState(() =>widget.isLoading=false);
          if(selectedStatus == 'Dispatch' && widget.dispatchPaging == true) {
            showSMSDriverDialog();
          }
-
          else{
            Navigator.pop(context);
            Navigator.push(context,
@@ -189,7 +194,8 @@ class _UpdateStatusState extends State<UpdateStatus> {
 @override
   Widget build(BuildContext context) {
      return AlertDialog(
-        content: Form(
+        content: widget.isLoading == false ?
+     Form(
           key: _formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -237,8 +243,12 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            setState(() =>
-                            selectedStatus="Dispatch");
+                            if(widget.dispatchStatusName != "Dispatch"){
+                              setState(() =>selectedStatus="Dispatch");
+                            }
+                            else{
+                              return null;
+                            }
                           },
                           child: Text('DISPATCH')))
               )),
@@ -259,8 +269,13 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            setState(() =>
-                            selectedStatus="Enroute");
+                            if(widget.dispatchStatusName != "Enroute") {
+                              setState(() => selectedStatus = "Enroute");
+                            }
+                            else{
+                              return null;
+                            }
+
                           },
                           child: Text('ENROUTE')))
               )),
@@ -282,8 +297,13 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
 
                           onPressed: () {
-                            setState(() =>
-                            selectedStatus="Onsite");
+                            if(widget.dispatchStatusName != "Onsite") {
+                              setState(() => selectedStatus = "Onsite");
+                            }
+                            else{
+                              return null;
+                            }
+
                           },
                           child: Text('ONSITE')))
               )),
@@ -304,8 +324,12 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            setState(() =>
-                            selectedStatus="Rolling");
+                            if(widget.dispatchStatusName != "Rolling") {
+                              setState(() => selectedStatus = "Rolling");
+                            }
+                            else{
+                              return null;
+                            }
                           },
                           child: Text('ROLLING')))
               )),
@@ -326,8 +350,13 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            setState(() =>
-                            selectedStatus="Arrived");
+                            if(widget.dispatchStatusName != "Arrived") {
+                              setState(() => selectedStatus = "Arrived");
+                            }
+                            else{
+                              return null;
+                            }
+
                           },
                           child: Text('ARRIVED')))
               )),
@@ -349,8 +378,12 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
 
                           onPressed: () {
-                            setState(() =>
-                            selectedStatus="Cleared");
+                          if(widget.dispatchStatusName != "Cleared") {
+                            setState(() => selectedStatus = "Cleared");
+                          }
+                          else{
+                            return null;
+                          }
                           },
                           child: Text('CLEARED')))
               )),
@@ -358,16 +391,13 @@ class _UpdateStatusState extends State<UpdateStatus> {
                 visible:true,
               child:Padding(
                   padding: const EdgeInsets.all(8.0),
-
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
-
                       Padding(
                           padding: EdgeInsets.all(8.0),
                           child: SizedBox(
-
                               width: 100,
                               height: 50,
                               child: FlatButton(
@@ -413,7 +443,11 @@ class _UpdateStatusState extends State<UpdateStatus> {
               ))
             ],
           ),
-        ));
+        ):
+        // CircularProgressIndicator(
+        //         backgroundColor: Colors.green )
+       Loader()
+     );
   }
 getCurrentStatusColor(String currentStatus) {
   if (widget.dispatchStatusName == currentStatus)

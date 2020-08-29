@@ -54,7 +54,7 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
     searchOption.add(new RadioModel(false, 'Driver', ''));
     searchOption.add(new RadioModel(false, 'Company', ''));
     searchOption.add(new RadioModel(false, 'Authorization', ''));
-    searchOption.add(new RadioModel(false, 'Tow type', ''));
+    searchOption.add(new RadioModel(false, 'Tow Type', ''));
 
     searchOptionType.add(new RadioModel(false, 'All', ''));
     searchOptionType.add(new RadioModel(false, 'Received', ''));
@@ -134,8 +134,12 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
               child: Column(children: <Widget>[
                 Row(children: <Widget>[
                   Padding(
-                    padding:EdgeInsets.all(20.0),
-                        child:   Text("SEARCH OPTION (Choose any one)", style:TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color:Color(0xff1c3764))),
+                    padding:EdgeInsets.only(top:20.0, bottom:20, left:20, right:5),
+                        child: Text("SEARCH OPTION", style:TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color:Color(0xff1c3764))),
+                  ),
+                  Padding(
+                      padding:EdgeInsets.only(bottom:2),
+                      child: Text("(Choose any one)", style:TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color:Color(0xffB5B5B4))),
                   )
                 ]),
                 SizedBox(
@@ -194,12 +198,14 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                   child:(selectedOptionIndex == 1 || selectedOptionIndex == 2 || selectedOptionIndex == 3) ?
                   SizedBox(
                   height: 75,
+                      child:Padding(
+                        padding:EdgeInsets.all(15.0),
                   child: TextField(
                       controller: myController,
                       decoration:
-                      InputDecoration(labelText: 'Enter Value for Search Option', labelStyle: TextStyle())
+                      InputDecoration(labelText: 'Enter Value for Search Option', labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500))
 
-                  ),
+                  )),
                 ) : (selectedOptionIndex == 0)
                       ?
                   new ListTile(
@@ -207,6 +213,7 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                       controller: myController,
                       decoration: new InputDecoration(
                         labelText: "Call Date",
+                          labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
                         suffixIcon: IconButton(
                           onPressed: () {
                             DatePicker.showDatePicker(context,
@@ -225,7 +232,7 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                                 currentTime: DateTime.now(),
                                 locale: LocaleType.en);
                           }, //_controller.clear(),
-                          icon: Icon(Icons.date_range),
+                          icon: Icon(Icons.date_range, size:20),
                         ),
                       ),
                     //  onSaved: (val) => setState(() => _call.towedDate = val),
@@ -242,7 +249,8 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         controller: this.myController,
                         decoration: new InputDecoration(
                           labelText: "Driver",
-                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                            labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
                         ),
                         onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
@@ -264,7 +272,8 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         controller: this.myController,
                         decoration: new InputDecoration(
                           labelText: "Company *",
-                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                            labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
                         ),
                         validator: (value) {
                           if (value.isEmpty) {
@@ -291,7 +300,8 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         controller: this.myController,
                         decoration: new InputDecoration(
                           labelText: "Authorization",
-                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                            labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
                         ),
                         onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
@@ -313,7 +323,8 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         controller: this.myController,
                         decoration: new InputDecoration(
                           hintText: "Tow Type *",
-                          suffixIcon: Icon(Icons.arrow_forward_ios),
+                            labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
                         ),
                         validator: (value) {
                           if (value.isEmpty) {
@@ -333,9 +344,13 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                 ),
                 Row(children: <Widget>[
                   Padding(
-                    padding:EdgeInsets.all(10.0),
-                    child:   Text("SEARCH TYPE (Choose any one)", style: TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold, color:Color(0xff1c3764))),
+                    padding:EdgeInsets.only(top:20.0, bottom:20, left:20, right:5),
+                    child:   Text("SEARCH TYPE", style: TextStyle(
+                        fontSize: 14, fontWeight: FontWeight.bold, color:Color(0xff1c3764))),
+                  ),
+                  Padding(
+                    padding:EdgeInsets.only(bottom:2),
+                    child: Text("(Choose any one)", style:TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color:Color(0xffB5B5B4))),
                   )
 
                 ]),

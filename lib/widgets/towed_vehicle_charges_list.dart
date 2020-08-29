@@ -11,6 +11,7 @@ class TowedVehicleChargesList extends StatelessWidget {
   TowedVehicleChargesList(this.userRole);
   final String userRole;
   static const int PAGE_SIZE = 15;
+  bool isLoading=false;
 
   Future<List> _refreshCallsList(BuildContext context) async {
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
@@ -36,13 +37,15 @@ class TowedVehicleChargesList extends StatelessWidget {
   }
 
   Future deleteCharge(BuildContext context, id) async {
+  isLoading=true;
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     await Provider.of<TowedVehicleChargesVM>(context, listen: false)
         .delete(id, selectedCall.id)
         .then((res) {
+          isLoading=false;
       Navigator.of(context).pop();
       Navigator.push(context,
-          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(4)));
+          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(5)));
     });
   }
 
@@ -75,9 +78,12 @@ class TowedVehicleChargesList extends StatelessWidget {
 
 //    return GestureDetector(
 //        onTap: () {},
-    return SingleChildScrollView(
-        child:Column(children: <Widget>[
-      Card(
+    return Column(
+
+        children: <Widget>[
+          Container(
+
+      child:Card(
         child: Padding(
             padding: EdgeInsets.all(10),
             child: Column(
@@ -88,7 +94,7 @@ class TowedVehicleChargesList extends StatelessWidget {
                       style: new TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.0)),
+                          fontSize: 14.0)),
                   Spacer(),
                   Text("Total ",
                       style: new TextStyle(
@@ -102,9 +108,8 @@ class TowedVehicleChargesList extends StatelessWidget {
                           fontSize: 14.0)),
                   Visibility(
                     visible:userRole == "3" ? false : true,
-//                      visible:userRole != null && userRole == "3" ? false :true,
                       child: IconButton(
-                        icon: new Icon(Icons.edit),
+                        icon: new Icon(Icons.edit, size:20),
                         tooltip: 'Edit',
                         onPressed: () {
                           Navigator.push(
@@ -161,7 +166,7 @@ class TowedVehicleChargesList extends StatelessWidget {
                   Visibility(
                       visible:userRole != null && userRole == "3" ? false :true,
                       child: IconButton(
-                        icon: new Icon(Icons.delete_outline),
+                        icon: new Icon(Icons.delete_outline, size:20),
                         tooltip: 'Delete',
                         onPressed: () => {
                           showDialog<void>(
@@ -170,23 +175,32 @@ class TowedVehicleChargesList extends StatelessWidget {
                               // user must tap button!
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: Text('Delete Charge'),
-                                  content: SingleChildScrollView(
+                                  title: Text(
+                                      'DELETE CHARGE', style: TextStyle(fontSize: 16,
+                                      fontWeight: FontWeight.bold, color:Color(0xff1C3764))),
+                                  content: isLoading == true ? Center(child:Loader()):SingleChildScrollView(
                                     child: ListBody(
                                       children: <Widget>[
                                         Text(
-                                            'Are you sure you want to delete Towed vehicle Charge - ' +
+                                            'Are you sure you want to delete Towed Vehicle Charge - ' +
                                                 towedVehicleCharges
                                                     .towChargesName +
                                                 ' with a total charge of \$\ ' +
                                                 towedVehicleCharges
                                                     .totalCharges +
-                                                '?'),
+                                                '?', style: TextStyle(fontSize: 14,
+                                            fontWeight: FontWeight.w400, color:Colors.black)),
                                       ],
                                     ),
                                   ),
                                   actions: <Widget>[
                                     FlatButton(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(0.0),
+                                          side: BorderSide(color: Colors.green)
+                                      ),
+                                      color: Colors.white,
+                                      textColor: Colors.green,
                                       child: Text('Yes'),
                                       onPressed: () {
                                         deleteCharge(
@@ -194,6 +208,12 @@ class TowedVehicleChargesList extends StatelessWidget {
                                       },
                                     ),
                                     FlatButton(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(0.0),
+                                          side: BorderSide(color: Colors.grey)
+                                      ),
+                                      color: Colors.white,
+                                      textColor: Colors.grey,
                                       child: Text('No'),
                                       onPressed: () {
                                         Navigator.of(context).pop();
@@ -221,9 +241,9 @@ class TowedVehicleChargesList extends StatelessWidget {
                         TableCell(
                             child: Column(
                           children: <Widget>[
-                            Text("QTY.",
+                            Text("Qty.",
                                 style: new TextStyle(
-                                    color: Colors.black, fontSize: 10.0)),
+                                    color: Colors.black, fontSize: 10.0,  fontWeight:FontWeight.w500)),
                             Padding(
                                 padding: EdgeInsets.only(top: 15),
                                 child:
@@ -233,9 +253,9 @@ class TowedVehicleChargesList extends StatelessWidget {
                         TableCell(
                             child: Column(
                           children: <Widget>[
-                            Text("DISC. QTY.",
+                            Text("Disc. Qty.",
                                 style: new TextStyle(
-                                    color: Colors.black, fontSize: 10.0)),
+                                    color: Colors.black, fontSize: 10.0, fontWeight:FontWeight.w500)),
                             Padding(
                                 padding: EdgeInsets.only(top: 15),
                                 child:
@@ -245,9 +265,9 @@ class TowedVehicleChargesList extends StatelessWidget {
                         TableCell(
                             child: Column(
                           children: <Widget>[
-                            Text("RATE",
+                            Text("Rate",
                                 style: new TextStyle(
-                                    color: Colors.black, fontSize: 10.0)),
+                                    color: Colors.black, fontSize: 10.0, fontWeight:FontWeight.w500)),
                             Padding(
                               padding: EdgeInsets.only(top: 15),
                               child: Text(towedVehicleCharges.chargesRate),
@@ -257,9 +277,9 @@ class TowedVehicleChargesList extends StatelessWidget {
                         TableCell(
                             child: Column(
                           children: <Widget>[
-                            Text("DISC.",
+                            Text("Disc.",
                                 style: new TextStyle(
-                                    color: Colors.black, fontSize: 10.0)),
+                                    color: Colors.black, fontSize: 10.0,  fontWeight:FontWeight.w500)),
                             Padding(
                               padding: EdgeInsets.only(top: 15),
                               child: Text(towedVehicleCharges.discountRate),
@@ -269,9 +289,9 @@ class TowedVehicleChargesList extends StatelessWidget {
                         TableCell(
                             child: Column(
                           children: <Widget>[
-                            Text("APPLY",
+                            Text("Apply",
                                 style: new TextStyle(
-                                    color: Colors.black, fontSize: 10.0)),
+                                    color: Colors.black, fontSize: 10.0, fontWeight:FontWeight.w500)),
                             new Checkbox(
                               value: towedVehicleCharges.discountApply,
 //                          //    onChanged: _value1Changed
@@ -281,9 +301,9 @@ class TowedVehicleChargesList extends StatelessWidget {
                         TableCell(
                             child: Column(
                           children: <Widget>[
-                            Text("TAXABLE",
+                            Text("Taxable",
                                 style: new TextStyle(
-                                    color: Colors.black, fontSize: 10.0)),
+                                    color: Colors.black, fontSize: 10.0, fontWeight:FontWeight.w500)),
                             new Checkbox(
                                 value: towedVehicleCharges.chargesTaxable),
                           ],
@@ -291,9 +311,9 @@ class TowedVehicleChargesList extends StatelessWidget {
                         TableCell(
                             child: Column(
                           children: <Widget>[
-                            Text("TOTAL",
+                            Text("Total",
                                 style: new TextStyle(
-                                    color: Colors.black, fontSize: 10.0)),
+                                    color: Colors.black, fontSize: 10.0, fontWeight:FontWeight.w500)),
                             Padding(
                                 padding: EdgeInsets.only(top: 15),
                                 child: Text(towedVehicleCharges.totalCharges)),
@@ -306,7 +326,7 @@ class TowedVehicleChargesList extends StatelessWidget {
               ],
             )),
         //Divider()
-      )
-    ]));
+      ))
+    ]);
   }
 }

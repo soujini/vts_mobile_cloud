@@ -129,8 +129,9 @@ class CompletedCallsList extends StatelessWidget {
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
                             children: <Widget>[
+                              completedCalls.towReasonName != null && completedCalls.towReasonName != ''?
                       Text((completedCalls.towReasonName),
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))),]))),
+                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))):Row(),]))),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
@@ -227,6 +228,7 @@ class CompletedCallsList extends StatelessWidget {
                                 ],
                               ),
                             ]))),
+                      completedCalls.towedToStreet != null && completedCalls.towedToStreet != ''?
                       Padding(
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
@@ -247,7 +249,7 @@ class CompletedCallsList extends StatelessWidget {
                                             fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
                                   ],
                                 ),
-                              ]))),
+                              ]))) : Row(),
                     ],
                   ))),
           //Divider()

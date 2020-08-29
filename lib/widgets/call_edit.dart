@@ -27,6 +27,7 @@ import 'package:vts_mobile_cloud/widgets/vehicle_make_modal.dart';
 import 'package:vts_mobile_cloud/widgets/wrecker_company_modal.dart';
 import 'package:vts_mobile_cloud/widgets/wrecker_driver_modal.dart';
 import 'package:vts_mobile_cloud/widgets/towed_vehicle_notes_list.dart';
+import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class CallEdit extends StatefulWidget {
   CallEdit(this.initialIndex) : super();
@@ -43,6 +44,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
   final _call = Call();
   String userRole;
   var dispatchPaging;
+  bool isLoading=false;
 
 //  Future<List> _refreshCallsList(BuildContext context) async {
 //    return await Provider.of<TowedVehicleNotesVM>(context)
@@ -175,8 +177,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
   }
   setBillTo(id, name) {
     setState(() {
-      _call.billTo = id;
-      _call.billToName = name;
+      _call.towBillTo = id;
+      _call.towBillToName = name;
       _billToController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
@@ -419,6 +421,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
   }
 
   bla() async {
+    setState(() {
+      isLoading=true;
+    });
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     await Provider.of<Calls>(context, listen: false).get(selectedCall.id);
     var x = await Provider.of<Calls>(context, listen: false).callDetails;
@@ -426,8 +431,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       //Bill To and BillToName
       _call.id=x[0].id;
-      _call.billTo = x[0].towBillTo;
-      _call.billToName = x[0].towBillToName;
+      _call.towBillTo = x[0].towBillTo;
+      _call.towBillToName = x[0].towBillToName;
       _billToController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: x[0].towBillToName != null ? x[0].towBillToName : ''))
           .value;
@@ -540,6 +545,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
       _vehicleOdomoeterController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: x[0].vehicleOdometer))
           .value;
+      isLoading=false;
     });
 
     //Tow Type
@@ -914,6 +920,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                 ))));
   }
   update() async{
+    this.setState(() {
+      isLoading=true;
+    });
     if(this._formKey.currentState.validate() == true) {
       this._formKey.currentState.save();
       await Provider.of<Calls>(context, listen: false).updateCall(_call);
@@ -921,6 +930,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
           .of<Calls>(context, listen: false)
           .updateResponse;
       if(response['errorStatus'] == "true"){
+        this.setState(() {
+          isLoading=false;
+        });
         Navigator.push(
             context,
             new MaterialPageRoute(
@@ -937,10 +949,16 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
         });
       }
       else {
+        this.setState(() {
+          isLoading=false;
+        });
         _showErrorMessage(context, response['errorMessage']);
       }
     }
     else{
+      this.setState(() {
+        isLoading=false;
+      });
       _showErrorMessage(context, "Please check your required fields");
     }
   }
@@ -1067,7 +1085,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                ),
               ],
             ),
-            body: Padding(
+            body: isLoading == true? Center(
+            child:Loader()
+            ):Padding(
                 padding: EdgeInsets.all(10.0),
                 child: Form(
                     key: this._formKey,
@@ -1965,7 +1985,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           new ListTile(
                             title: new TextFormField(
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._billToController,
+                                controller: this._towCustomerController,
                                 decoration: new InputDecoration(
                                   labelText: "Customer *",
                                   suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
@@ -2761,9 +2781,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                         Container(child: TowedVehicleNotesList()),
                       ])),
                       SingleChildScrollView(
-                          child: Column(children: <Widget>[
-                        Container(child: TowedVehicleChargesList(userRole)),
-                      ])),
+    child:TowedVehicleChargesList(userRole)
+                         // child: Column(children: <Widget>[
+
+//                        Container(child: TowedVehicleChargesList(userRole)),
+                    //  ]
+
+                          ),
                     ])))));
   }
 }

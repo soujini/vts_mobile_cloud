@@ -164,7 +164,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/update",
@@ -258,7 +258,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/create",
@@ -408,7 +408,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/update",
@@ -439,7 +439,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx',
+        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/get",
@@ -518,7 +518,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'http://74.95.253.45/vtscloud/WebServices/towedvehicletable.asmx?op=listMiniMobile',
+        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx?op=listMiniMobile',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMiniMobile",

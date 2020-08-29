@@ -132,8 +132,9 @@ class SearchCallsList extends StatelessWidget {
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
                             children: <Widget>[
+                              searchedCalls.towReasonName != null && searchedCalls.towReasonName != ''?
                       Text((searchedCalls.towReasonName),
-                          style: TextStyle(color: Colors.grey, fontSize: 14))]))),
+                          style: TextStyle(color: Colors.grey, fontSize: 14)):Row()]))),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5),
                         child: (Column(
@@ -224,6 +225,7 @@ class SearchCallsList extends StatelessWidget {
                                         fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
                               ],
                             )]))),
+                            searchedCalls.towedToStreet != null && searchedCalls.towedToStreet != ''?
                             Padding(
                               padding: EdgeInsets.symmetric(vertical: 5),
                               child: (Column(
@@ -245,7 +247,7 @@ class SearchCallsList extends StatelessWidget {
                                         fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
                               ],
                             ),
-                                  ])))
+                                  ]))) : Row()
                           ],
                         )),
                       ),

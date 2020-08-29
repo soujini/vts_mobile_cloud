@@ -504,7 +504,6 @@ class CallAddState extends State<CallAdd> {
   }
 
   save2() async{
-    print("printitng from dup call");
     await Provider.of<Calls>(context, listen: false).create(_call);
     var response = Provider
         .of<Calls>(context, listen: false)
