@@ -517,7 +517,7 @@ class CallAddState extends State<CallAdd> {
           context,
           new MaterialPageRoute(
               builder: (context) =>
-              new SuccessScreen()
+              new SuccessScreen("Call Successfully Added!")
           ));
 
       Timer(Duration(milliseconds: 3000), () {
@@ -560,7 +560,7 @@ class CallAddState extends State<CallAdd> {
             context,
             new MaterialPageRoute(
                 builder: (context) =>
-                new SuccessScreen()));
+                new SuccessScreen("Call Successfully Added!")));
 
         Timer(Duration(milliseconds: 3000), () {
           Navigator.pop(context);

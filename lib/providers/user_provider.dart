@@ -387,13 +387,10 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
     dd.add(new User.fromJson(extractedData));
     final storage = new FlutterSecureStorage();
     _userData = dd;
-    print(extractedData["userRole"]);
-    print(extractedData["userRoleName"]);
-    print(extractedData["dispatchPaging"]);
-  //  SecureStoreMixin secureStoreMixin = new SecureStoreMixin();
+    setSecureStore("userName",  extractedData["userName"]);
     setSecureStore("userId",  extractedData["id"]);
     setSecureStore("pinNumber",  extractedData["pinNumber"]);
-    setSecureStore("timeZoneName",  extractedData["timeZoneName"]);
+    setSecureStore("timeZoneName",  extractedData["systemTimeZoneName"]);
     setSecureStore("userRole",  extractedData["userRole"]);
     setSecureStore("userRoleName",  extractedData["userRoleName"]);
     setSecureStore("dispatchPaging",  extractedData["dispatchPaging"]);

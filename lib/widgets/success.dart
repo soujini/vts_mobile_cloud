@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class Success extends StatelessWidget {
+  String message="";
+  Success(this.message);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -18,7 +21,7 @@ class Success extends StatelessWidget {
                 ),
               ),
           Container(
-            child:Text("Call Successfully Added!", style: TextStyle(color: Colors.lightGreen, fontSize: 22, fontWeight: FontWeight.w500),)
+            child:Text(this.message, style: TextStyle(color: Colors.lightGreen, fontSize: 22, fontWeight: FontWeight.w500),)
           )
 
         ]));

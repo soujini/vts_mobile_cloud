@@ -173,8 +173,6 @@ class _UpdateStatusState extends State<UpdateStatus> {
 
   setStatus(String mode, bool moveStatus){
     setState(() =>widget.isLoading=true);
-
-
        Provider.of<Calls>(context, listen: false)
            .update(
            widget.id, selectedStatus, widget.dispatchInstructionsString, mode, moveStatus,widget.towType)

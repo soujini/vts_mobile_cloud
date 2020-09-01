@@ -937,7 +937,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
             context,
             new MaterialPageRoute(
                 builder: (context) =>
-                new SuccessScreen()));
+                new SuccessScreen("Call Successfully Updated!")));
 
         Timer(Duration(milliseconds: 3000), () {
           Navigator.pop(context);
