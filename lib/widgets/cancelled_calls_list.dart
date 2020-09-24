@@ -245,7 +245,14 @@ class CancelledCallsList extends StatelessWidget {
                                           fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
                                 ],
                               ),
-                            ]))) :Row()
+                            ]))) :Row(),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: (Column(
+                              children: <Widget>[
+                                cancelledCalls.dispatchInstructions_string != null && cancelledCalls.dispatchInstructions_string != '' && cancelledCalls.dispatchInstructions_string != 'null' && cancelledCalls.dispatchInstructions_string != '--'?
+                                Text((cancelledCalls.dispatchInstructions_string),
+                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color:Color(0xffB5B5B4))):Row(),]))),
                     ],
                   ))),
           //Divider()

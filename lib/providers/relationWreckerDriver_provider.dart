@@ -54,6 +54,7 @@ class WreckerDriversVM with ChangeNotifier, SecureStoreMixin {
   String userId="";
   String pinNumber="";
   String timeZoneName="";
+  String restrictWreckerDriver="";
 
   List<WreckerDriver> _wreckerDrivers = [];
 
@@ -73,8 +74,16 @@ class WreckerDriversVM with ChangeNotifier, SecureStoreMixin {
    await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
+    await  getSecureStore('restrictWreckerDriver', (token) {
+      restrictWreckerDriver=token;
+    });
 
-    filterFields = "pinNumber:"+pinNumber;
+   if(restrictWreckerDriver != '0') {
+     filterFields = "pinNumber:" + pinNumber + "|wreckerDriver:"+restrictWreckerDriver;
+   }
+   else{
+     filterFields = "pinNumber:" + pinNumber;
+   }
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -125,8 +134,15 @@ class WreckerDriversVM with ChangeNotifier, SecureStoreMixin {
    await  getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
-
-    filterFields = "pinNumber:"+pinNumber;
+    await  getSecureStore('restrictWreckerDriver', (token) {
+      restrictWreckerDriver=token;
+    });
+    if(restrictWreckerDriver != '0') {
+      filterFields = "pinNumber:" + pinNumber + "|wreckerDriver:"+restrictWreckerDriver;
+    }
+    else{
+      filterFields = "pinNumber:" + pinNumber;
+    }
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

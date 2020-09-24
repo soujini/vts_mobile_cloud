@@ -85,7 +85,7 @@ class TowTypeModal extends StatelessWidget {
                     },
                     onSuggestionSelected: (suggestion) {
                       this._typeAheadController1.text = suggestion.towTypeName;
-                      setTowType(suggestion.towType, suggestion.towTypeName);
+                      setTowType(suggestion);
                       Navigator.of(context).pop();
                     },
                   ),

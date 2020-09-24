@@ -117,7 +117,7 @@ class TowChargesVM with ChangeNotifier, SecureStoreMixin {
     tc =  List<TowCharge>();
 
     final int iStart=1;
-    final int iEnd=200;
+    final int iEnd=25;
     String filterFields = "";
 
    await  getSecureStore('userId', (token) {
@@ -127,7 +127,7 @@ class TowChargesVM with ChangeNotifier, SecureStoreMixin {
       pinNumber=token;
     });
 
-    filterFields = "name:"+name;
+    filterFields = "pinNumber:"+pinNumber;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -139,6 +139,7 @@ class TowChargesVM with ChangeNotifier, SecureStoreMixin {
         "<appName>${appName}</appName>"
         "<userId>${userId}</userId>"
         "<filterFields>${filterFields}</filterFields>"
+        "<name>${name}</name>"
         "<iStart>${iStart}</iStart>"
         "<iEnd>${iEnd}</iEnd>"
         "</listMini>"

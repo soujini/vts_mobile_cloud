@@ -19,6 +19,7 @@ class ChargesAdd extends StatefulWidget {
 
 class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
   final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = true;
   final _charge = TowedVehicleCharge();
   String userRole;
 
@@ -27,16 +28,22 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
   var _discountQuantityController = new TextEditingController();
   var _chargesRateController = new TextEditingController();
 
+
+
   setTowCharge(id, name) {
-    getAndSetDefaultCharges(id);
-    setState(() {
-      _charge.towCharges = id;
-      _towChargesController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
-              .value;
-    });
-    _formKey.currentState.validate();
-  }
+    // final form = _formKey.currentState;
+    // if (form.validate()) {
+    //    form.save();
+      getAndSetDefaultCharges(id);
+      setState(() {
+        _charge.towCharges = id;
+        _towChargesController.value =
+            new TextEditingController.fromValue(
+                new TextEditingValue(text: name))
+                .value;
+      });
+      _formKey.currentState.validate();
+    }
 
   getAndSetDefaultCharges(towCharges) async {
     var selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
@@ -79,9 +86,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
     });
   }
   save() async {
-    this.setState(() {
-      widget.isLoading=true;
-    });
+
     final form = _formKey.currentState;
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     _charge.towedVehicle = selectedCall.id;
@@ -89,26 +94,60 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
     _charge.discountApply = false;
     _charge.totalCharges = "0.00";
 
-    form.save();
-    await Provider.of<TowedVehicleChargesVM>(context, listen: false).create(_charge);
-    var response = Provider.of<TowedVehicleChargesVM>(context, listen: false).createResponse;
-    if (response["errorStatus"] == "false") {
-      this.setState(() {
-        widget.isLoading=true;
-      });
-      _showErrorMessage(context, response["errorMessage"]);
-    }
-    else{
-      this.setState(() {
-        widget.isLoading=true;
-      });
-      Navigator.push(context,
-          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(5)));
-    }
+         if (form.validate()) {
+           form.save();
+           this.setState(() {
+             widget.isLoading=true;
+           });
+
+           await Provider.of<TowedVehicleChargesVM>(context, listen: false)
+               .create(_charge);
+           var response = Provider
+               .of<TowedVehicleChargesVM>(context, listen: false)
+               .createResponse;
+           if (response["errorStatus"] == "false") {
+             this.setState(() {
+               widget.isLoading = false;
+             });
+             _showErrorMessage(context, response["errorMessage"]);
+           }
+           else {
+             await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+                 .processChangeCharges(_charge.towedVehicle);
+             var processChangeChargeResponse = Provider
+                 .of<ProcessTowedVehiclesVM>(context, listen: false)
+                 .processChangeChargeResponse;
+             if (processChangeChargeResponse["errorStatus"] == "false") {
+               this.setState(() {
+                 widget.isLoading = false;
+               });
+               _showErrorMessage(
+                   context, processChangeChargeResponse["errorMessage"]);
+             }
+             else {
+               this.setState(() {
+                 widget.isLoading = false;
+               });
+               Navigator.push(context,
+                   new MaterialPageRoute(
+                       builder: (context) => new AddEditCallScreen(5)));
+             }
+           }
+         }
+         else{
+           print("invalid fields");
+         }
   }
   void initState(){
     super.initState();
     getRole();
+  }
+
+  String validateFields(String value){
+    if (!value.isEmpty)
+      return null;
+    else
+        return 'Please enter the value';
   }
 
   @override
@@ -124,6 +163,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                 //content:
                 child: Form(
           key: _formKey,
+                  autovalidate: _autoValidate,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -132,10 +172,11 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
               ),
               new ListTile(
                 title: new TextFormField(
+                    readOnly:true,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: this._towChargesController,
                     decoration: new InputDecoration(
-                      labelText: 'Charge',
+                      labelText: 'Charge *',
                       suffixIcon: Icon(Icons.arrow_forward_ios),
                     ),
                     validator: (value) {
@@ -153,27 +194,37 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    // this.save();
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   keyboardType: TextInputType.number,
                   controller: _chargesQuantityController,
                   decoration: new InputDecoration(
-                    labelText: 'Quantity',
+                    labelText: 'Quantity *',
 //                    suffixIcon: IconButton(
 //                      //onPressed: () => _getVIN(), //_controller.clear(),
 //                      icon: Icon(Icons.autorenew),
 //                    ),
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
-                  //  },
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please select Quantity';
+                    }
+                  },
                   onSaved: (val) =>
                       setState(() => _charge.chargesQuantity = val),
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    // this.save();
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   keyboardType: TextInputType.number,
                   controller: _discountQuantityController,
@@ -195,20 +246,26 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    // this.save();
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   keyboardType: TextInputType.number,
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
-                    labelText: 'Rate',
+                    labelText: 'Rate *',
 //                    suffixIcon: IconButton(
 //                      //onPressed: () => _getVIN(), //_controller.clear(),
 //                      icon: Icon(Icons.autorenew),
 //                    ),
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please select Rate';
+                    }
+                  },
                   //  },
                   onSaved: (val) => setState(() => _charge.chargesRate = val),
                 ),

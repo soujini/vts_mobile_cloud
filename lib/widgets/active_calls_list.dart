@@ -129,7 +129,7 @@ class ActiveCallsList extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
                               fontSize: 12)),
-    Padding(
+                      Padding(
     padding: EdgeInsets.symmetric(vertical: 5),
     child: (Column(
     children: <Widget>[
@@ -159,7 +159,7 @@ class ActiveCallsList extends StatelessWidget {
                                         color:Color(0xff303030))),
                               ],
                             ),
-    Padding(
+                        Padding(
     padding: EdgeInsets.symmetric(vertical: 5),
     child: (Column(
     children: <Widget>[
@@ -211,7 +211,7 @@ class ActiveCallsList extends StatelessWidget {
                           ],
                         )),
                       ),
-            Padding(
+                      Padding(
               padding: EdgeInsets.symmetric(vertical: 5),
                 child: (Column(
                     children: <Widget>[
@@ -256,6 +256,13 @@ class ActiveCallsList extends StatelessWidget {
                                 ),
                               ]))
                       ):Row(),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: (Column(
+                              children: <Widget>[
+                                activeCalls.dispatchInstructions_string != null && activeCalls.dispatchInstructions_string != '' && activeCalls.dispatchInstructions_string != 'null' && activeCalls.dispatchInstructions_string != '--'?
+                                Text((activeCalls.dispatchInstructions_string),
+                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color:Color(0xffB5B5B4))):Row(),]))),
                     ],
                   ))),
         ]));

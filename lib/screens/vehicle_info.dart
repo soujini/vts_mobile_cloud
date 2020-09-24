@@ -63,17 +63,21 @@ class VehicleInfoScreen extends StatelessWidget {
                           child: Text("From",
                               style: TextStyle(
                                   color: Color(0xffb5b5bf), fontSize: 14, fontWeight: FontWeight.w500))),
-                      Text(
-                          (activeCalls.towedStreet != null ? activeCalls.towedStreet :''  +
-                              ' ' +
-                              activeCalls.towedStreetTwo != null ? activeCalls.towedStreetTwo:'' +
-                              ' ' +
-                              activeCalls.towedCityName != null ? activeCalls.towedCityName:'' +
-                              ' ' +
-                              activeCalls.towedStateName != null ? activeCalls.towedStateName:'' +
-                              ' ' +
-                              activeCalls.towedZipCode  != null ? activeCalls.towedZipCode:''),
-                          style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
+                      new Column(
+                        crossAxisAlignment:CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                              (activeCalls.towedStreet != null ? activeCalls.towedStreet :''  +
+                                  ' ' +
+                                  activeCalls.towedStreetTwo != null ? activeCalls.towedStreetTwo:''
+                                 ),
+                              style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
+                          Text(
+                              (activeCalls.towedCityName != null ? activeCalls.towedCityName:'' + ' '+activeCalls.towedStateName != null ? activeCalls.towedStateName:'' +
+                                  ' ' +
+                                  activeCalls.towedZipCode  != null ? activeCalls.towedZipCode:''),
+                              style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
+                        ]),
                     ],
                   ),
                   new Row(
@@ -82,18 +86,25 @@ class VehicleInfoScreen extends StatelessWidget {
                           width: 120,
                           child: Text("To",
                               style: TextStyle(
-                                  color: Color(0xffb5b5bf), fontSize: 14, fontWeight: FontWeight.w500))),
-                      Text(
-                          (activeCalls.towedToStreet +
-                              ' ' +
-                              activeCalls.towedToStreetTwo +
-                              ' ' +
-                              activeCalls.towedToCityName +
-                              ' ' +
-                              activeCalls.towedToStateName +
-                              ' ' +
-                              activeCalls.towedToZipCode),
-                          style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
+                               color: Color(0xffb5b5bf), fontSize: 14, fontWeight: FontWeight.w500))),
+
+
+                      new Column(
+                        crossAxisAlignment:CrossAxisAlignment.start,
+                        children: <Widget>[
+                        Text(
+                            (activeCalls.towedToStreet +
+                                ' ' +
+                                activeCalls.towedToStreetTwo
+                                ),
+                            style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
+                        Text(
+                            (activeCalls.towedToCityName + ' ' +activeCalls.towedToStateName +
+                                ' ' +
+                                activeCalls.towedToZipCode),
+                            style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
+                      ],)
+
                     ],
                   ),
     new Divider(height: 5.0, color: Color(0xffb5b5bf)),
@@ -224,7 +235,7 @@ class VehicleInfoScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold)),
                   ]),
                   Flexible(
-                    child: Text(activeCalls.dispatchInstructions_string, style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
+                    child: Text(activeCalls.dispatchInstructions_string != null && activeCalls.dispatchInstructions_string != 'null' ? activeCalls.dispatchInstructions_string : '--', style: TextStyle(color:Color(0xff303030), fontSize: 14, fontWeight: FontWeight.w500)),
                   )
 //
                 ])));

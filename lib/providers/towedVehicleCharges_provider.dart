@@ -99,6 +99,7 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
   List<TowedVehicleCharge> notes;
 
   var createResponse;
+  var chargesUpdateResponse;
 
   List<TowedVehicleCharge> get towedVehicleCharges {
     return [..._towedVehicleCharges]; //gets a copy of the items
@@ -218,6 +219,8 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
 
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["updateResponse"]["updateResult"];
+
+    chargesUpdateResponse = Map.from(extractedData);
   }
   Future<List> delete(id,towedVehicle) async {
 

@@ -6,6 +6,8 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
 import 'package:vts_mobile_cloud/widgets/charges_add.dart';
+import 'package:vts_mobile_cloud/widgets/tow_jurisdiction_modal.dart';
+import 'package:vts_mobile_cloud/widgets/tow_reason_modal.dart';
 import '../providers/secureStoreMixin_provider.dart';
 import 'package:vts_mobile_cloud/screens/success_screen.dart';
 import 'package:vts_mobile_cloud/models/call.dart';
@@ -88,11 +90,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //  var _vehicleTitleController = new TextEditingController();
   var _vehicleOdomoeterController = new TextEditingController();
   var _towTypeController = new TextEditingController();
-
-//  var _towReasonController = new TextEditingController();
+  var _towReasonController = new TextEditingController();
   var _authorizationController = new TextEditingController();
-
-//  var _jurisdictionController = new TextEditingController();
+  var _jurisdictionController = new TextEditingController();
   var _companyController = new TextEditingController();
   var _driverController = new TextEditingController();
   var _truckController = new TextEditingController();
@@ -177,20 +177,20 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
   }
   setBillTo(id, name) {
     setState(() {
-      _call.towBillTo = id;
-      _call.towBillToName = name;
+      _call.towBillTo = id != null ? id : 0;
+      _call.towBillToName = name != null ? name : '';
       _billToController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text:  _call.towBillToName))
               .value;
     });
   }
 
   setTowCustomer(id, name) {
     setState(() {
-      _call.towCustomer = id;
-      _call.towCustomerName = name;
+      _call.towCustomer = id != null ? id : 0;
+      _call.towCustomerName = name != null ? name : '';
       _towCustomerController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towCustomerName))
               .value;
     });
   }
@@ -206,33 +206,40 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //  }
 
   setModel(id, name) {
-    if(id != 0) {
       setState(() {
-        _call.vehicleYearMakeModel = id;
-        _call.vehicleYearMakeModelName = name;
+        _call.vehicleYearMakeModel = id != null ? id : 0;
+        _call.vehicleYearMakeModelName = name != null ? name : '';
         _modelController.value =
             new TextEditingController.fromValue(
-                new TextEditingValue(text: name))
+                new TextEditingValue(text: _call.vehicleYearMakeModelName))
                 .value;
       });
-    }
   }
 
   setVehicleYear(year) {
     setState(() {
-      _call.vehicleYear = year;
+      _call.vehicleYear = year != null ? year : '';
       _yearController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: year.toString()))
+              new TextEditingValue(text: _call.vehicleYear.toString()))
           .value;
     });
   }
 
   setMake(id, name) {
     setState(() {
-      _call.vehicleMake = id;
-      _call.vehicleMakeName = name;
+      _call.vehicleMake = id != null ? id : 0;
+      _call.vehicleMakeName = name != null ? name : '';
       _makeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleMakeName))
+              .value;
+    });
+  }
+  setTowReason(id, name) {
+    setState(() {
+      _call.towReason = id != null ? id : 0;
+      _call.towReasonName = name != null ? name : '';
+      _towReasonController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towReasonName ))
               .value;
     });
   }
@@ -249,30 +256,32 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
   setTopColor(id, name) {
     setState(() {
-      _call.topColor = id;
-      _call.topColorName = name;
+      _call.topColor = id != null ? id : 0;
+      _call.topColorName = name != null ? name : '';
       _topColorController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.topColorName))
               .value;
     });
+
+    setSecondColor(id, name);
   }
 
   setSecondColor(id, name) {
     setState(() {
-      _call.secondColor = id;
-      _call.secondColorName = name;
+      _call.secondColor = id != null ? id : 0;
+      _call.secondColorName = name != null ? name : '';
       _secondColorController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.secondColorName))
               .value;
     });
   }
 
-  setLicenseState(id, name) {
+  setLicenseState(suggestion) {
     setState(() {
-      _call.vehicleLicenseState = id;
-      _call.vehicleLicenseStateName = name;
+      _call.vehicleLicenseState = suggestion.vehicleLicenseState != null ? suggestion.vehicleLicenseState : 0;
+      _call.vehicleLicenseStateName = suggestion.vehicleLicenseStateName != null ? suggestion.vehicleLicenseStateName : '';
       _licenseStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleLicenseStateName))
               .value;
     });
   }
@@ -294,12 +303,29 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //
 //  }
 
-  setTowType(id, name) {
+  setTowType(suggestion) {
     setState(() {
-      _call.towType = id;
-      _call.towTypeName = name;
+      _call.towType = suggestion.towType != null && suggestion.towType != 'null' ? suggestion.towType : 0;
+      _call.towTypeName = suggestion.towTypeName != null && suggestion.towTypeName != 'null' ? suggestion.towTypeName : '';
+      _call.towAuthorization = suggestion.towAuthorization != null && suggestion.towAuthorization != 'null' ? suggestion.towAuthorization : 0;
+      _call.towAuthorizationName = suggestion.towAuthorizationName != null && suggestion.towAuthorizationName != 'null' ? suggestion.towAuthorizationName : '';
+      _call.towJurisdiction = suggestion.towJurisdiction != null && suggestion.towJurisdiction.toString() != 'null' ? suggestion.towJurisdiction : 0;
+      _call.towJurisdictionName = suggestion.towJurisdictionName != null && suggestion.towJurisdictionName.toString() != 'null' ? suggestion.towJurisdictionName : '';
+      _call.towReason = suggestion.towReason != null && suggestion.towReason.toString() != 'null' ? suggestion.towReason : 0;
+      _call.towReasonName = suggestion.towReasonName != null && suggestion.towReasonName.toString() != 'null' ? suggestion.towReasonName : '';
       _towTypeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towTypeName))
+              .value;
+
+      _authorizationController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text:_call.towAuthorizationName))
+              .value;
+
+      _jurisdictionController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towJurisdictionName))
+              .value;
+      _towReasonController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towReasonName))
               .value;
     });
   }
@@ -316,100 +342,100 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
   setAuthorization(id, name) {
     setState(() {
-      _call.towAuthorization = id;
-      _call.towAuthorizationName = name;
+      _call.towAuthorization = id != null ? id : 0;
+      _call.towAuthorizationName = name != null ? name : '';
       _authorizationController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text:  _call.towAuthorizationName))
               .value;
     });
   }
 
-//  setJurisdiction(id, name) {
-//    setState(() {
-//      _call.towJurisdiction = id;
-//      _call.towJurisdictionName = name;
-//      _jurisdictionController.value =
-//          new TextEditingController.fromValue(new TextEditingValue(text: name))
-//              .value;
-//    });
-//  }
+ setJurisdiction(id, name) {
+   setState(() {
+     _call.towJurisdiction = id != null ? id : 0;
+     _call.towJurisdictionName = name != null ? name : '';
+     _jurisdictionController.value =
+         new TextEditingController.fromValue(new TextEditingValue(text: _call.towJurisdictionName))
+             .value;
+   });
+ }
 
   setCity(id, name) {
     setState(() {
-      _call.towedCity = id;
-      _call.towedCityName = name;
+      _call.towedCity = id != null ? id : 0;
+      _call.towedCityName = name != null ? name : '';
       _towedCityController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towedCityName))
               .value;
     });
   }
 
-  setTowedState(id, name) {
+  setTowedState(id, name, shortName) {
     setState(() {
-      _call.towedState = id;
-      _call.towedStateName = name;
+      _call.towedState = id != null ? id : 0;
+      _call.towedStateName = name != null ? name : '';
       _towedStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: shortName != null ? shortName : ''))
               .value;
     });
   }
 
   setTowedToCity(id, name) {
     setState(() {
-      _call.towedToCity = id;
-      _call.towedToCityName = name;
+      _call.towedToCity = id != null ? id : 0;
+      _call.towedToCityName = name != null ? name : '';
       _towedToCityController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToCityName))
               .value;
     });
   }
 
-  setTowedToState(id, name) {
+  setTowedToState(id, name,shortName) {
     setState(() {
-      _call.towedToState = id;
-      _call.towedToStateName = name;
+      _call.towedToState = id != null ? id : 0;
+      _call.towedToStateName = name != null ? name : '';
       _towedToStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: shortName != null ? shortName : ''))
               .value;
     });
   }
 
   setCompany(id, name) {
     setState(() {
-      _call.wreckerCompany = id;
-      _call.wreckerCompanyName = name;
+      _call.wreckerCompany = id != null ? id : 0;
+      _call.wreckerCompanyName = name != null ? name : '';
       _companyController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.wreckerCompanyName))
               .value;
     });
   }
 
   setDriver(id, name) {
     setState(() {
-      _call.wreckerDriver = id;
-      _call.wreckerDriverName = name;
+      _call.wreckerDriver = id != null ? id : 0;
+      _call.wreckerDriverName = name != null ? name : '';
       _driverController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.wreckerDriverName))
               .value;
     });
   }
 
   setTruck(id, name) {
     setState(() {
-      _call.towTruck = id;
-      _call.towTruckName = name;
+      _call.towTruck =  id != null ? id : 0;
+      _call.towTruckName = name != null ? name : '';
       _truckController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.towTruckName))
               .value;
     });
   }
 
   setVehiclePriority(id, name) {
     setState(() {
-      _call.dispatchPriorityLevel = id;
-      _call.dispatchPriorityLevelName = name;
+      _call.dispatchPriorityLevel = id != null ? id : 0;
+      _call.dispatchPriorityLevelName = name != null ? name : '';
       _vehiclePriorityTypeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: _call.dispatchPriorityLevelName))
               .value;
     });
   }
@@ -446,7 +472,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
       //TowedPONumber
       _call.towedPONumber = x[0].towedPONumber != null ? x[0].towedPONumber : '';
       _towedPONumberController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: x[0].towedPONumber))
+              new TextEditingValue(text:  x[0].towedPONumber != null &&  x[0].towedPONumber != 'null' ?  x[0].towedPONumber : ''))
           .value;
 
       //Member Number
@@ -505,13 +531,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
       setSecondColor(x[0].secondColor, x[0].secondColorName);
 
       //License Plate
-      _call.licensePlate = x[0].licensePlate != null ? x[0].licensePlate : '';
+      _call.licensePlate = x[0].licensePlate != null && x[0].licensePlate != 'null' ? x[0].licensePlate : '';
       _licensePlateController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: x[0].licensePlate))
           .value;
 
       //License State
-      setLicenseState(x[0].vehicleLicenseState, x[0].vehicleLicenseStateName);
+      setLicenseState(x[0]);
 
       //License Type
 //      setLicenseStyle(x[0].vehicleLicenseType, x[0].vehicleLicenseTypeName);
@@ -549,16 +575,16 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     });
 
     //Tow Type
-    setTowType(x[0].towType, x[0].towTypeName);
+    setTowType(x[0]);
 
     //Tow Reason
-//    setTowReason(x[0].towReason, x[0].towReasonName);
+    //setTowReason(x[0].towReason, x[0].towReasonName);
 
     //Authorization
-    setAuthorization(x[0].towAuthorization, x[0].towAuthorizationName);
+    //setAuthorization(x[0].towAuthorization, x[0].towAuthorizationName);
 
     //Jurisdiction
-//    setJurisdiction(x[0].towJurisdiction, x[0].towJurisdictionName);
+    //setJurisdiction(x[0].towJurisdiction, x[0].towJurisdictionName);
 
     //Towed Date
     _call.towedDate = x[0].towedDate;
@@ -573,15 +599,15 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
         .value;
 
     //Towed Street
-    _call.towedStreet = x[0].towedStreet != null ? x[0].towedStreet : '';
+    _call.towedStreet = x[0].towedStreet != null && x[0].towedStreet != 'null' ? x[0].towedStreet : '';
     _towedStreetController.value = new TextEditingController.fromValue(
-            new TextEditingValue(text: x[0].towedStreet))
+            new TextEditingValue(text: _call.towedStreet))
         .value;
 
     //Towed Street2
-    _call.towedStreetTwo = x[0].towedStreetTwo != null ? x[0].towedStreetTwo : '';
+    _call.towedStreetTwo = x[0].towedStreetTwo != null && x[0].towedStreetTwo != 'null' ? x[0].towedStreetTwo : '';
     _towedStreetTwoController.value = new TextEditingController.fromValue(
-            new TextEditingValue(text: x[0].towedStreetTwo))
+            new TextEditingValue(text:_call.towedStreetTwo))
         .value;
 
     //TowedCity
@@ -671,7 +697,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     _call.dispatchInstructions_string = x[0].dispatchInstructions_string;
     _dispatchInstructions_stringController.value =
         new TextEditingController.fromValue(
-                new TextEditingValue(text: x[0].dispatchInstructions_string != null ? x[0].dispatchInstructions_string: ''))
+                new TextEditingValue(text: x[0].dispatchInstructions_string != null && x[0].dispatchInstructions_string != 'null' ? x[0].dispatchInstructions_string: ''))
             .value;
 
     //Dispatch Contact
@@ -941,11 +967,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
         Timer(Duration(milliseconds: 3000), () {
           Navigator.pop(context);
-//          Navigator.push(
-//              context,
-//              new MaterialPageRoute(
-//                  builder: (context) =>
-//                  new CallsScreen()));
         });
       }
       else {
@@ -1134,11 +1155,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               decoration: new InputDecoration(
                                 labelText: "PO #",
                               ),
-//                              validator: (value) {
-//                                if (value.isEmpty) {
-//                                  return 'Please enter PO #';
-//                                }
-//                              },
                               onSaved: (val) =>
                                   setState(() => _call.towedPONumber = val),
                             ),
@@ -1150,13 +1166,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               decoration: new InputDecoration(
                                 labelText: "Member #",
                               ),
-//                              validator: (value) {
-//                                if (value.isEmpty) {
-//                                  return 'Please enter Member #';
-//                                } else {
-//                                  return null;
-//                                }
-//                              },
                               onSaved: (val) => setState(
                                   () => _call.dispatchMemberNumber = val),
                             ),
@@ -1169,11 +1178,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               decoration: new InputDecoration(
                                 labelText: "Limit \$",
                               ),
-//                              validator: (value) {
-//                                if (value.isEmpty) {
-//                                  return 'Please enter Limit';
-//                                }
-//                              },
                               onSaved: (val) => setState(
                                   () => _call.dispatchLimitAmount = val),
                             ),
@@ -1186,11 +1190,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               decoration: new InputDecoration(
                                 labelText: "Limit Miles",
                               ),
-//                              validator: (value) {
-//                                if (value.isEmpty) {
-//                                  return 'Please enter Limit Miles';
-//                                }
-//                              },
                               onSaved: (val) => setState(
                                   () => _call.dispatchLimitMiles = val),
                             ),
@@ -1266,6 +1265,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._modelController,
                                 decoration: new InputDecoration(
@@ -1294,21 +1294,14 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                 controller: this._yearController,
                                 decoration: new InputDecoration(
                                   labelText: "Year *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
+                                  // suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
                                 ),
                                 validator: validateYear,
-                                onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          //    builder: (context) =>
-                                          //  new TowCustomersModal(setYear: setYear))
-                                          ));
-                                }),
+                                ),
                           ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._makeController,
                                 decoration: new InputDecoration(
@@ -1353,6 +1346,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                          ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._topColorController,
                                 decoration: new InputDecoration(
@@ -1375,6 +1369,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._secondColorController,
                                 decoration: new InputDecoration(
@@ -1387,7 +1382,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                   }
                                 },
                                 onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
@@ -1397,11 +1391,11 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           ),
                           new ListTile(
                             title: new TextFormField(
+                              textCapitalization: TextCapitalization.characters,
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                               controller: _licensePlateController,
                               decoration: new InputDecoration(
                                 labelText: "License Plate *",
-//                                suffixIcon: Icon(Icons.clear),
                               ),
                               validator: (value) {
                                 if (value.isEmpty) {
@@ -1424,7 +1418,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                   }
                                 },
                                 onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
@@ -1534,11 +1527,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               decoration: new InputDecoration(
                                 labelText: "Odometer",
                               ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter Title';
-                                }
-                              },
                               onSaved: (val) =>
                                   setState(() => _call.vehicleOdometer = val),
                             ),
@@ -1550,6 +1538,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                         children: <Widget>[
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._towTypeController,
                                 decoration: new InputDecoration(
@@ -1562,7 +1551,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                   }
                                 },
                                 onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
@@ -1571,25 +1559,26 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                                   setTowType: setTowType)));
                                 }),
                           ),
-//                          new ListTile(
-//                            title: new TextFormField(
-//                                controller: this._towReasonController,
-//                                decoration: new InputDecoration(
-//                                  labelText: "Tow Reason",
-//                                  suffixIcon: Icon(Icons.arrow_forward_ios),
-//                                ),
-//                                onTap: () {
-////                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-//                                  Navigator.push(
-//                                      context,
-//                                      new MaterialPageRoute(
-//                                          builder: (context) =>
-//                                              new TowReasonModal(
-//                                                  setTowReason: setTowReason)));
-//                                }),
-//                          ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                controller: this._towReasonController,
+                                decoration: new InputDecoration(
+                                  labelText: "Tow Reason",
+                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (context) => new TowReasonModal(
+                                              setTowReason: setTowReason)));
+                                }),
+                          ),
+                          new ListTile(
+                            title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._authorizationController,
                                 decoration: new InputDecoration(
@@ -1597,7 +1586,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                   suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                                 ),
                                 onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
@@ -1607,29 +1595,28 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                                       setAuthorization)));
                                 }),
                           ),
-//                          new ListTile(
-//                            title: new TextFormField(
-//                                controller: this._jurisdictionController,
-//                                decoration: new InputDecoration(
-//                                  labelText: "Jurisdiction",
-//                                  suffixIcon: Icon(Icons.arrow_forward_ios),
-//                                ),
-//                                validator: (value) {
-//                                  if (value.isEmpty) {
-//                                    return 'Please select Jurisdiction';
-//                                  }
-//                                },
-//                                onTap: () {
-////                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-//                                  Navigator.push(
-//                                      context,
-//                                      new MaterialPageRoute(
-//                                          builder: (context) =>
-//                                              new TowJurisdictionModal(
-//                                                  setJurisdiction:
-//                                                      setJurisdiction)));
-//                                }),
-//                          ),
+                          new ListTile(
+                            title: new TextFormField(
+                                readOnly:true,
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                controller: this._jurisdictionController,
+                                decoration: new InputDecoration(
+                                  labelText: "Jurisdiction *",
+                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                                ),
+                                validator: (value) {
+                                  if (value.isEmpty) {
+                                    return 'Please select Jurisdiction';
+                                  }
+                                },
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (context) => new TowJurisdictionModal(
+                                              setJurisdiction: setJurisdiction)));
+                                }),
+                          ),
                           new ListTile(
                             title: new TextFormField(
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
@@ -1670,6 +1657,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                 suffixIcon: IconButton(
                                   onPressed: () {
                                     DatePicker.showTimePicker(context,
+                                        showSecondsColumn: false,
                                         showTitleActions: true,
                                         //  minTime: DateTime(2018, 3, 5),
                                         //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -1715,34 +1703,14 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               decoration: new InputDecoration(
                                 labelText: "",
                               ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter StreetTwo';
-                                }
-                              },
+
                               onSaved: (val) =>
                                   setState(() => _call.towedStreetTwo = val),
                             ),
                           ),
                           new ListTile(
                             title: new TextFormField(
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towedCityController,
-                                decoration: new InputDecoration(
-                                  labelText: "City",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new SystemCityModal(
-                                                  setCity: setCity)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._towedStateController,
                                 decoration: new InputDecoration(
@@ -1754,11 +1722,32 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                       context,
                                       new MaterialPageRoute(
                                           builder: (context) =>
-                                              new SystemStateModal(
-                                                  setSystemState:
-                                                      setTowedState)));
+                                          new SystemStateModal(
+                                              setSystemState:
+                                              setTowedState)));
                                 }),
                           ),
+                          new ListTile(
+                            title: new TextFormField(
+                                readOnly:true,
+                                enabled:  _call.towedState.toString() == 'null' || _call.towedState.toString() == '' || _call.towedState.toString() == '0'  ? false : true ,
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                controller: this._towedCityController,
+                                decoration: new InputDecoration(
+                                  labelText: "City",
+                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (context) =>
+                                  new SystemCityModal(setCity: setCity, stateId:_call.towedState.toString())));
+
+
+                                }),
+                          ),
+
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _towedZipCodeController,
@@ -1787,35 +1776,18 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               decoration: new InputDecoration(
                                 labelText: "",
                               ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter StreetTwo';
-                                }
-                              },
+                              // validator: (value) {
+                              //   if (value.isEmpty) {
+                              //     return 'Please enter StreetTwo';
+                              //   }
+                              // },
                               onSaved: (val) =>
                                   setState(() => _call.towedToStreetTwo = val),
                             ),
                           ),
                           new ListTile(
                             title: new TextFormField(
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towedToCityController,
-                                decoration: new InputDecoration(
-                                  labelText: "City",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
-                                ),
-                                onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new SystemCityModal(
-                                                  setCity: setTowedToCity)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._towedToStateController,
                                 decoration: new InputDecoration(
@@ -1828,11 +1800,31 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                       context,
                                       new MaterialPageRoute(
                                           builder: (context) =>
-                                              new SystemStateModal(
-                                                  setSystemState:
-                                                      setTowedToState)));
+                                          new SystemStateModal(
+                                              setSystemState:
+                                              setTowedToState)));
                                 }),
                           ),
+                          new ListTile(
+                            title: new TextFormField(
+                                readOnly:true,
+                                enabled:  _call.towedToState.toString() == 'null' || _call.towedToState.toString() == '' || _call.towedToState.toString() == '0' ? false : true,
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                                controller: this._towedToCityController,
+                                decoration: new InputDecoration(
+                                  labelText: "City",
+                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
+                                ),
+                                onTap: () {
+//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+                                  Navigator.push(
+                                      context,
+                                      new MaterialPageRoute(
+                                          builder: (context) =>
+                                  new SystemCityModal(setCity: setTowedToCity, stateId:_call.towedToState.toString())));
+                                }),
+                          ),
+
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _towedToZipCodeController,
@@ -1845,6 +1837,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                          ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._companyController,
                                 decoration: new InputDecoration(
@@ -1876,6 +1869,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                          ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._driverController,
                                 decoration: new InputDecoration(
@@ -1883,7 +1877,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                   suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
                                 ),
                                 onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
@@ -1894,6 +1887,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._truckController,
                                 decoration: new InputDecoration(
@@ -1901,7 +1895,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                   suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                                 ),
                                 onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                   Navigator.push(
                                       context,
                                       new MaterialPageRoute(
@@ -1984,6 +1977,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                         children: <Widget>[
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._towCustomerController,
                                 decoration: new InputDecoration(
@@ -2008,14 +2002,20 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           ),
                           new ListTile(
                             title: new TextFormField(
+                              keyboardType: TextInputType.multiline,
+                              textInputAction: TextInputAction.newline,
+                              maxLines: 4,
+                              maxLength: 512,
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                               controller:
                                   _dispatchInstructions_stringController,
                               decoration: new InputDecoration(
                                 labelText: "Instructions",
                               ),
-                              onSaved: (val) => setState(() =>
-                                  _call.dispatchInstructions_string = val),
+                              onSaved: (val) => setState(() =>{
+                                _call.dispatchInstructions_string = val
+                              }
+                                  ),
                             ),
                           ),
                           new ListTile(
@@ -2042,17 +2042,14 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           ),
                           new ListTile(
                             title: new TextFormField(
+                                readOnly:true,
                                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                                 controller: this._vehiclePriorityTypeController,
                                 decoration: new InputDecoration(
                                   labelText: "Priority",
                                   suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                                 ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Vehicle Priority';
-                                  }
-                                },
+
                                 onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                   Navigator.push(
@@ -2115,6 +2112,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
+                         // showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2146,6 +2144,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
+                        //  showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2177,6 +2176,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
+//                           showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2208,6 +2208,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
+//                           showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2239,6 +2240,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
+//                           showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2270,6 +2272,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
+//                           showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2301,6 +2304,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
+//                           showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2336,6 +2340,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                          ),
                           new ListTile(
                             title: new TextFormField(
+                              readOnly: true,
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                               controller: _dispatchResponseIDController,
                               decoration: new InputDecoration(
@@ -2347,6 +2352,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           ),
                           new ListTile(
                             title: new TextFormField(
+                              readOnly: true,
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                               controller:
                                   _dispatchAuthorizationNumberController,
@@ -2369,6 +2375,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                          ),
                           new ListTile(
                             title: new TextFormField(
+                              readOnly: true,
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                               controller: _dispatchProviderResponseController,
                               decoration: new InputDecoration(
@@ -2776,18 +2783,12 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 ////                          ),
 //                        ],
 //                      )),
-                      SingleChildScrollView(
-                          child: Column(children: <Widget>[
-                        Container(child: TowedVehicleNotesList()),
-                      ])),
-                      SingleChildScrollView(
-    child:TowedVehicleChargesList(userRole)
-                         // child: Column(children: <Widget>[
+                      Expanded(
+                          child: TowedVehicleNotesList()),
 
-//                        Container(child: TowedVehicleChargesList(userRole)),
-                    //  ]
+                      Expanded(
+                          child: TowedVehicleChargesList(userRole)),
 
-                          ),
                     ])))));
   }
 }

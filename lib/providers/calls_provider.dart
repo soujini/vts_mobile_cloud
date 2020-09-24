@@ -15,6 +15,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
   String userId="";
   String pinNumber="";
   String timeZoneName="";
+  String restrictWreckerDriver;
 
   int _activeCount = 0;
   int _completedCount = 0;
@@ -363,7 +364,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       fieldName = "Arrived - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     }
-    else  if(fieldName == "Cleared")
+    else if(fieldName == "Cleared")
     {
       var towedStatus;
       if(mode == "tow"){
@@ -478,22 +479,46 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     await getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
+    await getSecureStore('restrictWreckerDriver', (token) {
+      restrictWreckerDriver=token;
+    });
+
 
     if (mode == 'active') {
-     filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
+      if(restrictWreckerDriver != '0'){
+        filterFields = "pinNumber:"+pinNumber+"|towedStatus:C|wreckerDriver:"+restrictWreckerDriver;
+      }
+      else{
+        filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
+      }
       towedStatus = "C";
       activeDispatch = true;
     } else if (mode == 'completed') {
-     filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
+      if(restrictWreckerDriver != '0'){
+        filterFields = "pinNumber:"+pinNumber+"|towedStatus:C|wreckerDriver:"+restrictWreckerDriver;
+      }
+      else{
+        filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
+      }
       towedStatus = "C";
       activeDispatch = false;
     } else if (mode == 'cancelled') {
-      filterFields = "pinNumber:"+pinNumber+"|towedStatus:X";
+      if(restrictWreckerDriver != '0') {
+        filterFields = "pinNumber:" + pinNumber + "|towedStatus:X|wreckerDriver:"+restrictWreckerDriver;
+      }
+      else{
+        filterFields = "pinNumber:" + pinNumber + "|towedStatus:X";
+      }
       towedStatus = "X";
       activeDispatch = true;
     }
       else if (mode == 'search') {
-      filterFields = _filterFields;
+      if(restrictWreckerDriver != '0') {
+        filterFields = _filterFields +"|wreckerDriver:"+restrictWreckerDriver;
+      }
+      else{
+        filterFields = _filterFields;
+      }
       towedStatus = "C";
       activeDispatch = true;
   }
@@ -560,9 +585,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
   }
 
   getCallDetails(extractedData){
-    final List<Call> towedVehicleNotes = [];
-    towedVehicleNotes.add(new Call.fromJson(extractedData));
-    _callDetails=towedVehicleNotes;
+    final List<Call> callDetails = [];
+    callDetails.add(new Call.fromJson(extractedData));
+    _callDetails=callDetails;
     //notifyListeners();
   }
   getActiveCalls(_activeCallsFiltered, count) {
@@ -577,7 +602,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
             ? _activeCallsFiltered["dispatchStatusName"]
             : '--',
         dispatchInstructions_string:
-        _activeCallsFiltered["dispatchInstructions_string"] != null
+        _activeCallsFiltered["dispatchInstructions_string"] != null && _activeCallsFiltered["dispatchInstructions_string"] != 'null'
             ? _activeCallsFiltered["dispatchInstructions_string"]
             : '--',
         progressStyleColor:

@@ -111,7 +111,7 @@ class CompletedCallsList extends StatelessWidget {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(completedCalls.id, completedCalls.dispatchStatusName, completedCalls.dispatchInstructions_string, userRole, dispatchPaging, completedCalls.towtype);
+                                    return UpdateStatus(completedCalls.id, completedCalls.dispatchStatusName, completedCalls.dispatchInstructions_string, userRole, dispatchPaging, completedCalls.towType);
                                   });
                               // showDialogUpdateStatus(context);
                             },
@@ -250,6 +250,13 @@ class CompletedCallsList extends StatelessWidget {
                                   ],
                                 ),
                               ]))) : Row(),
+                      Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: (Column(
+                              children: <Widget>[
+                                completedCalls.dispatchInstructions_string != null && completedCalls.dispatchInstructions_string != '' && completedCalls.dispatchInstructions_string != 'null' && completedCalls.dispatchInstructions_string != '--'?
+                                Text((completedCalls.dispatchInstructions_string),
+                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color:Color(0xffB5B5B4))):Row(),]))),
                     ],
                   ))),
           //Divider()

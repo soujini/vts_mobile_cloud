@@ -41,6 +41,7 @@ class CallAddState extends State<CallAdd> {
   List<GlobalKey<FormState>> _formKey = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _autoValidate = true;
+  bool enableCity1 = false;
 
   DateTime _date = DateTime.now();
   final _call = Call();
@@ -93,7 +94,7 @@ class CallAddState extends State<CallAdd> {
 
     //Initial Defaults
     setStyle(1, "Other");
-    setLicenseState(43, "TX");
+    setLicenseState(43, "TX", "TX");
 
     _dispatchDateController.text = DateFormat('MM-dd-yyyy').format(_date);
     _dispatchReceivedTimeController.text = DateFormat('kk:mm').format(_date);
@@ -333,6 +334,7 @@ class CallAddState extends State<CallAdd> {
               .value;
     });
     _formKey[0].currentState.validate();
+    setSecondColor(id, name);
   }
 
   setSecondColor(id, name) {
@@ -346,7 +348,7 @@ class CallAddState extends State<CallAdd> {
     _formKey[0].currentState.validate();
   }
 
-  setLicenseState(id, name) {
+  setLicenseState(id, name, shortName) {
     setState(() {
       _call.vehicleLicenseState = id;
       _call.vehicleLicenseStateName = name;
@@ -357,12 +359,30 @@ class CallAddState extends State<CallAdd> {
     _formKey[0].currentState.validate();
   }
 
-  setTowType(id, name) {
+  setTowType(suggestion) {
+    //Default
     setState(() {
-      _call.towType = id;
-      _call.towTypeName = name;
+      _call.towType = suggestion.towType;
+      _call.towTypeName = suggestion.towTypeName;
+      _call.towAuthorization = suggestion.towAuthorization;
+      _call.towAuthorizationName = suggestion.towAuthorizationName;
+      _call.towJurisdiction = suggestion.towJurisdiction;
+      _call.towJurisdictionName = suggestion.towJurisdictionName;
+      _call.towReason = suggestion.towReason;
+      _call.towReasonName = suggestion.towReasonName;
       _towTypeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.towTypeName))
+              .value;
+
+      _authorizationController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text:suggestion.towAuthorizationName))
+              .value;
+
+      _jurisdictionController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.towJurisdictionName))
+              .value;
+      _towReasonController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.towReasonName))
               .value;
     });
     _formKey[1].currentState.validate();
@@ -399,6 +419,15 @@ class CallAddState extends State<CallAdd> {
     _formKey[1].currentState.validate();
   }
 
+  enableCity(){
+    var a = _call.towedState.toString();
+    print(a);
+    if(_call.towedState.toString() == 'null' || _call.towedState.toString() == '')
+      return false;
+          else
+    return true;
+  }
+
   setCity(id, name) {
     setState(() {
       _call.towedCity = id;
@@ -410,12 +439,12 @@ class CallAddState extends State<CallAdd> {
    //_formKey.currentState.validate();
   }
 
-  setTowedState(id, name) {
+  setTowedState(id, name, shortName) {
     setState(() {
       _call.towedState = id;
       _call.towedStateName = name;
       _towedStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: shortName))
               .value;
     });
    //_formKey.currentState.validate();
@@ -629,7 +658,7 @@ class CallAddState extends State<CallAdd> {
   String validateVIN(String value){
     Pattern pattern = "^[^iIoOqQ'-]{10,17}\$";
     RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value))
+    if (!regex.hasMatch(value) && value != "NOVIN")
       return 'Please enter a valid VIN';
     else
       return null;
@@ -649,7 +678,7 @@ class CallAddState extends State<CallAdd> {
   }
   String validateInvoice(String value){
     if (value.isEmpty)
-      return 'Please enter Year';
+      return 'Please enter Invoice';
     else
       return null;
   }
@@ -745,6 +774,7 @@ class CallAddState extends State<CallAdd> {
                 new ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   title: new TextFormField(
+                      textCapitalization: TextCapitalization.characters,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _vinController,
                     decoration: new InputDecoration(
@@ -790,22 +820,22 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
-                      readOnly:true,
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._yearController,
                       decoration: new InputDecoration(
                         labelText: "Year *",
-                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                        // suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       validator: validateYear,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            new MaterialPageRoute(
-                              //    builder: (context) =>
-                              //  new TowCustomersModal(setYear: setYear))
-                            ));
-                      }),
+                      // onTap: () {
+                      //   Navigator.push(
+                      //       context,
+                      //       new MaterialPageRoute(
+                      //         //    builder: (context) =>
+                      //         //  new TowCustomersModal(setYear: setYear))
+                      //       ));
+                      // }
+                      ),
                 ),
                 new ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
@@ -911,6 +941,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    textCapitalization: TextCapitalization.characters,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _licensePlateController,
                     decoration: new InputDecoration(
@@ -1091,6 +1122,7 @@ class CallAddState extends State<CallAdd> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           DatePicker.showTimePicker(context,
+                              showSecondsColumn: false,
                               showTitleActions: true,
                               onConfirm: (time) {
                                 String formattedTime =
@@ -1144,6 +1176,7 @@ class CallAddState extends State<CallAdd> {
                       suffixIcon: IconButton(
                         onPressed: () {
                           DatePicker.showTimePicker(context,
+                              showSecondsColumn: false,
                               showTitleActions: true,
                               onConfirm: (time) {
                                 String formattedTime =
@@ -1184,7 +1217,6 @@ class CallAddState extends State<CallAdd> {
                         suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       onTap: () {
-
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
@@ -1197,6 +1229,7 @@ class CallAddState extends State<CallAdd> {
                   dense:true,
                   title: new TextFormField(
                       readOnly:true,
+                      enabled:  _call.towedState.toString() == 'null' || _call.towedState.toString() == '' || _call.towedState.toString() == '0'  ? false : true ,
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._towedCityController,
                       decoration: new InputDecoration(
@@ -1204,14 +1237,14 @@ class CallAddState extends State<CallAdd> {
                         suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                       ),
                       onTap: () {
-
                         Navigator.push(
                             context,
                             new MaterialPageRoute(
                                 builder: (context) =>
-                                new SystemCityModal(setCity: setCity)));
+                                new SystemCityModal(setCity: setCity, stateId:_call.towedState.toString())));
                       }),
                 ),
+
                 new ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,

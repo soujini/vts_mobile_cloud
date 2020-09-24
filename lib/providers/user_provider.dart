@@ -394,6 +394,7 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
     setSecureStore("userRole",  extractedData["userRole"]);
     setSecureStore("userRoleName",  extractedData["userRoleName"]);
     setSecureStore("dispatchPaging",  extractedData["dispatchPaging"]);
+    setSecureStore("restrictWreckerDriver",  extractedData["restrictWreckerDriver"]);
   }
 }
 

@@ -7,7 +7,8 @@ import 'package:vts_mobile_cloud/providers/systemCity_provider.dart';
 class SystemCityModal extends StatelessWidget {
 
   final Function setCity;
-  SystemCityModal({Key key, this.setCity}) : super(key: key);
+  final String stateId;
+  SystemCityModal({Key key, this.setCity, this.stateId}) : super(key: key);
 
   final  _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController1 = TextEditingController();
@@ -39,7 +40,7 @@ class SystemCityModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      await Provider.of<SystemCitiesVM>(context, listen:false).listMini(pattern);
+                      await Provider.of<SystemCitiesVM>(context, listen:false).listMini(pattern,stateId);
                       return Provider.of<SystemCitiesVM>(context, listen:false).systemCities;
                     },
                     itemBuilder: (context, suggestion) {

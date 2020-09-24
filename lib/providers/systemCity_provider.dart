@@ -110,7 +110,7 @@ class SystemCitiesVM with ChangeNotifier, SecureStoreMixin {
     _systemCities = tc;
   }
 
-  Future listMini(name) async {
+  Future listMini(cityName,state) async {
     _systemCities = [];
     List<SystemCity> tc;
     tc =  List<SystemCity>();
@@ -126,7 +126,7 @@ class SystemCitiesVM with ChangeNotifier, SecureStoreMixin {
       pinNumber=token;
     });
 
-    filterFields = "name:"+name;
+    filterFields = "name:"+cityName+"|systemState:"+state;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

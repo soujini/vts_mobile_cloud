@@ -66,8 +66,11 @@ class TowedVehicleNotesList extends StatelessWidget {
               child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+
                   Row(children: [
-                    Text(towedVehicleNotes.vehicleNotes_string, style: new TextStyle(
+
+                   Text(
+                        towedVehicleNotes.vehicleNotes_string,  overflow: TextOverflow.clip, style: new TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
                         fontSize: 14.0)),

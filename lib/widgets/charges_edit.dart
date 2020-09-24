@@ -18,6 +18,7 @@ class ChargesEdit extends StatefulWidget {
 
 class _ChargesEditState extends State<ChargesEdit> {
   final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = true;
   var _charge = TowedVehicleCharge();
   var _enableDiscountApply = false;
 
@@ -105,27 +106,87 @@ class _ChargesEditState extends State<ChargesEdit> {
           .value;
     });
   }
-
-  save() async {
-    this.setState(() {
-      widget.isLoading=true;
-    });
-    final form = _formKey.currentState;
-    var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
-    _charge.towedVehicle = selectedCall.id;
-
-    form.save();
-    await Provider.of<TowedVehicleChargesVM>(context, listen: false)
-        .update(_charge)
-        .then((res) {
-      this.setState(() {
-        widget.isLoading=false;
-      });
-      Navigator.push(context,
-          new MaterialPageRoute(builder: (context) => new AddEditCallScreen(5)));
-    });
+  _showErrorMessage(BuildContext context, errorMessage) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+            backgroundColor: Colors.lightGreen,
+            content: Text(errorMessage,
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+                ))));
   }
 
+  save() async {
+    final form = _formKey.currentState;
+    var selectedCall = Provider
+        .of<Calls>(context, listen: false)
+        .selectedCall;
+    _charge.towedVehicle = selectedCall.id;
+
+    if (form.validate()) {
+      form.save();
+      this.setState(() {
+        widget.isLoading = true;
+      });
+      await Provider.of<TowedVehicleChargesVM>(context, listen: false).update(
+          _charge);
+      var chargesUpdateResponse = Provider
+          .of<TowedVehicleChargesVM>(context, listen: false)
+          .chargesUpdateResponse;
+
+      if (chargesUpdateResponse["errorStatus"] == "false") {
+        this.setState(() {
+          widget.isLoading = false;
+        });
+        _showErrorMessage(context, chargesUpdateResponse["errorMessage"]);
+      }
+      else {
+        //call process change charge
+        await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+            .processChangeCharges(_charge.towedVehicle);
+        var processChangeChargeResponse = Provider
+            .of<ProcessTowedVehiclesVM>(context, listen: false)
+            .processChangeChargeResponse;
+        if (processChangeChargeResponse["errorStatus"] == "false") {
+          this.setState(() {
+            widget.isLoading = false;
+          });
+          _showErrorMessage(
+              context, processChangeChargeResponse["errorMessage"]);
+        }
+        else {
+          this.setState(() {
+            widget.isLoading = false;
+          });
+          Navigator.push(context,
+              new MaterialPageRoute(
+                  builder: (context) => new AddEditCallScreen(5)));
+        }
+      }
+    }
+    else{
+      print("Invalid fields");
+    }
+  }
+  calculateTotalChargesOnQuantityChange(val){
+    setState(() => _charge.chargesQuantity = val);
+    double total = double.parse(val).floor() * double.parse(_charge.chargesRate);
+    String totalCharges =  total.toStringAsFixed(2);
+    _charge.totalCharges=totalCharges;
+      _totalChargesController.value = new TextEditingController.fromValue(
+          new TextEditingValue(text: totalCharges))
+          .value;
+
+  }
+  calculateTotalChargesOnRateChange(val){
+    setState(() => _charge.chargesRate = val);
+    double total = double.parse(val) * double.parse(_charge.chargesQuantity);
+    String totalCharges =  total.toStringAsFixed(2);
+    _charge.totalCharges=totalCharges;
+    _totalChargesController.value = new TextEditingController.fromValue(
+        new TextEditingValue(text: totalCharges))
+        .value;
+
+  }
   @override
   Widget build(BuildContext context) {
     var selectedCharge =
@@ -143,6 +204,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                 //content:
                 child: Form(
           key: _formKey,
+          autovalidate: _autoValidate,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -151,33 +213,49 @@ class _ChargesEditState extends State<ChargesEdit> {
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   enabled: false,
                   controller: this._towChargesController,
                   decoration: new InputDecoration(
-                    labelText: 'Charge',
+                    labelText: 'Charge *',
                   ),
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   controller: this._chargesQuantityController,
                   keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     labelText: 'Quantity',
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
-                  //  },
+                 validator: (value) {
+                   if (value.isEmpty) {
+                     return 'Please enter Quantity';
+                   }
+                   else{
+                     return null;
+                   }
+                   },
+                  onChanged: (val) => calculateTotalChargesOnQuantityChange(val),
                   onSaved: (val) =>
                       setState(() => _charge.chargesQuantity = val),
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   controller: this._discountQuantityController,
                   keyboardType: TextInputType.number,
@@ -195,22 +273,34 @@ class _ChargesEditState extends State<ChargesEdit> {
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   keyboardType: TextInputType.number,
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
-                    labelText: 'Rate',
+                    labelText: 'Rate *',
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
-                  //  },
+                 validator: (value) {
+                   if (value.isEmpty) {
+                     return 'Please enter Rate';
+                   }
+                   else{
+                     return null;
+                   }
+                   },
+                  onChanged: (val) => calculateTotalChargesOnRateChange(val),
                   onSaved: (val) => setState(() => _charge.chargesRate = val),
                 ),
               ),
               new ListTile(
                 title: new TextFormField(
+                  onEditingComplete: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                    FocusScope.of(context).unfocus();
+                  },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   enabled: false,
                   keyboardType: TextInputType.number,
@@ -218,11 +308,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                   decoration: new InputDecoration(
                     labelText: 'Discount',
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
-                  //  },
+
                   onSaved: (val) => setState(() => _charge.discountRate = val),
                 ),
               ),
@@ -257,8 +343,9 @@ class _ChargesEditState extends State<ChargesEdit> {
               ),
               new ListTile(
                 title: new TextFormField(
+                  readOnly: true,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  enabled: false,
+                  // readOnly: true,
                   keyboardType: TextInputType.number,
                   controller: _totalChargesController,
                   decoration: new InputDecoration(

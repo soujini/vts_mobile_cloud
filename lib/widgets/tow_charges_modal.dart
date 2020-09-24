@@ -57,7 +57,7 @@ class TowChargesModal extends StatelessWidget {
                     },
                     onSuggestionSelected: (suggestion) {
                       this._typeAheadController1.text = suggestion.towChargesName;
-                      setTowCharge(suggestion.id, suggestion.towChargesName);
+                      setTowCharge(suggestion.towCharges, suggestion.towChargesName);
                       Navigator.of(context).pop();
                     },
                   ),

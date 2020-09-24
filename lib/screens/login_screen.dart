@@ -95,9 +95,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       ),
                       child: TextFormField(
                           onEditingComplete: () {
-//                            this.submit(context);
-//                            FocusScope.of(context).requestFocus(new FocusNode());
-//                            FocusScope.of(context).unfocus();
+                            this.submit(context);
+                            FocusScope.of(context).requestFocus(new FocusNode());
+                            FocusScope.of(context).unfocus();
                           },
                           decoration: new InputDecoration(
                             prefixIcon: Icon(Icons.account_circle,
@@ -135,8 +135,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                     child: TextFormField(
                         onEditingComplete: () {
-//                          this.submit(context);
-//                          FocusScope.of(context).requestFocus(new FocusNode());
+                          this.submit(context);
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          FocusScope.of(context).unfocus();
                         },
                         obscureText: true,
                         decoration: new InputDecoration(
@@ -176,8 +177,9 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     ),
                     child: TextFormField(
                         onEditingComplete: () {
-//                          this.submit(context);
-//                          FocusScope.of(context).requestFocus(new FocusNode());
+                          this.submit(context);
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          FocusScope.of(context).unfocus();
                         },
 //                        onSubmitted: (value) {},
                         decoration: new InputDecoration(
