@@ -362,14 +362,14 @@ class CallAddState extends State<CallAdd> {
   setTowType(suggestion) {
     //Default
     setState(() {
-      _call.towType = suggestion.towType;
-      _call.towTypeName = suggestion.towTypeName;
-      _call.towAuthorization = suggestion.towAuthorization;
-      _call.towAuthorizationName = suggestion.towAuthorizationName;
-      _call.towJurisdiction = suggestion.towJurisdiction;
-      _call.towJurisdictionName = suggestion.towJurisdictionName;
-      _call.towReason = suggestion.towReason;
-      _call.towReasonName = suggestion.towReasonName;
+      _call.towType = suggestion.towType != null && suggestion.towType != 'null' ? suggestion.towType : 0;
+      _call.towTypeName = suggestion.towTypeName != null && suggestion.towTypeName != 'null' ? suggestion.towTypeName : '';
+      _call.towAuthorization = suggestion.towAuthorization != null && suggestion.towAuthorization != 'null' ? suggestion.towAuthorization : 0;
+      _call.towAuthorizationName = suggestion.towAuthorizationName != null && suggestion.towAuthorizationName != 'null' ? suggestion.towAuthorizationName : '';
+      _call.towJurisdiction = suggestion.towJurisdiction != null && suggestion.towJurisdiction.toString() != 'null' ? suggestion.towJurisdiction : 0;
+      _call.towJurisdictionName = suggestion.towJurisdictionName != null && suggestion.towJurisdictionName.toString() != 'null' ? suggestion.towJurisdictionName : '';
+      _call.towReason = suggestion.towReason != null && suggestion.towReason.toString() != 'null' ? suggestion.towReason : 0;
+      _call.towReasonName = suggestion.towReasonName != null && suggestion.towReasonName.toString() != 'null' ? suggestion.towReasonName : '';
       _towTypeController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: suggestion.towTypeName))
               .value;

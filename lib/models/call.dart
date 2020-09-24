@@ -696,11 +696,11 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       towAuthorizationName: parsedJson["towAuthorizationName"] != null
           ? parsedJson["towAuthorizationName"]
           : "",
-//      towJurisdiction: int.parse(parsedJson["towJurisdiction"]) != 0 ? int
-//          .parse(parsedJson["towJurisdiction"]) : 0,
-//      towJurisdictionName: parsedJson["towJurisdictionName"] != null
-//          ? parsedJson["towJurisdictionName"]
-//          : "",
+     towJurisdiction: int.parse(parsedJson["towJurisdiction"]) != 0 ? int
+         .parse(parsedJson["towJurisdiction"]) : 0,
+     towJurisdictionName: parsedJson["towJurisdictionName"] != null
+         ? parsedJson["towJurisdictionName"]
+         : "",
       topColor: parsedJson["topColor"] != "0" ? int.parse(
           parsedJson["topColor"]) : 0,
       topColorName: parsedJson["topColorName"] != null
@@ -721,7 +721,11 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
 //      vehicleLicenseTypeName: parsedJson["vehicleLicenseTypeName"] != null
 //          ? parsedJson["vehicleLicenseTypeName"]
 //          : "",
-      //   towReason: parsedJson["towReason"],
+        towReason: parsedJson["towReason"] != "0" ? int.parse(
+          parsedJson["towReason"]) : 0,
+      towReasonName: parsedJson["towReasonName"] != null
+          ? parsedJson["towReasonName"]
+          : '',
       //   towedState: parsedJson["towedState"],
       wreckerCompany:int.parse(parsedJson["wreckerCompany"]),
       wreckerCompanyName: parsedJson["wreckerCompanyName"] != null
