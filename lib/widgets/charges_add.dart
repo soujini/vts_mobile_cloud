@@ -9,8 +9,11 @@ import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class ChargesAdd extends StatefulWidget {
-//  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructions_string);
+  int selectedCall=0;
   bool isLoading=false;
+
+  ChargesAdd(this.selectedCall);
+
   @override
   State<StatefulWidget> createState() {
     return _ChargesAddState();
@@ -19,6 +22,7 @@ class ChargesAdd extends StatefulWidget {
 
 class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
   final _formKey = GlobalKey<FormState>();
+  bool _isFormReadOnly=false;
   bool _autoValidate = true;
   final _charge = TowedVehicleCharge();
   String userRole;
@@ -84,6 +88,9 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
         userRole=token;
       });
     });
+    if(userRole == "3"){
+      _isFormReadOnly = true;
+    }
   }
   save() async {
 
@@ -113,7 +120,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
            }
            else {
              await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-                 .processChangeCharges(_charge.towedVehicle);
+                 .processChangeCharges(_charge.towedVehicle, _charge.towCharges);
              var processChangeChargeResponse = Provider
                  .of<ProcessTowedVehiclesVM>(context, listen: false)
                  .processChangeChargeResponse;
@@ -128,6 +135,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                this.setState(() {
                  widget.isLoading = false;
                });
+               // Navigator.pop(context);
                Navigator.push(context,
                    new MaterialPageRoute(
                        builder: (context) => new AddEditCallScreen(5)));
@@ -189,11 +197,12 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                           context,
                           MaterialPageRoute(
                               builder: (context) => new TowChargesModal(
-                                  setTowCharge: setTowCharge)));
+                                  setTowCharge: setTowCharge, selectedCall : widget.selectedCall)));
                     }),
               ),
               new ListTile(
                 title: new TextFormField(
+                  readOnly: _isFormReadOnly,
                   onEditingComplete: () {
                     // this.save();
                     FocusScope.of(context).requestFocus(new FocusNode());
@@ -220,6 +229,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
               ),
               new ListTile(
                 title: new TextFormField(
+                  readOnly: _isFormReadOnly,
                   onEditingComplete: () {
                     // this.save();
                     FocusScope.of(context).requestFocus(new FocusNode());
@@ -246,6 +256,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
               ),
               new ListTile(
                 title: new TextFormField(
+                  readOnly: _isFormReadOnly && _charge.chargesRate != "0.00",
                   onEditingComplete: () {
                     // this.save();
                     FocusScope.of(context).requestFocus(new FocusNode());

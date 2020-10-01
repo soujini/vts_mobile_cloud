@@ -34,6 +34,7 @@ class TowedVehicleNotesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _refreshCallsList(context);
     var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),

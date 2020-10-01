@@ -19,6 +19,7 @@ class ChargesEdit extends StatefulWidget {
 class _ChargesEditState extends State<ChargesEdit> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = true;
+  bool _isFormReadOnly = false;
   var _charge = TowedVehicleCharge();
   var _enableDiscountApply = false;
 
@@ -28,6 +29,27 @@ class _ChargesEditState extends State<ChargesEdit> {
   var _chargesRateController = new TextEditingController();
   var _discountRateController = new TextEditingController();
   var _totalChargesController = new TextEditingController();
+
+  void initState() {
+    _chargesQuantityController.addListener(() {
+      final text = _chargesQuantityController.text;
+      _chargesQuantityController.value = _chargesQuantityController.value.copyWith(
+        text: text,
+        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+
+    _chargesRateController.addListener(() {
+      final text = _chargesRateController.text;
+      _chargesRateController.value = _chargesRateController.value.copyWith(
+        text: text,
+        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+    super.initState();
+  }
 
   getValues() {
     enableDisableDiscount();
@@ -142,7 +164,7 @@ class _ChargesEditState extends State<ChargesEdit> {
       else {
         //call process change charge
         await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-            .processChangeCharges(_charge.towedVehicle);
+            .processChangeCharges(_charge.towedVehicle, _charge.towCharges);
         var processChangeChargeResponse = Provider
             .of<ProcessTowedVehiclesVM>(context, listen: false)
             .processChangeChargeResponse;
@@ -157,9 +179,10 @@ class _ChargesEditState extends State<ChargesEdit> {
           this.setState(() {
             widget.isLoading = false;
           });
-          Navigator.push(context,
-              new MaterialPageRoute(
-                  builder: (context) => new AddEditCallScreen(5)));
+          Navigator.pop(context);
+          // Navigator.push(context,
+          //     new MaterialPageRoute(
+          //         builder: (context) => new AddEditCallScreen(5)));
         }
       }
     }
@@ -171,16 +194,19 @@ class _ChargesEditState extends State<ChargesEdit> {
     setState(() => _charge.chargesQuantity = val);
     double total = double.parse(val).floor() * double.parse(_charge.chargesRate);
     String totalCharges =  total.toStringAsFixed(2);
-    _charge.totalCharges=totalCharges;
-      _totalChargesController.value = new TextEditingController.fromValue(
-          new TextEditingValue(text: totalCharges))
-          .value;
 
+    _charge.totalCharges=totalCharges;
+     _totalChargesController.value = new TextEditingController.fromValue(
+        new TextEditingValue(
+            text: totalCharges,
+        ))
+        .value;
   }
   calculateTotalChargesOnRateChange(val){
     setState(() => _charge.chargesRate = val);
     double total = double.parse(val) * double.parse(_charge.chargesQuantity);
     String totalCharges =  total.toStringAsFixed(2);
+
     _charge.totalCharges=totalCharges;
     _totalChargesController.value = new TextEditingController.fromValue(
         new TextEditingValue(text: totalCharges))

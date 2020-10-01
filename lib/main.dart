@@ -141,7 +141,6 @@ class _MyAppState extends State<MyApp>{
           primarySwatch: colorCustom,
           bottomAppBarColor: colorCustom,
           fontFamily: 'Montserrat',
-        backgroundColor: Colors.red
       ),
       home: (pageMode == "login") ? LoginPage(setScreen: setScreen) : MyHomePage(title: "Fluttter App"),
 

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -39,14 +40,15 @@ class CallEdit extends StatefulWidget {
   _CallEditState createState() => _CallEditState();
 }
 
-
 class _CallEditState extends State<CallEdit> with SecureStoreMixin {
   final _formKey = GlobalKey<FormState>();
+  bool _autoValidate = true;
+  bool _isFormReadOnly = false;
   DateTime _date = DateTime.now();
   final _call = Call();
   String userRole;
   var dispatchPaging;
-  bool isLoading=false;
+  bool isLoading = false;
 
 //  Future<List> _refreshCallsList(BuildContext context) async {
 //    return await Provider.of<TowedVehicleNotesVM>(context)
@@ -160,28 +162,33 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //  var _towedDiscountAmountController=new TextEditingController();
 //  var _vehicleLicenseYearController = new TextEditingController();
   var _dispatchETAMinutesController = new TextEditingController();
-  getRole() async{
-   await  getSecureStore('userRole', (token) {
+
+  getRole() async {
+    await getSecureStore('userRole', (token) {
       setState(() {
-        userRole=token;
+        userRole = token;
+      });
+    });
+    if(userRole == "3"){
+      _isFormReadOnly = true;
+    }
+  }
+
+  getDispatchPaging() async {
+    await getSecureStore('dispatchPaging', (token) {
+      setState(() {
+        dispatchPaging = token;
       });
     });
   }
 
-  getDispatchPaging() async{
-   await  getSecureStore('dispatchPaging', (token) {
-      setState(() {
-        dispatchPaging=token;
-      });
-    });
-  }
   setBillTo(id, name) {
     setState(() {
       _call.towBillTo = id != null ? id : 0;
       _call.towBillToName = name != null ? name : '';
-      _billToController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text:  _call.towBillToName))
-              .value;
+      _billToController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towBillToName))
+          .value;
     });
   }
 
@@ -189,9 +196,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.towCustomer = id != null ? id : 0;
       _call.towCustomerName = name != null ? name : '';
-      _towCustomerController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towCustomerName))
-              .value;
+      _towCustomerController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towCustomerName))
+          .value;
     });
   }
 
@@ -206,14 +213,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //  }
 
   setModel(id, name) {
-      setState(() {
-        _call.vehicleYearMakeModel = id != null ? id : 0;
-        _call.vehicleYearMakeModelName = name != null ? name : '';
-        _modelController.value =
-            new TextEditingController.fromValue(
-                new TextEditingValue(text: _call.vehicleYearMakeModelName))
-                .value;
-      });
+    setState(() {
+      _call.vehicleYearMakeModel = id != null ? id : 0;
+      _call.vehicleYearMakeModelName = name != null ? name : '';
+      _modelController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.vehicleYearMakeModelName))
+          .value;
+    });
   }
 
   setVehicleYear(year) {
@@ -229,18 +235,19 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.vehicleMake = id != null ? id : 0;
       _call.vehicleMakeName = name != null ? name : '';
-      _makeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleMakeName))
-              .value;
+      _makeController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.vehicleMakeName))
+          .value;
     });
   }
+
   setTowReason(id, name) {
     setState(() {
       _call.towReason = id != null ? id : 0;
       _call.towReasonName = name != null ? name : '';
-      _towReasonController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towReasonName ))
-              .value;
+      _towReasonController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towReasonName))
+          .value;
     });
   }
 
@@ -258,9 +265,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.topColor = id != null ? id : 0;
       _call.topColorName = name != null ? name : '';
-      _topColorController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.topColorName))
-              .value;
+      _topColorController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.topColorName))
+          .value;
     });
 
     setSecondColor(id, name);
@@ -270,19 +277,23 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.secondColor = id != null ? id : 0;
       _call.secondColorName = name != null ? name : '';
-      _secondColorController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.secondColorName))
-              .value;
+      _secondColorController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.secondColorName))
+          .value;
     });
   }
 
   setLicenseState(suggestion) {
     setState(() {
-      _call.vehicleLicenseState = suggestion.vehicleLicenseState != null ? suggestion.vehicleLicenseState : 0;
-      _call.vehicleLicenseStateName = suggestion.vehicleLicenseStateName != null ? suggestion.vehicleLicenseStateName : '';
-      _licenseStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleLicenseStateName))
-              .value;
+      _call.vehicleLicenseState = suggestion.vehicleLicenseState != null
+          ? suggestion.vehicleLicenseState
+          : 0;
+      _call.vehicleLicenseStateName = suggestion.vehicleLicenseStateName != null
+          ? suggestion.vehicleLicenseStateName
+          : '';
+      _licenseStateController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.vehicleLicenseStateName))
+          .value;
     });
   }
 
@@ -305,28 +316,51 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
   setTowType(suggestion) {
     setState(() {
-      _call.towType = suggestion.towType != null && suggestion.towType != 'null' ? suggestion.towType : 0;
-      _call.towTypeName = suggestion.towTypeName != null && suggestion.towTypeName != 'null' ? suggestion.towTypeName : '';
-      _call.towAuthorization = suggestion.towAuthorization != null && suggestion.towAuthorization != 'null' ? suggestion.towAuthorization : 0;
-      _call.towAuthorizationName = suggestion.towAuthorizationName != null && suggestion.towAuthorizationName != 'null' ? suggestion.towAuthorizationName : '';
-      _call.towJurisdiction = suggestion.towJurisdiction != null && suggestion.towJurisdiction.toString() != 'null' ? suggestion.towJurisdiction : 0;
-      _call.towJurisdictionName = suggestion.towJurisdictionName != null && suggestion.towJurisdictionName.toString() != 'null' ? suggestion.towJurisdictionName : '';
-      _call.towReason = suggestion.towReason != null && suggestion.towReason.toString() != 'null' ? suggestion.towReason : 0;
-      _call.towReasonName = suggestion.towReasonName != null && suggestion.towReasonName.toString() != 'null' ? suggestion.towReasonName : '';
-      _towTypeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towTypeName))
-              .value;
+      _call.towType = suggestion.towType != null && suggestion.towType != 'null'
+          ? suggestion.towType
+          : 0;
+      _call.towTypeName =
+          suggestion.towTypeName != null && suggestion.towTypeName != 'null'
+              ? suggestion.towTypeName
+              : '';
+      _call.towAuthorization = suggestion.towAuthorization != null &&
+              suggestion.towAuthorization != 'null'
+          ? suggestion.towAuthorization
+          : 0;
+      _call.towAuthorizationName = suggestion.towAuthorizationName != null &&
+              suggestion.towAuthorizationName != 'null'
+          ? suggestion.towAuthorizationName
+          : '';
+      _call.towJurisdiction = suggestion.towJurisdiction != null &&
+              suggestion.towJurisdiction.toString() != 'null'
+          ? suggestion.towJurisdiction
+          : 0;
+      _call.towJurisdictionName = suggestion.towJurisdictionName != null &&
+              suggestion.towJurisdictionName.toString() != 'null'
+          ? suggestion.towJurisdictionName
+          : '';
+      _call.towReason = suggestion.towReason != null &&
+              suggestion.towReason.toString() != 'null'
+          ? suggestion.towReason
+          : 0;
+      _call.towReasonName = suggestion.towReasonName != null &&
+              suggestion.towReasonName.toString() != 'null'
+          ? suggestion.towReasonName
+          : '';
+      _towTypeController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towTypeName))
+          .value;
 
-      _authorizationController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text:_call.towAuthorizationName))
-              .value;
+      _authorizationController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towAuthorizationName))
+          .value;
 
-      _jurisdictionController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towJurisdictionName))
-              .value;
-      _towReasonController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towReasonName))
-              .value;
+      _jurisdictionController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towJurisdictionName))
+          .value;
+      _towReasonController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towReasonName))
+          .value;
     });
   }
 
@@ -344,29 +378,29 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.towAuthorization = id != null ? id : 0;
       _call.towAuthorizationName = name != null ? name : '';
-      _authorizationController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text:  _call.towAuthorizationName))
-              .value;
+      _authorizationController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towAuthorizationName))
+          .value;
     });
   }
 
- setJurisdiction(id, name) {
-   setState(() {
-     _call.towJurisdiction = id != null ? id : 0;
-     _call.towJurisdictionName = name != null ? name : '';
-     _jurisdictionController.value =
-         new TextEditingController.fromValue(new TextEditingValue(text: _call.towJurisdictionName))
-             .value;
-   });
- }
+  setJurisdiction(id, name) {
+    setState(() {
+      _call.towJurisdiction = id != null ? id : 0;
+      _call.towJurisdictionName = name != null ? name : '';
+      _jurisdictionController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towJurisdictionName))
+          .value;
+    });
+  }
 
   setCity(id, name) {
     setState(() {
       _call.towedCity = id != null ? id : 0;
       _call.towedCityName = name != null ? name : '';
-      _towedCityController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towedCityName))
-              .value;
+      _towedCityController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towedCityName))
+          .value;
     });
   }
 
@@ -374,9 +408,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.towedState = id != null ? id : 0;
       _call.towedStateName = name != null ? name : '';
-      _towedStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: shortName != null ? shortName : ''))
-              .value;
+      _towedStateController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: shortName != null ? shortName : ''))
+          .value;
     });
   }
 
@@ -384,19 +418,19 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.towedToCity = id != null ? id : 0;
       _call.towedToCityName = name != null ? name : '';
-      _towedToCityController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToCityName))
-              .value;
+      _towedToCityController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towedToCityName))
+          .value;
     });
   }
 
-  setTowedToState(id, name,shortName) {
+  setTowedToState(id, name, shortName) {
     setState(() {
       _call.towedToState = id != null ? id : 0;
       _call.towedToStateName = name != null ? name : '';
-      _towedToStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: shortName != null ? shortName : ''))
-              .value;
+      _towedToStateController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: shortName != null ? shortName : ''))
+          .value;
     });
   }
 
@@ -404,29 +438,40 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setState(() {
       _call.wreckerCompany = id != null ? id : 0;
       _call.wreckerCompanyName = name != null ? name : '';
-      _companyController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.wreckerCompanyName))
-              .value;
+      _companyController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.wreckerCompanyName))
+          .value;
     });
   }
 
-  setDriver(id, name) {
+  setDriver(driverObj) {
     setState(() {
-      _call.wreckerDriver = id != null ? id : 0;
-      _call.wreckerDriverName = name != null ? name : '';
-      _driverController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.wreckerDriverName))
-              .value;
+      _call.wreckerDriver = driverObj.wreckerDriver != null ? driverObj.wreckerDriver : 0;
+      _call.wreckerDriverName = driverObj.wreckerDriverName != null ? driverObj.wreckerDriverName : '';
+      _driverController.value = new TextEditingController.fromValue(
+          new TextEditingValue(text: _call.wreckerDriverName))
+          .value;
     });
+  }
+  setDriverOnEdit(suggestion) {
+    setState(() {
+      _call.wreckerDriver = suggestion.wreckerDriver;
+      _call.wreckerDriverName = suggestion.wreckerDriverName;
+      _driverController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.wreckerDriverName))
+              .value;
+      setTruck(suggestion.towTruck, suggestion.towTruckName);
+    });
+    //_formKey.currentState.validate();
   }
 
   setTruck(id, name) {
     setState(() {
-      _call.towTruck =  id != null ? id : 0;
+      _call.towTruck = id != null ? id : 0;
       _call.towTruckName = name != null ? name : '';
-      _truckController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.towTruckName))
-              .value;
+      _truckController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: _call.towTruckName))
+          .value;
     });
   }
 
@@ -435,7 +480,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
       _call.dispatchPriorityLevel = id != null ? id : 0;
       _call.dispatchPriorityLevelName = name != null ? name : '';
       _vehiclePriorityTypeController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: _call.dispatchPriorityLevelName))
+          new TextEditingController.fromValue(
+                  new TextEditingValue(text: _call.dispatchPriorityLevelName))
               .value;
     });
   }
@@ -448,7 +494,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
   bla() async {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     await Provider.of<Calls>(context, listen: false).get(selectedCall.id);
@@ -456,23 +502,30 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
     setState(() {
       //Bill To and BillToName
-      _call.id=x[0].id;
+      _call.id = x[0].id;
       _call.towBillTo = x[0].towBillTo;
       _call.towBillToName = x[0].towBillToName;
       _billToController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: x[0].towBillToName != null ? x[0].towBillToName : ''))
+              new TextEditingValue(
+                  text: x[0].towBillToName != null ? x[0].towBillToName : ''))
           .value;
 
       //Invoice
       _call.towedInvoice = x[0].towedInvoice;
       _towedInvoiceController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: x[0].towedInvoice != null ? x[0].towedInvoice : ''))
+              new TextEditingValue(
+                  text: x[0].towedInvoice != null ? x[0].towedInvoice : ''))
           .value;
 
       //TowedPONumber
-      _call.towedPONumber = x[0].towedPONumber != null ? x[0].towedPONumber : '';
+      _call.towedPONumber =
+          x[0].towedPONumber != null ? x[0].towedPONumber : '';
       _towedPONumberController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text:  x[0].towedPONumber != null &&  x[0].towedPONumber != 'null' ?  x[0].towedPONumber : ''))
+              new TextEditingValue(
+                  text:
+                      x[0].towedPONumber != null && x[0].towedPONumber != 'null'
+                          ? x[0].towedPONumber
+                          : ''))
           .value;
 
       //Member Number
@@ -531,7 +584,10 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
       setSecondColor(x[0].secondColor, x[0].secondColorName);
 
       //License Plate
-      _call.licensePlate = x[0].licensePlate != null && x[0].licensePlate != 'null' ? x[0].licensePlate : '';
+      _call.licensePlate =
+          x[0].licensePlate != null && x[0].licensePlate != 'null'
+              ? x[0].licensePlate
+              : '';
       _licensePlateController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: x[0].licensePlate))
           .value;
@@ -571,7 +627,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
       _vehicleOdomoeterController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: x[0].vehicleOdometer))
           .value;
-      isLoading=false;
+      isLoading = false;
     });
 
     //Tow Type
@@ -599,15 +655,20 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
         .value;
 
     //Towed Street
-    _call.towedStreet = x[0].towedStreet != null && x[0].towedStreet != 'null' ? x[0].towedStreet : '';
+    _call.towedStreet = x[0].towedStreet != null && x[0].towedStreet != 'null'
+        ? x[0].towedStreet
+        : '';
     _towedStreetController.value = new TextEditingController.fromValue(
             new TextEditingValue(text: _call.towedStreet))
         .value;
 
     //Towed Street2
-    _call.towedStreetTwo = x[0].towedStreetTwo != null && x[0].towedStreetTwo != 'null' ? x[0].towedStreetTwo : '';
+    _call.towedStreetTwo =
+        x[0].towedStreetTwo != null && x[0].towedStreetTwo != 'null'
+            ? x[0].towedStreetTwo
+            : '';
     _towedStreetTwoController.value = new TextEditingController.fromValue(
-            new TextEditingValue(text:_call.towedStreetTwo))
+            new TextEditingValue(text: _call.towedStreetTwo))
         .value;
 
     //TowedCity
@@ -666,14 +727,14 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     setCompany(x[0].wreckerCompany, x[0].wreckerCompanyName);
 
     //TowedStatus
-//    _call.towedStatus = x[0].towedStatus;
-//    _call.towedStatusName = x[0].towedStatusName;
+   _call.towedStatus = x[0].towedStatus;
+   _call.towedStatusName = x[0].towedStatusName;
 //    _towedStatusController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedStatusName))
 //            .value;
 
     //Driver
-    setDriver(x[0].wreckerDriver, x[0].wreckerDriverName);
+    setDriver(x[0]);
 
     //Truck
     setTruck(x[0].towTruck, x[0].towTruckName);
@@ -696,8 +757,11 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     //Instructions
     _call.dispatchInstructions_string = x[0].dispatchInstructions_string;
     _dispatchInstructions_stringController.value =
-        new TextEditingController.fromValue(
-                new TextEditingValue(text: x[0].dispatchInstructions_string != null && x[0].dispatchInstructions_string != 'null' ? x[0].dispatchInstructions_string: ''))
+        new TextEditingController.fromValue(new TextEditingValue(
+                text: x[0].dispatchInstructions_string != null &&
+                        x[0].dispatchInstructions_string != 'null'
+                    ? x[0].dispatchInstructions_string
+                    : ''))
             .value;
 
     //Dispatch Contact
@@ -798,8 +862,10 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     // dispatchProviderResponse
     _call.dispatchProviderResponse = x[0].dispatchProviderResponse;
     _dispatchProviderResponseController.value =
-        new TextEditingController.fromValue(
-                new TextEditingValue(text: x[0].dispatchProviderResponse != null ? x[0].dispatchProviderResponse: ''))
+        new TextEditingController.fromValue(new TextEditingValue(
+                text: x[0].dispatchProviderResponse != null
+                    ? x[0].dispatchProviderResponse
+                    : ''))
             .value;
 
     //dispatchProviderSelectedResponseName
@@ -910,75 +976,75 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     //Cancel
 //    _call.dispatchCancel = x[0].dispatchCancel;
   }
-  String validateVIN(String value){
+
+  String validateVIN(String value) {
     Pattern pattern = "^[^iIoOqQ'-]{10,17}\$";
     RegExp regex = new RegExp(pattern);
-    if (!regex.hasMatch(value))
+    if (!regex.hasMatch(value) && value != "NOVIN")
       return 'Please enter a valid VIN';
     else
       return null;
   }
 
-  String validateLocation(String value){
+  String validateLocation(String value) {
     if (value.isEmpty)
       return 'Please enter a Location';
     else
       return null;
   }
-  String validateYear(String value){
+
+  String validateYear(String value) {
     if (value.isEmpty)
       return 'Please enter Year';
     else
       return null;
   }
-  String validateInvoice(String value){
+
+  String validateInvoice(String value) {
     if (value.isEmpty)
       return 'Please enter Year';
     else
       return null;
   }
+
   _showErrorMessage(BuildContext context, errorMessage) {
-    Scaffold.of(context).showSnackBar(
-        new SnackBar(
-            backgroundColor: Colors.lightGreen,
-            content: Text(errorMessage,
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
-                ))));
+    Scaffold.of(context).showSnackBar(new SnackBar(
+        backgroundColor: Colors.lightGreen,
+        content: Text(errorMessage,
+            style:
+                TextStyle(color: Colors.black, fontWeight: FontWeight.w500))));
   }
-  update() async{
+
+  update() async {
     this.setState(() {
-      isLoading=true;
+      isLoading = true;
     });
-    if(this._formKey.currentState.validate() == true) {
+    if (this._formKey.currentState.validate() == true) {
       this._formKey.currentState.save();
       await Provider.of<Calls>(context, listen: false).updateCall(_call);
-      var response = Provider
-          .of<Calls>(context, listen: false)
-          .updateResponse;
-      if(response['errorStatus'] == "true"){
+      var response = Provider.of<Calls>(context, listen: false).updateResponse;
+      if (response['errorStatus'] == "true") {
         this.setState(() {
-          isLoading=false;
+          isLoading = false;
         });
         Navigator.push(
             context,
             new MaterialPageRoute(
                 builder: (context) =>
-                new SuccessScreen("Call Successfully Updated!")));
+                    new SuccessScreen("Call Successfully Updated!")));
 
         Timer(Duration(milliseconds: 3000), () {
           Navigator.pop(context);
         });
-      }
-      else {
+      } else {
         this.setState(() {
-          isLoading=false;
+          isLoading = false;
         });
         _showErrorMessage(context, response['errorMessage']);
       }
-    }
-    else{
+    } else {
       this.setState(() {
-        isLoading=false;
+        isLoading = false;
       });
       _showErrorMessage(context, "Please check your required fields");
     }
@@ -986,20 +1052,21 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
   PageController _pageController;
   var selectedCall;
+
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _pageController = PageController();
     getRole();
+
     selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _pageController.dispose();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -1013,15 +1080,15 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                 isScrollable: true,
                 indicatorColor: Colors.green,
                 labelColor: Colors.white,
-               labelStyle: TextStyle(fontSize:12, fontWeight:FontWeight.w500),
-//              unselectedLabelColor: Colors.blueGrey,
+                labelStyle:
+                    TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
                 tabs: [
                   Tab(
-                    icon: Icon(Icons.monetization_on, size:18.0),
+                    icon: Icon(Icons.monetization_on, size: 18.0),
                     text: "BILLING",
                   ),
                   Tab(
-                    icon: Icon(Icons.directions_car, size:18.0),
+                    icon: Icon(Icons.directions_car, size: 18.0),
                     text: "VEHICLE",
                   ),
                   Tab(
@@ -1047,7 +1114,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                 ],
               ),
               // automaticallyImplyLeading: true,
-              title: Text('EDIT CALL', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
+              title: Text('EDIT CALL',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
               actions: <Widget>[
                 new IconButton(
                   icon: new Icon(Icons.update, size: 20.0),
@@ -1059,7 +1127,10 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                           return UpdateStatus(
                               selectedCall.id,
                               selectedCall.dispatchStatusName,
-                              selectedCall.dispatchInstructions_string, userRole, dispatchPaging,selectedCall.towType);
+                              selectedCall.dispatchInstructions_string,
+                              userRole,
+                              dispatchPaging,
+                              selectedCall.towType);
                         });
                   },
                 ),
@@ -1067,13 +1138,15 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                   icon: new Icon(Icons.attach_money, size: 20.0),
                   tooltip: 'Add Charges',
                   onPressed: () {
+                    Navigator.pop(context);
                     Navigator.push(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => new ChargesAdd()));
+                            builder: (context) => new ChargesAdd(selectedCall.id)));
                   },
                 ),
                 new IconButton(
+
                   icon: new Icon(Icons.note_add, size: 20.0),
                   tooltip: 'Add Notes',
                   onPressed: () {
@@ -1095,9 +1168,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                   },
                 ),
                 new IconButton(
-                  icon: new Icon(Icons.check, size: 20.0),
+                  icon: new Icon(Icons.check, size: 20.0, color: _isFormReadOnly == true ? Colors.grey : Colors.white),
                   tooltip: 'Save',
-                  onPressed: () => update(),
+                  onPressed: () => _isFormReadOnly == false ? update() : null,
                 ),
 //                new IconButton(
 //                  icon: new Icon(Icons.more_vert),
@@ -1106,94 +1179,117 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                ),
               ],
             ),
-            body: isLoading == true? Center(
-            child:Loader()
-            ):Padding(
-                padding: EdgeInsets.all(10.0),
-                child: Form(
-                    key: this._formKey,
-                    child: TabBarView(children: [
-                      SingleChildScrollView(
-                          child: Column(
-                        children: <Widget>[
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                readOnly: true,
-                                controller: this._billToController,
-                                decoration: new InputDecoration(
-                                  labelText: "Bill To *",
+            body: isLoading == true
+                ? Center(child: Loader())
+                : Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Form(
+                        key: this._formKey,
+                        autovalidate:_autoValidate,
+                        child: TabBarView(children: [
+                          SingleChildScrollView(
+                              child: Column(
+                            children: <Widget>[
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
 
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
+                                    controller: this._billToController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Bill To *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
 //                                validator: (value) {
 //                                  if (value.isEmpty) {
 //                                    return 'Please select Bill To Customer';
 //                                  }
 //                                },
-                                onTap: ()  {
-                                  Navigator.push(context, MaterialPageRoute(builder: (_) => TowCustomersModal(setTowCustomer: setBillTo)));
-                                }
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (_) => TowCustomersModal(
+                                                  setTowCustomer: setBillTo)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedInvoiceController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Invoice # *",
+                                  ),
+                                  validator: validateInvoice,
+                                  onSaved: (val) =>
+                                      setState(() => _call.towedInvoice = val),
                                 ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedInvoiceController,
-                              decoration: new InputDecoration(
-                                labelText: "Invoice # *",
                               ),
-                              validator: validateInvoice,
-                              onSaved: (val) =>
-                                  setState(() => _call.towedInvoice = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedPONumberController,
-                              decoration: new InputDecoration(
-                                labelText: "PO #",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedPONumberController,
+                                  decoration: new InputDecoration(
+                                    labelText: "PO #",
+                                  ),
+                                  onSaved: (val) =>
+                                      setState(() => _call.towedPONumber = val),
+                                ),
                               ),
-                              onSaved: (val) =>
-                                  setState(() => _call.towedPONumber = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchMemberController,
-                              decoration: new InputDecoration(
-                                labelText: "Member #",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchMemberController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Member #",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.dispatchMemberNumber = val),
+                                ),
                               ),
-                              onSaved: (val) => setState(
-                                  () => _call.dispatchMemberNumber = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchLimitAmountController,
-                              keyboardType: TextInputType.number,
-                              decoration: new InputDecoration(
-                                labelText: "Limit \$",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchLimitAmountController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "Limit \$",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.dispatchLimitAmount = val),
+                                ),
                               ),
-                              onSaved: (val) => setState(
-                                  () => _call.dispatchLimitAmount = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchLimitMilesController,
-                              keyboardType: TextInputType.number,
-                              decoration: new InputDecoration(
-                                labelText: "Limit Miles",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchLimitMilesController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: new InputDecoration(
+                                    labelText: "Limit Miles",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.dispatchLimitMiles = val),
+                                ),
                               ),
-                              onSaved: (val) => setState(
-                                  () => _call.dispatchLimitMiles = val),
-                            ),
-                          ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _towedDiscountRateController,
@@ -1243,85 +1339,103 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                              },
 //                            ),
 //                          ),
-                        ],
-                      )),
-                      SingleChildScrollView(
-                          child: Column(
-                        children: <Widget>[
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _vinController,
-                              decoration: new InputDecoration(
-                                labelText: "VIN *",
-                                suffixIcon: IconButton(
-                                  //onPressed: () => _getVIN(), //_controller.clear(),
-                                  icon: Icon(Icons.autorenew, size:14),
+                            ],
+                          )),
+                          SingleChildScrollView(
+                              child: Column(
+                            children: <Widget>[
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  textCapitalization: TextCapitalization.characters,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _vinController,
+                                  decoration: new InputDecoration(
+                                    labelText: "VIN *",
+                                    suffixIcon: IconButton(
+                                      //onPressed: () => _getVIN(), //_controller.clear(),
+                                      icon: Icon(Icons.autorenew, size: 14),
+                                    ),
+                                  ),
+                                  validator: validateVIN,
+                                  onSaved: (val) =>
+                                      setState(() => _call.VIN = val),
                                 ),
                               ),
-                              validator: validateVIN,
-                              onSaved: (val) => setState(() => _call.VIN = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._modelController,
-                                decoration: new InputDecoration(
-                                  labelText: "Model *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Model';
-                                  }
-                                },
-                                onTap: () {
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._modelController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Model *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Model';
+                                      }
+                                    },
+                                    onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new VehicleYearMakeModelModal(
-                                                  setYearMakeModelName:
-                                                      setYearMakeModelName)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._yearController,
-                                decoration: new InputDecoration(
-                                  labelText: "Year *",
-                                  // suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new VehicleYearMakeModelModal(
+                                                      setYearMakeModelName:
+                                                          setYearMakeModelName)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: this._yearController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Year *",
+                                    // suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
+                                  ),
+                                  validator: validateYear,
+                                    onSaved: (val) =>
+                                  setState(() => _call.vehicleYear = int.parse(val)),
                                 ),
-                                validator: validateYear,
-                                ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._makeController,
-                                decoration: new InputDecoration(
-                                  labelText: "Make *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Make';
-                                  }
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new VehicleMakeModal(
-                                                  setMake: setMake)));
-                                }),
-                          ),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._makeController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Make *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Make';
+                                      }
+                                    },
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new VehicleMakeModal(
+                                                      setMake: setMake)));
+                                    }),
+                              ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                                controller: this._styleController,
@@ -1344,89 +1458,108 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                                  setStyle: setStyle)));
 //                                }),
 //                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._topColorController,
-                                decoration: new InputDecoration(
-                                  labelText: "Top Color *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Top Color';
-                                  }
-                                },
-                                onTap: () {
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._topColorController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Top Color *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Top Color';
+                                      }
+                                    },
+                                    onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) => new ColorModal(
-                                              setColor: setTopColor)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._secondColorController,
-                                decoration: new InputDecoration(
-                                  labelText: "Bottom Color *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Bottom Color';
-                                  }
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) => new ColorModal(
-                                              setColor: setSecondColor)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              textCapitalization: TextCapitalization.characters,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _licensePlateController,
-                              decoration: new InputDecoration(
-                                labelText: "License Plate *",
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new ColorModal(
+                                                      setColor: setTopColor)));
+                                    }),
                               ),
-                              validator: (value) {
-                                if (value.isEmpty) {
-                                  return 'Please enter License Plate';
-                                }
-                              },
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._licenseStateController,
-                                decoration: new InputDecoration(
-                                  labelText: "License State *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._secondColorController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Bottom Color *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Bottom Color';
+                                      }
+                                    },
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new ColorModal(
+                                                      setColor:
+                                                          setSecondColor)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _licensePlateController,
+                                  decoration: new InputDecoration(
+                                    labelText: "License Plate *",
+                                  ),
+                                  validator: (value) {
+                                    if (value.isEmpty) {
+                                      return 'Please enter License Plate';
+                                    }
+                                  },
                                 ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select License State';
-                                  }
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new SystemStateModal(
-                                                  setSystemState:
-                                                      setLicenseState)));
-                                }),
-                          ),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: _isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._licenseStateController,
+                                    decoration: new InputDecoration(
+                                      labelText: "License State *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select License State';
+                                      }
+                                    },
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new SystemStateModal(
+                                                      setSystemState:
+                                                          setLicenseState)));
+                                    }),
+                              ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                                controller: this._licenseTypeController,
@@ -1519,234 +1652,286 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                  setState(() => _call.vehicleTitle = val),
 //                            ),
 //                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              keyboardType: TextInputType.number,
-                              controller: _vehicleOdomoeterController,
-                              decoration: new InputDecoration(
-                                labelText: "Odometer",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  keyboardType: TextInputType.number,
+                                  controller: _vehicleOdomoeterController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Odometer",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.vehicleOdometer = val),
+                                ),
                               ),
-                              onSaved: (val) =>
-                                  setState(() => _call.vehicleOdometer = val),
-                            ),
-                          ),
-                        ],
-                      )),
-                      SingleChildScrollView(
-                          child: Column(
-                        children: <Widget>[
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towTypeController,
-                                decoration: new InputDecoration(
-                                  labelText: "Tow Type *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Tow Type';
-                                  }
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new TowTypeModal(
-                                                  setTowType: setTowType)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towReasonController,
-                                decoration: new InputDecoration(
-                                  labelText: "Tow Reason",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) => new TowReasonModal(
-                                              setTowReason: setTowReason)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._authorizationController,
-                                decoration: new InputDecoration(
-                                  labelText: "Authorization",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new TowAuthorizationModal(
-                                                  setAuthorization:
-                                                      setAuthorization)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._jurisdictionController,
-                                decoration: new InputDecoration(
-                                  labelText: "Jurisdiction *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Jurisdiction';
-                                  }
-                                },
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) => new TowJurisdictionModal(
-                                              setJurisdiction: setJurisdiction)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedDateController,
-                              decoration: new InputDecoration(
-                                labelText: "Towed Date",
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    DatePicker.showDatePicker(context,
-                                        showTitleActions: true,
-                                        //  minTime: DateTime(2018, 3, 5),
-                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                        //   print('change $date');
-                                        // },
-                                        onConfirm: (date) {
-                                      String formattedDate =
-                                          DateFormat('MM-dd-yyyy').format(date);
-                                      _towedDateController.text = formattedDate;
+                            ],
+                          )),
+                          SingleChildScrollView(
+                              child: Column(
+                            children: <Widget>[
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._towTypeController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Tow Type *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Tow Type';
+                                      }
+                                    },
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new TowTypeModal(
+                                                      setTowType: setTowType)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._towReasonController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Tow Reason",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new TowReasonModal(
+                                                      setTowReason:
+                                                          setTowReason)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._authorizationController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Authorization",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new TowAuthorizationModal(
+                                                      setAuthorization:
+                                                          setAuthorization)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._jurisdictionController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Jurisdiction *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Jurisdiction';
+                                      }
+                                    },
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new TowJurisdictionModal(
+                                                      setJurisdiction:
+                                                          setJurisdiction)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedDateController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Towed Date",
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        _isFormReadOnly == false ?
+                                        DatePicker.showDatePicker(context,
+                                            showTitleActions: true,
+                                            //  minTime: DateTime(2018, 3, 5),
+                                            //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                            //   print('change $date');
+                                            // },
+                                            onConfirm: (date) {
+                                          String formattedDate =
+                                              DateFormat('MM-dd-yyyy')
+                                                  .format(date);
+                                          _towedDateController.text =
+                                              formattedDate;
 //                              String formattedTime = DateFormat('kk.mm').format(now);
 //                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                                    },
-                                        currentTime: DateTime.now(),
-                                        locale: LocaleType.en);
-                                  }, //_controller.clear(),
-                                  icon: Icon(Icons.date_range, size:14),
+                                        },
+                                            currentTime: DateTime.now(),
+                                            locale: LocaleType.en) : null;
+                                      }, //_controller.clear(),
+                                      icon: Icon(Icons.date_range, size: 14),
+                                    ),
+                                  ),
+                                  onSaved: (val) =>
+                                      setState(() => _call.towedDate = val),
                                 ),
                               ),
-                              onSaved: (val) =>
-                                  setState(() => _call.towedDate = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedTimeController,
-                              decoration: new InputDecoration(
-                                labelText: "Towed Time",
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    DatePicker.showTimePicker(context,
-                                        showSecondsColumn: false,
-                                        showTitleActions: true,
-                                        //  minTime: DateTime(2018, 3, 5),
-                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                        //   print('change $date');
-                                        // },
-                                        onConfirm: (time) {
-                                      String formattedTime =
-                                          DateFormat('HH:mm').format(time);
-                                      _towedTimeController.text = formattedTime;
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedTimeController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Towed Time",
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        _isFormReadOnly == false ?
+                                        DatePicker.showTimePicker(context,
+                                            showSecondsColumn: false,
+                                            showTitleActions: true,
+                                            //  minTime: DateTime(2018, 3, 5),
+                                            //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                            //   print('change $date');
+                                            // },
+                                            onConfirm: (time) {
+                                          String formattedTime =
+                                              DateFormat('HH:mm').format(time);
+                                          _towedTimeController.text =
+                                              formattedTime;
 //                              String formattedTime = DateFormat('kk.mm').format(now);
 //                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                                    },
-                                        currentTime: DateTime.now(),
-                                        locale: LocaleType.en);
-                                  }, //_controller.clear(),
-                                  icon: Icon(Icons.access_time, size:14),
+                                        },
+                                            currentTime: DateTime.now(),
+                                            locale: LocaleType.en) : null;
+                                      }, //_controller.clear(),
+                                      icon: Icon(Icons.access_time, size: 14),
+                                    ),
+                                  ),
+                                  onSaved: (val) =>
+                                      setState(() => _call.towedTime = val),
                                 ),
                               ),
-                              onSaved: (val) =>
-                                  setState(() => _call.towedTime = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedStreetController,
-                              decoration: new InputDecoration(
-                                labelText: "Location *",
-                              ),
-                              validator: (value) {
-                                if (value.isEmpty || value == null) {
-                                  return 'Please enter location';
-                                }
-                              },
-                              onSaved: (val) =>
-                                  setState(() => _call.towedStreet = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedStreetTwoController,
-                              decoration: new InputDecoration(
-                                labelText: "",
-                              ),
-
-                              onSaved: (val) =>
-                                  setState(() => _call.towedStreetTwo = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towedStateController,
-                                decoration: new InputDecoration(
-                                  labelText: "State",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedStreetController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Location *",
+                                  ),
+                                  validator: (value) {
+                                    if (value.isEmpty || value == null) {
+                                      return 'Please enter location';
+                                    }
+                                  },
+                                  onSaved: (val) =>
+                                      setState(() => _call.towedStreet = val),
                                 ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                          new SystemStateModal(
-                                              setSystemState:
-                                              setTowedState)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                enabled:  _call.towedState.toString() == 'null' || _call.towedState.toString() == '' || _call.towedState.toString() == '0'  ? false : true ,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towedCityController,
-                                decoration: new InputDecoration(
-                                  labelText: "City",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedStreetTwoController,
+                                  decoration: new InputDecoration(
+                                    labelText: "",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.towedStreetTwo = val),
                                 ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                  new SystemCityModal(setCity: setCity, stateId:_call.towedState.toString())));
-
-
-                                }),
-                          ),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._towedStateController,
+                                    decoration: new InputDecoration(
+                                      labelText: "State",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new SystemStateModal(
+                                                      setSystemState:
+                                                          setTowedState)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: _call.towedState.toString() ==
+                                                'null' ||
+                                            _call.towedState.toString() == '' ||
+                                            _call.towedState.toString() == '0' && _isFormReadOnly == false
+                                        ? false
+                                        : true,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._towedCityController,
+                                    decoration: new InputDecoration(
+                                      labelText: "City",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new SystemCityModal(
+                                                      setCity: setCity,
+                                                      stateId: _call.towedState
+                                                          .toString())));
+                                    }),
+                              ),
 
 //                          new ListTile(
 //                            title: new TextFormField(
@@ -1758,72 +1943,96 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                  setState(() => _call.towedZipCode = val),
 //                            ),
 //                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedToStreetController,
-                              decoration: new InputDecoration(
-                                labelText: "Destination",
-                              ),
-                              onSaved: (val) =>
-                                  setState(() => _call.towedToStreet = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _towedToStreetTwoController,
-                              decoration: new InputDecoration(
-                                labelText: "",
-                              ),
-                              // validator: (value) {
-                              //   if (value.isEmpty) {
-                              //     return 'Please enter StreetTwo';
-                              //   }
-                              // },
-                              onSaved: (val) =>
-                                  setState(() => _call.towedToStreetTwo = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towedToStateController,
-                                decoration: new InputDecoration(
-                                  labelText: "State",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedToStreetController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Destination",
+                                  ),
+                                  onSaved: (val) =>
+                                      setState(() => _call.towedToStreet = val),
                                 ),
-                                onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                          new SystemStateModal(
-                                              setSystemState:
-                                              setTowedToState)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                enabled:  _call.towedToState.toString() == 'null' || _call.towedToState.toString() == '' || _call.towedToState.toString() == '0' ? false : true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towedToCityController,
-                                decoration: new InputDecoration(
-                                  labelText: "City",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedToStreetTwoController,
+                                  decoration: new InputDecoration(
+                                    labelText: "",
+                                  ),
+                                  // validator: (value) {
+                                  //   if (value.isEmpty) {
+                                  //     return 'Please enter StreetTwo';
+                                  //   }
+                                  // },
+                                  onSaved: (val) => setState(
+                                      () => _call.towedToStreetTwo = val),
                                 ),
-                                onTap: () {
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._towedToStateController,
+                                    decoration: new InputDecoration(
+                                      labelText: "State",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                  new SystemCityModal(setCity: setTowedToCity, stateId:_call.towedToState.toString())));
-                                }),
-                          ),
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new SystemStateModal(
+                                                      setSystemState:
+                                                          setTowedToState)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+
+                                    enabled: _call.towedToState.toString() ==
+                                                'null' ||
+                                            _call.towedToState.toString() ==
+                                                '' ||
+                                            _call.towedToState.toString() == '0' && _isFormReadOnly == false
+                                        ? false
+                                        : true,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._towedToCityController,
+                                    decoration: new InputDecoration(
+                                      labelText: "City",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new SystemCityModal(
+                                                      setCity: setTowedToCity,
+                                                      stateId: _call
+                                                          .towedToState
+                                                          .toString())));
+                                    }),
+                              ),
 
 //                          new ListTile(
 //                            title: new TextFormField(
@@ -1835,30 +2044,34 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                  setState(() => _call.towedToZipCode = val),
 //                            ),
 //                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._companyController,
-                                decoration: new InputDecoration(
-                                  labelText: "Company *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Company';
-                                  }
-                                },
-                                onTap: () {
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._companyController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Company *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Company';
+                                      }
+                                    },
+                                    onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new WreckerCompanyModal(
-                                                  setCompany: setCompany)));
-                                }),
-                          ),
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new WreckerCompanyModal(
+                                                      setCompany: setCompany)));
+                                    }),
+                              ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _towedStatusController,
@@ -1867,42 +2080,50 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                              ),
 //                            ),
 //                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._driverController,
-                                decoration: new InputDecoration(
-                                  labelText: "Driver",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new WreckerDriverModal(
-                                                  setDriver: setDriver)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._truckController,
-                                decoration: new InputDecoration(
-                                  labelText: "Truck",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
-                                ),
-                                onTap: () {
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new TowTrucksModal(
-                                                  setTruck: setTruck)));
-                                }),
-                          ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._driverController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Driver",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new WreckerDriverModal(
+                                                      setDriver: setDriverOnEdit)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._truckController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Truck",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new TowTrucksModal(
+                                                      setTruck: setTruck)));
+                                    }),
+                              ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _wreckerDriverPaidController,
@@ -1970,140 +2191,163 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                              },
 //                            ),
 //                          ),
-                        ],
-                      )),
-                      SingleChildScrollView(
-                          child: Column(
-                        children: <Widget>[
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._towCustomerController,
-                                decoration: new InputDecoration(
-                                  labelText: "Customer *",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
-                                ),
-                                validator: (value) {
-                                  if (value.isEmpty) {
-                                    return 'Please select Tow Customer';
-                                  }
-                                },
-                                onTap: () {
+                            ],
+                          )),
+                          SingleChildScrollView(
+                              child: Column(
+                            children: <Widget>[
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller: this._towCustomerController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Customer *",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'Please select Tow Customer';
+                                      }
+                                    },
+                                    onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              new TowCustomersModal(
-                                                  setTowCustomer:
-                                                      setTowCustomer)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              keyboardType: TextInputType.multiline,
-                              textInputAction: TextInputAction.newline,
-                              maxLines: 4,
-                              maxLength: 512,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller:
-                                  _dispatchInstructions_stringController,
-                              decoration: new InputDecoration(
-                                labelText: "Instructions",
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new TowCustomersModal(
+                                                      setTowCustomer:
+                                                          setTowCustomer)));
+                                    }),
                               ),
-                              onSaved: (val) => setState(() =>{
-                                _call.dispatchInstructions_string = val
-                              }
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  keyboardType: TextInputType.multiline,
+                                  textInputAction: TextInputAction.newline,
+                                  maxLines: 4,
+                                  maxLength: 512,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller:
+                                      _dispatchInstructions_stringController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Instructions",
                                   ),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchContactController,
-                              decoration: new InputDecoration(
-                                labelText: "Contact",
-                              ),
-                              onSaved: (val) =>
-                                  setState(() => _call.dispatchContact = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchContactPhoneController,
-                              decoration: new InputDecoration(
-                                labelText: "Contact Phone",
-                              ),
-                              onSaved: (val) => setState(
-                                  () => _call.dispatchContactPhone = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                                readOnly:true,
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                                controller: this._vehiclePriorityTypeController,
-                                decoration: new InputDecoration(
-                                  labelText: "Priority",
-                                  suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                                  onSaved: (val) => setState(() => {
+                                        _call.dispatchInstructions_string = val
+                                      }),
                                 ),
-
-                                onTap: () {
-//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
-                                  Navigator.push(
-                                      context,
-                                      new MaterialPageRoute(
-                                          builder: (context) =>
-                                              new SystemPriorityModal(
-                                                  setVehiclePriority:
-                                                      setVehiclePriority)));
-                                }),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchETAMinutesController,
-                              decoration: new InputDecoration(
-                                labelText: "ETA",
                               ),
-                              onSaved: (val) => setState(
-                                  () => _call.dispatchETAMinutes = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchDateController,
-                              decoration: new InputDecoration(
-                                labelText: "Call Date",
-                                suffixIcon: IconButton(
-                                  onPressed: () {
-                                    DatePicker.showDatePicker(context,
-                                        showTitleActions: true,
-                                        //  minTime: DateTime(2018, 3, 5),
-                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                        //   print('change $date');
-                                        // },
-                                        onConfirm: (date) {
-                                      String formattedDate =
-                                          DateFormat('MM-dd-yyyy').format(date);
-                                      _dispatchDateController.text =
-                                          formattedDate;
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchContactController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Contact",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.dispatchContact = val),
+                                ),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchContactPhoneController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Contact Phone",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.dispatchContactPhone = val),
+                                ),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                    controller:
+                                        this._vehiclePriorityTypeController,
+                                    decoration: new InputDecoration(
+                                      labelText: "Priority",
+                                      suffixIcon: Icon(Icons.arrow_forward_ios,
+                                          size: 14),
+                                    ),
+                                    onTap: () {
+//                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
+                                      Navigator.push(
+                                          context,
+                                          new MaterialPageRoute(
+                                              builder: (context) =>
+                                                  new SystemPriorityModal(
+                                                      setVehiclePriority:
+                                                          setVehiclePriority)));
+                                    }),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchETAMinutesController,
+                                  decoration: new InputDecoration(
+                                    labelText: "ETA",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.dispatchETAMinutes = val),
+                                ),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchDateController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Call Date",
+                                    suffixIcon: IconButton(
+                                      onPressed: () {
+                                        DatePicker.showDatePicker(context,
+                                            showTitleActions: true,
+                                            //  minTime: DateTime(2018, 3, 5),
+                                            //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                            //   print('change $date');
+                                            // },
+                                            onConfirm: (date) {
+                                          String formattedDate =
+                                              DateFormat('MM-dd-yyyy')
+                                                  .format(date);
+                                          _dispatchDateController.text =
+                                              formattedDate;
 //                              String formattedTime = DateFormat('kk.mm').format(now);
 //                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                                    },
-                                        currentTime: DateTime.now(),
-                                        locale: LocaleType.en);
-                                  }, //_controller.clear(),
-                                  icon: Icon(Icons.date_range, size:14),
+                                        },
+                                            currentTime: DateTime.now(),
+                                            locale: LocaleType.en);
+                                      }, //_controller.clear(),
+                                      icon: Icon(Icons.date_range, size: 14),
+                                    ),
+                                  ),
+                                  onSaved: (val) =>
+                                      setState(() => _call.dispatchDate = val),
                                 ),
                               ),
-                              onSaved: (val) =>
-                                  setState(() => _call.dispatchDate = val),
-                            ),
-                          ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _dispatchReceivedTimeController,
@@ -2112,7 +2356,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
-                         // showSecondsColumn: false,
+                              // showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2144,7 +2388,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                suffixIcon: IconButton(
 //                                  onPressed: () {
 //                                    DatePicker.showTimePicker(context,
-                        //  showSecondsColumn: false,
+                              //  showSecondsColumn: false,
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
@@ -2338,31 +2582,37 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                  setState(() => _call.dispatchID = val),
 //                            ),
 //                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              readOnly: true,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchResponseIDController,
-                              decoration: new InputDecoration(
-                                labelText: "Response Id",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: true,
+                                  enabled: !_isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _dispatchResponseIDController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Response Id",
+                                  ),
+                                  onSaved: (val) => setState(
+                                      () => _call.dispatchResponseID = val),
+                                ),
                               ),
-                              onSaved: (val) => setState(
-                                  () => _call.dispatchResponseID = val),
-                            ),
-                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              readOnly: true,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller:
-                                  _dispatchAuthorizationNumberController,
-                              decoration: new InputDecoration(
-                                labelText: "Authorization #",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: true,
+                                  enabled: !_isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller:
+                                      _dispatchAuthorizationNumberController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Authorization #",
+                                  ),
+                                  onSaved: (val) => setState(() =>
+                                      _call.dispatchAuthorizationNumber = val),
+                                ),
                               ),
-                              onSaved: (val) => setState(() =>
-                                  _call.dispatchAuthorizationNumber = val),
-                            ),
-                          ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _dispatchJobIDController,
@@ -2373,18 +2623,22 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                                  setState(() => _call.dispatchJobID = val),
 //                            ),
 //                          ),
-                          new ListTile(
-                            title: new TextFormField(
-                              readOnly: true,
-                              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                              controller: _dispatchProviderResponseController,
-                              decoration: new InputDecoration(
-                                labelText: "Response Type",
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: true,
+                                  enabled: !_isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller:
+                                      _dispatchProviderResponseController,
+                                  decoration: new InputDecoration(
+                                    labelText: "Response Type",
+                                  ),
+                                  onSaved: (val) => setState(() =>
+                                      _call.dispatchProviderResponse = val),
+                                ),
                               ),
-                              onSaved: (val) => setState(
-                                  () => _call.dispatchProviderResponse = val),
-                            ),
-                          ),
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller:
@@ -2439,8 +2693,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //                              },
 //                            ),
 //                          ),
-                        ],
-                      )),
+                            ],
+                          )),
 //                      SingleChildScrollView(
 //                          child: Column(
 //                        children: <Widget>[
@@ -2783,12 +3037,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 ////                          ),
 //                        ],
 //                      )),
-                      Expanded(
-                          child: TowedVehicleNotesList()),
+                          Column(children: <Widget>[
+                            Expanded(child: TowedVehicleNotesList())
+                          ]),
 
-                      Expanded(
-                          child: TowedVehicleChargesList(userRole)),
-
-                    ])))));
+                          Column(children: <Widget>[
+                            Expanded(child: TowedVehicleChargesList(userRole))
+                          ]),
+                        ])))));
   }
 }

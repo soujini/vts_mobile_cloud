@@ -669,7 +669,7 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
 //      towedStatusName: parsedJson["towedStatusName"] != null
 //          ? parsedJson["towedStatusName"]
 //          : '',
-      towedStatus:parsedJson["towedStatus"] != null ? parsedJson["towedStatus"] : '',
+      towedStatus:parsedJson["towedStatus"],
       licensePlate: parsedJson["licensePlate"],
       VIN: parsedJson["VIN"],
       wreckerDriverName: parsedJson["wreckerDriverName"],

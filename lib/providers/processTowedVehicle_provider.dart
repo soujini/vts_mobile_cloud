@@ -308,7 +308,7 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
     defaultCharges=towedVehicleNotes;
     //notifyListeners();
   }
-  Future<List> processChangeCharges(towedVehicle) async {
+  Future<List> processChangeCharges(towedVehicle, towCharge) async {
     final towCharges=0;
     final commission=true;
 

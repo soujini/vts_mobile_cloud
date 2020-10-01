@@ -8,6 +8,7 @@ import '../models/call.dart';
 import '../models/call_add.dart';
 import '../providers/secureStoreMixin_provider.dart';
 import '../providers/common_provider.dart';
+import 'dart:convert';
 
 class Calls with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
@@ -69,7 +70,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     final int id = _call.id;
     List<String> fieldList = new List<String>();
     List<String> filteredFieldList = new List<String>();
-    String tabUpdate = "Call";
+    String tabUpdate = "Mobile Update";
     String fieldName="";
     bool moveStatus=false;
     String dispatchInstructions_string=_call.dispatchInstructions_string;//Need to be updated
@@ -79,6 +80,10 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     String formattedTime = DateFormat('kk.mm').format(now);
     String formattedTime2 = DateFormat('kk^mm').format(now);
 
+    var formatTowedTime = _call.towedTime.split(":");
+     String formattedTowedTime = formatTowedTime[0]+'.'+formatTowedTime[1];
+      dispatchInstructions_string = dispatchInstructions_string == '--' ? '' : dispatchInstructions_string;
+    List<int> dispatchInstructionsBytes = utf8.encode("dispatchInstructions_string");
     await  getSecureStore('userId', (token) {
       userId=token;
     });
@@ -129,20 +134,20 @@ class Calls with ChangeNotifier, SecureStoreMixin {
 //      "dispatchResponseID:"+call.dispatchResponseID.toString(),
 //      "dispatchAuthorizationNumber:"+call.dispatchAuthorizationNumber.toString(),
 //      "dispatchProviderResponse:"+call.dispatchProviderResponse.toString(),
-      "towedStatus:C",
+      "towedStatus:"+_call.towedStatus.toString(),
       "pinNumber:"+pinNumber,
 //      "vehicleStyle:"+call.vehicleStyle.toString(),
-//      "towReason:"+call.towReason.toString(),
-//      "towJurisdiction:"+call.towJurisdiction.toString(),
-//      "towedDate:"+call.towedDate.toString(),
-//      "towedTime:"+call.towedTime.toString(),
-      "systemRuntimeType:2"
+      "towReason:"+ _call.towReason.toString(),
+      "towJurisdiction:"+ _call.towJurisdiction.toString(),
+      "towedDate:"+_call.towedDate.toString(),
+      "towedTime:"+formattedTowedTime,
+      "systemRuntimeType:2",
+      // "dispatchInstructions:" +dispatchInstructionsBytes.toString(),
+      'dispatchETAMinutes:'+_call.dispatchETAMinutes,
     ];
-
-    filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != "").toList();
-
+    print(fieldList);
+    filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != null).toList();
     xmlValues = filteredFieldList.map((v) => '<string>$v</string>').join();
-
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -182,7 +187,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
 
     updateResponse = Map.from(extractedData);
   }
-
   Future<List> create(call) async {
     List<String> fieldList;
     String xmlValues="";
@@ -279,7 +283,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
   Future<String> update(int call_id, String field_name, String _dispatchInstructions_string, String mode, bool moveStatus, int towType) async {
     final int id = call_id;
     List<String> fieldList = new List<String>();
-    String tabUpdate = "Call";
+    String tabUpdate = "Mobile Update";
     String fieldName=field_name;
     bool moveStatus=false;
     String dispatchInstructions_string=_dispatchInstructions_string;//Need to be updated
@@ -469,7 +473,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     }
     String filterFields = "";
     String towedStatus;
-    final bool listAfterInsert = true;
+    bool listAfterInsert = false;
     final bool currentDayList = true;
     bool activeDispatch = true;
 
@@ -521,6 +525,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       }
       towedStatus = "C";
       activeDispatch = true;
+      listAfterInsert = true;
   }
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -583,7 +588,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       return searchedCalls;
     }
   }
-
   getCallDetails(extractedData){
     final List<Call> callDetails = [];
     callDetails.add(new Call.fromJson(extractedData));

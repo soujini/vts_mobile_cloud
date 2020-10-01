@@ -9,10 +9,15 @@ import '../screens/vehicle_info.dart';
 import '../screens/add_edit_call.dart';
 import '../widgets/update_status.dart';
 
-class CompletedCallsList extends StatelessWidget {
-  CompletedCallsList(this.userRole, this.dispatchPaging);
-  final String userRole;
+class CompletedCallsList extends StatefulWidget {
+  var userRole;
   var dispatchPaging;
+  CompletedCallsList(this.userRole, this.dispatchPaging);
+
+  @override
+  _CompletedCallsList createState() => _CompletedCallsList();
+}
+class _CompletedCallsList extends State<CompletedCallsList> {
 
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
@@ -42,6 +47,7 @@ class CompletedCallsList extends StatelessWidget {
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
+            key: UniqueKey(),
             errorBuilder: (context, error) {
               return Text(error);
             },
@@ -99,10 +105,10 @@ class CompletedCallsList extends StatelessWidget {
                             onPressed: () {
                               Provider.of<Calls>(context, listen:false).selectedCall = completedCalls;
                               Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                      new AddEditCallScreen(0)));
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) =>
+                                    new AddEditCallScreen(0)),).then((value) => setState(() {}));
                             },
                             icon: Icon(Icons.edit, size:14),
                             label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
@@ -111,7 +117,7 @@ class CompletedCallsList extends StatelessWidget {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(completedCalls.id, completedCalls.dispatchStatusName, completedCalls.dispatchInstructions_string, userRole, dispatchPaging, completedCalls.towType);
+                                    return UpdateStatus(completedCalls.id, completedCalls.dispatchStatusName, completedCalls.dispatchInstructions_string, widget.userRole, widget.dispatchPaging, completedCalls.towType);
                                   });
                               // showDialogUpdateStatus(context);
                             },

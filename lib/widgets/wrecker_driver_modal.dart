@@ -93,7 +93,7 @@ class WreckerDriverModal extends StatelessWidget {
                     },
                     onSuggestionSelected: (suggestion) {
                       this._typeAheadController1.text = suggestion.wreckerDriverName;
-                      setDriver(suggestion.wreckerDriver, suggestion.wreckerDriverName);
+                      setDriver(suggestion);
                       Navigator.of(context).pop();
                     },
                   ),

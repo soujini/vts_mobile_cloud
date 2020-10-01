@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:vts_mobile_cloud/providers/towedVehicleCharges_provider.dart';
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import '../providers/secureStoreMixin_provider.dart';
@@ -48,7 +49,7 @@ bool _convertTobool(value) {
     return value;
 }
 
-class TowChargesVM with ChangeNotifier, SecureStoreMixin {
+class TowChargesVM with ChangeNotifier, SecureStoreMixin{
   Xml2Json xml2json = new Xml2Json();
   final String appName = "towing";
   String userId="";
@@ -111,23 +112,28 @@ class TowChargesVM with ChangeNotifier, SecureStoreMixin {
     }
     _towCharges = tc;
   }
-  Future listMini(name) async {
+  Future listMini(name, mode, selectedCall) async {
+    TowedVehicleChargesVM TVCVM = new TowedVehicleChargesVM();
     _towCharges = [];
+    List<TowedVehicleCharge> _chargesList;
     List<TowCharge> tc;
-    tc =  List<TowCharge>();
+    List<TowCharge> filteredTC;
 
-    final int iStart=1;
-    final int iEnd=25;
+    tc = List<TowCharge>();
+    filteredTC = List<TowCharge>();
+
+    final int iStart = 1;
+    final int iEnd = 25;
     String filterFields = "";
 
-   await  getSecureStore('userId', (token) {
-      userId=token;
+    await getSecureStore('userId', (token) {
+      userId = token;
     });
-   await  getSecureStore('pinNumber', (token) {
-      pinNumber=token;
+    await getSecureStore('pinNumber', (token) {
+      pinNumber = token;
     });
 
-    filterFields = "pinNumber:"+pinNumber;
+    filterFields = "pinNumber:" + pinNumber;
 
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -165,12 +171,37 @@ class TowChargesVM with ChangeNotifier, SecureStoreMixin {
     final count = await data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["count"];
 
-    if(count == "1"){
+    if (count == "1") {
+      if (mode == "add-charge-mode") {
+
+      }
+      else
       tc.add(new TowCharge.fromJson(extractedData));
     }
-    else if (count != "1" && count != "0"){
-      for (int i = 0; i < extractedData.length; i++) {
-        tc.add(new TowCharge.fromJson(extractedData[i]));
+    else if (count != "1" && count != "0") {
+      if (mode == "add-charge-mode") {
+        await TVCVM.listMini(0, 100, selectedCall.toString()); //Charges List
+        var x = TVCVM.towedVehicleCharges;
+
+        for (int i = 0; i < extractedData.length; i++) {
+          var bla=false;
+          for(int j=0; j<x.length;j++){
+
+             if(extractedData[i]['towCharges'].toString() == x[j].towCharges.toString()){
+               print(extractedData[i]['towCharges']);
+               print(x[j].towCharges);
+               bla=true;
+             }
+          }
+          if(bla == false){
+            tc.add(new TowCharge.fromJson(extractedData[i]));
+          }
+        }
+      }
+      else{
+        for (int i = 0; i < extractedData.length; i++) {
+          tc.add(new TowCharge.fromJson(extractedData[i]));
+        }
       }
     }
     _towCharges = tc;

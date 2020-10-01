@@ -9,10 +9,15 @@ import '../screens/vehicle_info.dart';
 import '../screens/add_edit_call.dart';
 import '../widgets/update_status.dart';
 
-class CancelledCallsList extends StatelessWidget {
+class CancelledCallsList extends StatefulWidget {
+  var userRole;
+  var dispatchPaging;
   CancelledCallsList(this.userRole, this.dispatchPaging);
-  final userRole;
-   var dispatchPaging;
+
+  @override
+  _CancelledCallsList createState() => _CancelledCallsList();
+}
+class _CancelledCallsList extends State<CancelledCallsList> {
 
   static const int PAGE_SIZE = 15;
   Future<List> _refreshCallsList(BuildContext context) async {
@@ -42,6 +47,7 @@ class CancelledCallsList extends StatelessWidget {
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
+            key: UniqueKey(),
             errorBuilder: (context, error) {
               return Text(error);
             },
@@ -93,10 +99,10 @@ class CancelledCallsList extends StatelessWidget {
                             onPressed: () {
                               Provider.of<Calls>(context, listen:false).selectedCall = cancelledCalls;
                               Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) =>
-                                      new AddEditCallScreen(0)));
+                                context,
+                                new MaterialPageRoute(
+                                    builder: (context) =>
+                                    new AddEditCallScreen(0)),).then((value) => setState(() {}));
                             },
                             textColor: Colors.grey,
                             icon: Icon(Icons.edit, size:14),
@@ -106,7 +112,7 @@ class CancelledCallsList extends StatelessWidget {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(cancelledCalls.id,cancelledCalls.dispatchStatusName, cancelledCalls.dispatchInstructions_string, userRole, dispatchPaging, cancelledCalls.towType);
+                                    return UpdateStatus(cancelledCalls.id,cancelledCalls.dispatchStatusName, cancelledCalls.dispatchInstructions_string, widget.userRole, widget.dispatchPaging, cancelledCalls.towType);
                                   });
                               // showDialogUpdateStatus(context);
                             },

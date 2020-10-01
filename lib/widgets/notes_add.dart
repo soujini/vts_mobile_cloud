@@ -46,6 +46,7 @@ class _NotesAddState extends State<NotesAdd> {
     }
     form.save();
     await Provider.of<NotesVM>(context, listen:false).create(_note).then((res) {
+      Navigator.pop(context);
       this.setState(() {
         widget.isLoading=false;
       });

@@ -10,12 +10,22 @@ import '../screens/vehicle_info.dart';
 import '../screens/add_edit_call.dart';
 import '../widgets/update_status.dart';
 
-
-class ActiveCallsList extends StatelessWidget {
-  ActiveCallsList(this.userRole, this.dispatchPaging);
-  String userRole;
+class ActiveCallsList extends StatefulWidget {
+  var userRole;
   var dispatchPaging;
+  ActiveCallsList(this.userRole, this.dispatchPaging);
+
+  @override
+  _ActiveCallsList createState() => _ActiveCallsList();
+}
+class _ActiveCallsList extends State<ActiveCallsList> {
   static const int PAGE_SIZE = 15;
+
+  void initState() {
+    super.initState();
+
+    _refreshCallsList(context);
+  }
 
   Future<List> _refreshCallsList(BuildContext context) async {
     return await Provider.of<Calls>(context, listen:false)
@@ -38,12 +48,14 @@ class ActiveCallsList extends StatelessWidget {
               )));
     });
   }
-
   @override
   Widget build(BuildContext context) {
+
+
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
+            key: UniqueKey(),
             shrinkWrap: true,
             errorBuilder: (context, error) {
               return Text(error);
@@ -98,11 +110,12 @@ class ActiveCallsList extends StatelessWidget {
                         FlatButton.icon(
                             onPressed: () {
                               Provider.of<Calls>(context, listen:false).selectedCall = activeCalls;
+                              // Navigator.pop(context);
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
-                                      new AddEditCallScreen(0)));
+                                      new AddEditCallScreen(0)),).then((value) => setState(() {}));
                             },
                             icon: Icon(Icons.edit, size:14),
                             label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
@@ -115,7 +128,7 @@ class ActiveCallsList extends StatelessWidget {
                                       UpdateStatus(activeCalls.id,
                                           activeCalls.dispatchStatusName,
                                           activeCalls
-                                              .dispatchInstructions_string, userRole, dispatchPaging, activeCalls.towType);
+                                              .dispatchInstructions_string, widget.userRole, widget.dispatchPaging, activeCalls.towType);
                                   });
                             },
                             icon: Icon(Icons.update, size:14),

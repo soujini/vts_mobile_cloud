@@ -418,7 +418,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                               height: 50,
                               child: FlatButton(
 //                                  color: Color(0xff6ACA25),
-                                  color: Color(0xff1C3764),
+                                  color:  widget.dispatchStatusName == "Arrived" && widget.userRole == "3" ? Colors.grey : Color(0xff1C3764),
                                   textColor: Colors.white,
                                   shape: new RoundedRectangleBorder(
                                       borderRadius: new BorderRadius
@@ -426,11 +426,11 @@ class _UpdateStatusState extends State<UpdateStatus> {
                                   disabledTextColor: Colors.black,
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Colors.blueAccent,
-                                  onPressed: () => checkStatus(),
+                                  onPressed: () => widget.dispatchStatusName == "Arrived" && widget.userRole == "3" ? '' : checkStatus(),
                                   child: Align(
                                       alignment: Alignment
                                           .center,
-                                      child: Text('SET TO \n'+ selectedStatus.toUpperCase(),
+                                      child: Text( widget.dispatchStatusName == "Arrived" && widget.userRole == "3" ? 'SET TO ARRIVED' : 'SET TO \n'+ selectedStatus.toUpperCase(),
                                           textAlign: TextAlign.center)
                                   )
                               )

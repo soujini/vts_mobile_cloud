@@ -147,7 +147,7 @@ class InfoScreenState extends State<InfoScreen> with SecureStoreMixin {
                           mainAxisAlignment: MainAxisAlignment.center, //Center Row contents horizontally,,
                           children: <Widget>[
                           Text("Phone : "),
-                          Text("(269)-123-1234",  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500))
+                          Text("(877)-374-7225",  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500))
                         ],
                       )
                   ),

@@ -461,13 +461,14 @@ class CallAddState extends State<CallAdd> {
     _formKey[1].currentState.validate();
   }
 
-  setDriver(id, name) {
+  setDriver(suggestion) {
     setState(() {
-      _call.wreckerDriver = id;
-      _call.wreckerDriverName = name;
+      _call.wreckerDriver = suggestion.wreckerDriver;
+      _call.wreckerDriverName = suggestion.wreckerDriverName;
       _driverController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.wreckerDriverName))
               .value;
+      setTruck(suggestion.towTruck, suggestion.towTruckName);
     });
    //_formKey.currentState.validate();
   }

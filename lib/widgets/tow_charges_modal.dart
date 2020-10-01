@@ -7,8 +7,8 @@ import 'package:vts_mobile_cloud/providers/relationTowCharges_provider.dart';
 class TowChargesModal extends StatelessWidget {
 
   final Function setTowCharge;
-  TowChargesModal({Key key, this.setTowCharge}) : super(key: key);
-
+  int selectedCall=0;
+  TowChargesModal({Key key, this.setTowCharge, this.selectedCall}) : super(key: key);
   final  _formKey = GlobalKey<FormState>();
   final TextEditingController _typeAheadController1 = TextEditingController();
 
@@ -39,7 +39,7 @@ class TowChargesModal extends StatelessWidget {
                       controller: this._typeAheadController1,
                     ),
                     suggestionsCallback: (pattern) async {
-                      await Provider.of<TowChargesVM>(context, listen:false).listMini(pattern);
+                      await Provider.of<TowChargesVM>(context, listen:false).listMini(pattern,"add-charge-mode", this.selectedCall);
                       return Provider.of<TowChargesVM>(context, listen:false).towCharges;
                     },
                     itemBuilder: (context, suggestion) {
