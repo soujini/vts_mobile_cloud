@@ -1,27 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:vts_mobile_cloud/providers/calls_provider.dart';
-import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
-import 'package:vts_mobile_cloud/screens/success_screen.dart';
 import '../providers/processTowedVehicle_provider.dart';
-import 'call_add.dart';
-import '../models/call.dart';
-import 'dart:async';
 
 class DuplicateCall extends StatefulWidget {
   final Function save2;
   DuplicateCall({Key key, this.save2}) : super(key: key);
 
   _DuplicateCallState createState()=>_DuplicateCallState();
-
-//  final Function addCall;
-//
-//  TowReasonModal({Key key, this.setTowReason}) : super(key: key);
-
-//  @override
-//  State<StatefulWidget> createState() {
-//    return _DuplicateCallState();
-//  }
 }
 
 
@@ -37,35 +22,6 @@ class _DuplicateCallState extends State<DuplicateCall> {
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
                 ))));
   }
-
-//  save2() async{
-//    Navigator.pop(context);
-//    await Provider.of<Calls>(context, listen: false).create(widget._call);
-//    var response = Provider
-//        .of<Calls>(context, listen: false)
-//        .createResponse;
-//    if (response["errorStatus"] == "false") {
-//      _showErrorMessage(context, response["errorMessage"]);
-//    }
-//    else {
-////      Navigator.pop(context);
-//      Navigator.push(
-//          context,
-//          new MaterialPageRoute(
-//              builder: (context) =>
-//              new SuccessScreen()));
-//
-//      Timer(Duration(milliseconds: 3000), () {
-//        Navigator.pop(context);
-//        Navigator.push(
-//            context,
-//            new MaterialPageRoute(
-//                builder: (context) =>
-//                new CallsScreen()));
-//      });
-////
-//    }
-//  }
 
   @override
   Widget build(BuildContext context) {

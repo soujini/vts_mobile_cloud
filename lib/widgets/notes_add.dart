@@ -54,7 +54,7 @@ class _NotesAddState extends State<NotesAdd> {
           context,
           new MaterialPageRoute(
               builder: (context) =>
-              new AddEditCallScreen(4)));
+              new AddEditCallScreen(4,0)));
     });
   }
 

@@ -32,6 +32,7 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
   var selectedModalOption=0;
   final myController = TextEditingController();
   String userRole;
+  String pinNumber;
   var dispatchPaging;
 
   @override
@@ -47,6 +48,10 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
     super.initState();
     getRole();
     getDispatchPaging();
+    getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+
     searchOption.add(new RadioModel(false, 'Call Date', ''));
     searchOption.add(new RadioModel(false, 'Plate #', ''));
     searchOption.add(new RadioModel(false, 'PO #', ''));
@@ -66,13 +71,13 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
     searchOptionType.add(new RadioModel(false, 'Cleared', ''));
   }
 
-  setDriver(id, name) {
+  setDriver(suggestion) {
     setState(() {
-      selectedModalOption=id;
+      selectedModalOption=suggestion.wreckerDriver;
 //      _call.wreckerDriver = id;
 //      _call.wreckerDriverName = name;
       myController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.wreckerDriverName))
               .value;
     });
   }
@@ -86,13 +91,13 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
               .value;
     });
   }
-  setTowType(id, name) {
+  setTowType(suggestion) {
     setState(() {
-      selectedModalOption=id;
+      selectedModalOption=suggestion.towType;
 //      _call.towType = id;
 //      _call.towTypeName = name;
       myController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: name))
+          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.towTypeName))
               .value;
     });
   }
@@ -415,19 +420,19 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                           if(selectedOptionIndex == 0){
                             filterFields = searchOptionField +
                                 myController.text +
-                                "|pinNumber:PIN0000074|towedStatus:C|dispatchStatus:" +
+                                "|pinNumber:"+pinNumber+"|towedStatus:C|dispatchStatus:" +
                                 dispatchStatus;
                           }
                           if(selectedOptionIndex > 0 && selectedOptionIndex < 4){
                             filterFields = searchOptionField +
                                 myController.text +
-                                "|pinNumber:PIN0000074|towedStatus:C|dispatchStatus:" +
+                                "|pinNumber:"+pinNumber+"|towedStatus:C|dispatchStatus:" +
                                 dispatchStatus;
                           }
                           if(selectedOptionIndex >= 4){
                             filterFields = searchOptionField +
                                 selectedModalOption.toString() +
-                                "|pinNumber:PIN0000074|towedStatus:C|dispatchStatus:" +
+                                "|pinNumber:"+pinNumber+"|towedStatus:C|dispatchStatus:" +
                                 dispatchStatus;
 
                           }

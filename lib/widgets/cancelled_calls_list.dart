@@ -12,7 +12,10 @@ import '../widgets/update_status.dart';
 class CancelledCallsList extends StatefulWidget {
   var userRole;
   var dispatchPaging;
-  CancelledCallsList(this.userRole, this.dispatchPaging);
+  int selectedTabIndex;
+  final Function notifyParent;
+  var refreshMainTabController;
+  CancelledCallsList({Key key, this.userRole, this.dispatchPaging, this.selectedTabIndex, this.notifyParent, this.refreshMainTabController}) : super(key: key);
 
   @override
   _CancelledCallsList createState() => _CancelledCallsList();
@@ -47,7 +50,7 @@ class _CancelledCallsList extends State<CancelledCallsList> {
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
-            key: UniqueKey(),
+            key:UniqueKey(),
             errorBuilder: (context, error) {
               return Text(error);
             },
@@ -64,7 +67,7 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                 .listMiniMobile('cancelled', pageIndex, PAGE_SIZE,"")));
   }
 
-  Widget _itemBuilder(context, cancelledCalls, _) {
+  Widget _itemBuilder(context, cancelledCalls, index) {
     return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -73,7 +76,14 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                   builder: (context) => new VehicleInfoScreen(cancelledCalls)));
         },
         child: Column(children: <Widget>[
+          index == 0 ? Padding(
+              padding: EdgeInsets.all(15),
+              child:Text("Total "+cancelledCalls.count.toString(), style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff1C3764)))) : Text(''),
           Card(
+              elevation: 0,
               child: Padding(
                   padding: EdgeInsets.all(15),
                   child: Column(
@@ -98,11 +108,12 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                         FlatButton.icon(
                             onPressed: () {
                               Provider.of<Calls>(context, listen:false).selectedCall = cancelledCalls;
+                              // Navigator.pop(context);
                               Navigator.push(
                                 context,
                                 new MaterialPageRoute(
                                     builder: (context) =>
-                                    new AddEditCallScreen(0)),).then((value) => setState(() {}));
+                                    new AddEditCallScreen(0, widget.selectedTabIndex)),).then((value) => setState(() {}));
                             },
                             textColor: Colors.grey,
                             icon: Icon(Icons.edit, size:14),
@@ -258,7 +269,7 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                               children: <Widget>[
                                 cancelledCalls.dispatchInstructions_string != null && cancelledCalls.dispatchInstructions_string != '' && cancelledCalls.dispatchInstructions_string != 'null' && cancelledCalls.dispatchInstructions_string != '--'?
                                 Text((cancelledCalls.dispatchInstructions_string),
-                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color:Color(0xffB5B5B4))):Row(),]))),
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color:Color(0xff6C89BA))):Row(),]))),
                     ],
                   ))),
           //Divider()

@@ -12,14 +12,17 @@ import '../widgets/update_status.dart';
 class CompletedCallsList extends StatefulWidget {
   var userRole;
   var dispatchPaging;
-  CompletedCallsList(this.userRole, this.dispatchPaging);
+  int selectedTabIndex;
+  final Function notifyParent;
+  var refreshMainTabController;
+  CompletedCallsList({Key key, this.userRole, this.dispatchPaging, this.selectedTabIndex, this.notifyParent, this.refreshMainTabController}) : super(key: key);
 
   @override
   _CompletedCallsList createState() => _CompletedCallsList();
 }
 class _CompletedCallsList extends State<CompletedCallsList> {
-
   static const int PAGE_SIZE = 15;
+
   Future<List> _refreshCallsList(BuildContext context) async {
     return await Provider.of<Calls>(context, listen:false)
         .listMiniMobile('completed', 0, PAGE_SIZE,"")
@@ -47,16 +50,13 @@ class _CompletedCallsList extends State<CompletedCallsList> {
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
-            key: UniqueKey(),
+            key:UniqueKey(),
             errorBuilder: (context, error) {
               return Text(error);
             },
             showRetry: false,
             loadingBuilder: (context) {
               return Loader();
-              //              return CircularProgressIndicator(
-////                backgroundColor: Colors.green,
-//              );
             },
             noItemsFoundBuilder: (context) {
               return Text('No Items Found');
@@ -67,7 +67,7 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                 .listMiniMobile('completed', pageIndex, PAGE_SIZE,"")));
   }
 
-  Widget _itemBuilder(context, completedCalls, _) {
+  Widget _itemBuilder(context, completedCalls, index) {
     return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -76,7 +76,14 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                   builder: (context) => new VehicleInfoScreen(completedCalls)));
         },
         child: Column(children: <Widget>[
+          index == 0 ? Padding(
+              padding: EdgeInsets.all(15),
+              child:Text("Total "+completedCalls.count.toString(), style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff1C3764)))) : Text(''),
           Card(
+              elevation: 0,
               child: Padding(
                   padding: EdgeInsets.all(15),
                   child: Column(
@@ -104,11 +111,12 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                         FlatButton.icon(
                             onPressed: () {
                               Provider.of<Calls>(context, listen:false).selectedCall = completedCalls;
+                              // Navigator.pop(context);
                               Navigator.push(
                                 context,
                                 new MaterialPageRoute(
                                     builder: (context) =>
-                                    new AddEditCallScreen(0)),).then((value) => setState(() {}));
+                                    new AddEditCallScreen(0, widget.selectedTabIndex)),).then((value) => setState(() {}));
                             },
                             icon: Icon(Icons.edit, size:14),
                             label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
@@ -262,7 +270,7 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                               children: <Widget>[
                                 completedCalls.dispatchInstructions_string != null && completedCalls.dispatchInstructions_string != '' && completedCalls.dispatchInstructions_string != 'null' && completedCalls.dispatchInstructions_string != '--'?
                                 Text((completedCalls.dispatchInstructions_string),
-                                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14, color:Color(0xffB5B5B4))):Row(),]))),
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color:Color(0xff6C89BA))):Row(),]))),
                     ],
                   ))),
           //Divider()

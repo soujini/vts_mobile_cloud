@@ -37,7 +37,9 @@ class Call {
   String dispatchInstructions_string;
   String licensePlate;
   String VIN;
+  int wreckerDriver;
   String wreckerDriverName;
+  int towTruck;
   String towTruckName;
   String dispatchReceivedTime;
   String dispatchEnrouteTime;
@@ -67,8 +69,7 @@ class Call {
   int towedState;
   int wreckerCompany;
   String wreckerCompanyName;
-  int wreckerDriver;
-  int towTruck;
+
   int billTo;
   String billToName;
   int vehicleMake;
@@ -157,7 +158,7 @@ class Call {
   "wreckerCompanyName":wreckerCompanyName,
   "towAuthorizationName":towAuthorizationName,
   "towReasonName":towReasonName,
-  "pinNumber":"PIN0000074",
+  "pinNumber":pinNumber,
   "VIN":VIN,
   "licensePlate":licensePlate,
   "topColor":topColor,
@@ -672,8 +673,10 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       towedStatus:parsedJson["towedStatus"],
       licensePlate: parsedJson["licensePlate"],
       VIN: parsedJson["VIN"],
+      wreckerDriver: int.parse(parsedJson["wreckerDriver"]),
       wreckerDriverName: parsedJson["wreckerDriverName"],
       towTruckName: parsedJson["towTruckName"],
+      towTruck: int.parse(parsedJson["towTruck"]),
 //      dispatchReceivedTime: parsedJson["dispatchReceivedTime"],
 //      dispatchEnrouteTime: parsedJson["dispatchEnrouteTime"],
 //      dispatchOnsiteTime: parsedJson["dispatchOnsiteTime"],

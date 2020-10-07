@@ -137,7 +137,7 @@ else if(selectedOptionIndex == 7){
          context,
          new MaterialPageRoute(
              builder: (context) =>
-             new AddEditCallScreen(0)));
+             new AddEditCallScreen(0,0)));
    });
   }
 

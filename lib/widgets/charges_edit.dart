@@ -8,7 +8,8 @@ import '../providers/towedVehicleCharges_provider.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class ChargesEdit extends StatefulWidget {
-  bool isLoading =false;
+  final Function notifyParent;
+  ChargesEdit({Key key, this.notifyParent});
 
   @override
   State<StatefulWidget> createState() {
@@ -19,7 +20,7 @@ class ChargesEdit extends StatefulWidget {
 class _ChargesEditState extends State<ChargesEdit> {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = true;
-  bool _isFormReadOnly = false;
+  bool isLoading = false;
   var _charge = TowedVehicleCharge();
   var _enableDiscountApply = false;
 
@@ -48,15 +49,16 @@ class _ChargesEditState extends State<ChargesEdit> {
         composing: TextRange.empty,
       );
     });
+     _charge = Provider.of<TowedVehicleChargesVM>(context, listen: false).selectedCharge;
+    getValues();
+
     super.initState();
   }
 
   getValues() {
-    enableDisableDiscount();
-    _charge = Provider.of<TowedVehicleChargesVM>(context, listen: false)
-        .selectedCharge;
-
+    isLoading=true;
     setState(() {
+
       _towChargesController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _charge.towChargesName))
           .value;
@@ -75,11 +77,14 @@ class _ChargesEditState extends State<ChargesEdit> {
       _totalChargesController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _charge.totalCharges))
           .value;
+
     });
+    enableDisableDiscount();
+    isLoading=false;
   }
 
-  enableDisableDiscount() {
-    var _selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
+  enableDisableDiscount() async {
+    var _selectedCall = await Provider.of<Calls>(context, listen: false).callDetails;
     var storageStatus = _selectedCall[0].storageStatus;
     var towedStatus = _selectedCall[0].towedStatus;
     if (storageStatus != 2 && towedStatus != 'X') {
@@ -100,34 +105,34 @@ class _ChargesEditState extends State<ChargesEdit> {
 //    _formKey.currentState.validate();
 //  }
 
-  getAndSetDefaultCharges(towCharges) async {
-    var selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
-    var towCustomer = selectedCall[0].towCustomer;
-    var towType = selectedCall[0].towType;
-
-    enableDisableDiscount();
-
-    await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-        .getDefaultCharges(towCharges, towCustomer, towType);
-    var defaultCharges =
-        Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-            .defaultCharges[0];
-    setState(() {
-      _charge.chargesQuantity = defaultCharges.chargesQuantity;
-      _charge.discountQuantity = defaultCharges.discountQuantity;
-      _charge.chargesRate = defaultCharges.chargesRate;
-
-      _chargesQuantityController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: defaultCharges.chargesQuantity))
-          .value;
-      _discountQuantityController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: defaultCharges.discountQuantity))
-          .value;
-      _chargesRateController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: defaultCharges.chargesRate))
-          .value;
-    });
-  }
+  // getAndSetDefaultCharges(towCharges) async {
+  //   var selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
+  //   var towCustomer = selectedCall[0].towCustomer;
+  //   var towType = selectedCall[0].towType;
+  //
+  //   enableDisableDiscount();
+  //
+  //   await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+  //       .getDefaultCharges(towCharges, towCustomer, towType);
+  //   var defaultCharges =
+  //       Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+  //           .defaultCharges[0];
+  //   setState(() {
+  //     _charge.chargesQuantity = defaultCharges.chargesQuantity;
+  //     _charge.discountQuantity = defaultCharges.discountQuantity;
+  //     _charge.chargesRate = defaultCharges.chargesRate;
+  //
+  //     _chargesQuantityController.value = new TextEditingController.fromValue(
+  //             new TextEditingValue(text: defaultCharges.chargesQuantity))
+  //         .value;
+  //     _discountQuantityController.value = new TextEditingController.fromValue(
+  //             new TextEditingValue(text: defaultCharges.discountQuantity))
+  //         .value;
+  //     _chargesRateController.value = new TextEditingController.fromValue(
+  //             new TextEditingValue(text: defaultCharges.chargesRate))
+  //         .value;
+  //   });
+  // }
   _showErrorMessage(BuildContext context, errorMessage) {
     Scaffold.of(context).showSnackBar(
         new SnackBar(
@@ -146,9 +151,7 @@ class _ChargesEditState extends State<ChargesEdit> {
 
     if (form.validate()) {
       form.save();
-      this.setState(() {
-        widget.isLoading = true;
-      });
+        isLoading = true;
       await Provider.of<TowedVehicleChargesVM>(context, listen: false).update(
           _charge);
       var chargesUpdateResponse = Provider
@@ -156,9 +159,7 @@ class _ChargesEditState extends State<ChargesEdit> {
           .chargesUpdateResponse;
 
       if (chargesUpdateResponse["errorStatus"] == "false") {
-        this.setState(() {
-          widget.isLoading = false;
-        });
+          isLoading = false;
         _showErrorMessage(context, chargesUpdateResponse["errorMessage"]);
       }
       else {
@@ -169,17 +170,14 @@ class _ChargesEditState extends State<ChargesEdit> {
             .of<ProcessTowedVehiclesVM>(context, listen: false)
             .processChangeChargeResponse;
         if (processChangeChargeResponse["errorStatus"] == "false") {
-          this.setState(() {
-            widget.isLoading = false;
-          });
+            isLoading = false;
           _showErrorMessage(
               context, processChangeChargeResponse["errorMessage"]);
         }
         else {
-          this.setState(() {
-            widget.isLoading = false;
-          });
+            isLoading = false;
           Navigator.pop(context);
+          widget.notifyParent();
           // Navigator.push(context,
           //     new MaterialPageRoute(
           //         builder: (context) => new AddEditCallScreen(5)));
@@ -215,16 +213,13 @@ class _ChargesEditState extends State<ChargesEdit> {
   }
   @override
   Widget build(BuildContext context) {
-    var selectedCharge =
-        Provider.of<TowedVehicleChargesVM>(context, listen: false)
-            .selectedCharge;
-    getValues();
+
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
           title: Text('EDIT CHARGES', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
         ),
-        body: widget.isLoading == true? Center(child:Loader()):Container(
+        body: isLoading == true? Center(child:Loader()):Container(
             child: SingleChildScrollView(
                 // child: AlertDialog(
                 //content:
@@ -253,6 +248,7 @@ class _ChargesEditState extends State<ChargesEdit> {
               ),
               new ListTile(
                 title: new TextFormField(
+                  readOnly: _charge.accruedCharge == true,
                   onEditingComplete: () {
                     FocusScope.of(context).requestFocus(new FocusNode());
                     FocusScope.of(context).unfocus();
@@ -343,7 +339,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                     style: new TextStyle(color: Colors.black54, fontSize: 16)),
                 trailing: Checkbox(
                   //To set the default value of a checkbox, just set `value` to `true` if u want it checked by default or `false` if unchecked by default
-                  value: selectedCharge.discountApply,
+                  value: _charge.discountApply,
                   onChanged: _enableDiscountApply
                       ? (val) {
                           setState(() {
@@ -358,7 +354,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                     style: new TextStyle(color: Colors.black54, fontSize: 16)),
                 trailing: Checkbox(
                   //To set the default value of a checkbox, just set `value` to `true` if u want it checked by default or `false` if unchecked by default
-                  //value: selectedCharge.chargesTaxable,
+                  //value: _charge.chargesTaxable,
                   value: false,
                   onChanged: (bool val) {
                     setState(() {

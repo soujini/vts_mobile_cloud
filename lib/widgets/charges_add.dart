@@ -11,8 +11,9 @@ import 'package:vts_mobile_cloud/widgets/loader.dart';
 class ChargesAdd extends StatefulWidget {
   int selectedCall=0;
   bool isLoading=false;
+  final Function notifyParent;
 
-  ChargesAdd(this.selectedCall);
+  ChargesAdd({Key key, this.selectedCall, this.notifyParent}): super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -50,6 +51,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
     }
 
   getAndSetDefaultCharges(towCharges) async {
+      // widget.isLoading = true;
     var selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
     var towCustomer = selectedCall[0].towCustomer;
     var towType = selectedCall[0].towType;
@@ -72,6 +74,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
       _chargesRateController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: defaultCharges.chargesRate))
           .value;
+      // widget.isLoading=false;
     });
   }
   _showErrorMessage(BuildContext context, errorMessage) {
@@ -103,9 +106,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
 
          if (form.validate()) {
            form.save();
-           this.setState(() {
              widget.isLoading=true;
-           });
 
            await Provider.of<TowedVehicleChargesVM>(context, listen: false)
                .create(_charge);
@@ -113,9 +114,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                .of<TowedVehicleChargesVM>(context, listen: false)
                .createResponse;
            if (response["errorStatus"] == "false") {
-             this.setState(() {
                widget.isLoading = false;
-             });
              _showErrorMessage(context, response["errorMessage"]);
            }
            else {
@@ -125,20 +124,18 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                  .of<ProcessTowedVehiclesVM>(context, listen: false)
                  .processChangeChargeResponse;
              if (processChangeChargeResponse["errorStatus"] == "false") {
-               this.setState(() {
                  widget.isLoading = false;
-               });
                _showErrorMessage(
                    context, processChangeChargeResponse["errorMessage"]);
              }
              else {
-               this.setState(() {
                  widget.isLoading = false;
-               });
-               // Navigator.pop(context);
-               Navigator.push(context,
-                   new MaterialPageRoute(
-                       builder: (context) => new AddEditCallScreen(5)));
+                Navigator.pop(context);
+                widget.notifyParent();
+                // Navigator.pop(context);
+               // Navigator.push(context,
+               //     new MaterialPageRoute(
+               //         builder: (context) => new AddEditCallScreen(5,0)));
              }
            }
          }

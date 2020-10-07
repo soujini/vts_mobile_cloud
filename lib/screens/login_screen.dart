@@ -176,12 +176,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       bottom: 0,
                     ),
                     child: TextFormField(
+                      textCapitalization:TextCapitalization.characters,
                         onEditingComplete: () {
                           this.submit(context);
                           FocusScope.of(context).requestFocus(new FocusNode());
                           FocusScope.of(context).unfocus();
                         },
-//                        onSubmitted: (value) {},
+//                        onSubmitteked: (value) {},
                         decoration: new InputDecoration(
                           prefixIcon:
                               Icon(Icons.dialpad, color: Color(0XffB5B5BF)),

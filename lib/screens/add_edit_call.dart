@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:vts_mobile_cloud/widgets/call_edit.dart';
 
 class AddEditCallScreen extends StatelessWidget {
-  AddEditCallScreen(this.initialIndex);
   var initialIndex;
+  int selectedTabIndex;
+  AddEditCallScreen(this.initialIndex, this.selectedTabIndex);
+
 
   @override
   Widget build(BuildContext context) {
-  return CallEdit(initialIndex);
+  return CallEdit(initialIndex, selectedTabIndex);
   }
 }

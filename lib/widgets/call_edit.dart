@@ -33,23 +33,27 @@ import 'package:vts_mobile_cloud/widgets/towed_vehicle_notes_list.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class CallEdit extends StatefulWidget {
-  CallEdit(this.initialIndex) : super();
   var initialIndex;
+  int selectedTabIndex;
+
+  CallEdit(this.initialIndex, this.selectedTabIndex) : super();
+
 
   @override
   _CallEditState createState() => _CallEditState();
 }
 
-class _CallEditState extends State<CallEdit> with SecureStoreMixin {
+class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKeepAliveClientMixin  {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = true;
   bool _isFormReadOnly = false;
+  bool wantKeepAlive = true;
   DateTime _date = DateTime.now();
   final _call = Call();
   String userRole;
   var dispatchPaging;
   bool isLoading = false;
-
+  int tabIndex = 0;
 //  Future<List> _refreshCallsList(BuildContext context) async {
 //    return await Provider.of<TowedVehicleNotesVM>(context)
 //        .listMini(0, PAGE_SIZE, "")
@@ -71,7 +75,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 //              )));
 //    });
 //  }
-
+//   _tabController = TabController();
   var _billToController = new TextEditingController();
   var _towedInvoiceController = new TextEditingController();
   var _dispatchMemberController = new TextEditingController();
@@ -352,7 +356,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
           .value;
 
       _authorizationController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towAuthorizationName))
+              new TextEditingValue(text: suggestion.towAuthorizationName))
           .value;
 
       _jurisdictionController.value = new TextEditingController.fromValue(
@@ -460,7 +464,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
       _driverController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: suggestion.wreckerDriverName))
               .value;
-      setTruck(suggestion.towTruck, suggestion.towTruckName);
+      if(suggestion.towTruck != 0) {
+        setTruck(suggestion.towTruck, suggestion.towTruckName);
+      }
     });
     //_formKey.currentState.validate();
   }
@@ -493,9 +499,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
   }
 
   bla() async {
-    setState(() {
       isLoading = true;
-    });
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     await Provider.of<Calls>(context, listen: false).get(selectedCall.id);
     var x = await Provider.of<Calls>(context, listen: false).callDetails;
@@ -637,7 +641,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
     //setTowReason(x[0].towReason, x[0].towReasonName);
 
     //Authorization
-    //setAuthorization(x[0].towAuthorization, x[0].towAuthorizationName);
+    setAuthorization(x[0].towAuthorization, x[0].towAuthorizationName);
 
     //Jurisdiction
     //setJurisdiction(x[0].towJurisdiction, x[0].towJurisdictionName);
@@ -1002,7 +1006,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
 
   String validateInvoice(String value) {
     if (value.isEmpty)
-      return 'Please enter Year';
+      return 'Please enter Invoice';
     else
       return null;
   }
@@ -1016,17 +1020,15 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
   }
 
   update() async {
-    this.setState(() {
       isLoading = true;
-    });
     if (this._formKey.currentState.validate() == true) {
       this._formKey.currentState.save();
       await Provider.of<Calls>(context, listen: false).updateCall(_call);
       var response = Provider.of<Calls>(context, listen: false).updateResponse;
       if (response['errorStatus'] == "true") {
-        this.setState(() {
-          isLoading = false;
-        });
+          setState(() {
+            isLoading = false;
+          });
         Navigator.push(
             context,
             new MaterialPageRoute(
@@ -1037,46 +1039,86 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
           Navigator.pop(context);
         });
       } else {
-        this.setState(() {
           isLoading = false;
-        });
         _showErrorMessage(context, response['errorMessage']);
       }
     } else {
-      this.setState(() {
         isLoading = false;
-      });
       _showErrorMessage(context, "Please check your required fields");
     }
   }
 
-  PageController _pageController;
   var selectedCall;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
     getRole();
-
     selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    // _pageController.dispose();
     super.dispose();
   }
-
+  back(BuildContext context){
+    // Navigator.pop(context);
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) =>
+    //             CallsScreen(selectedTabIndex:widget.selectedTabIndex)),
+    //         (Route<dynamic> route) =>
+    //     false);
+    // Navigator.of(context).pushRe(
+    //     MaterialPageRoute(builder: (c) => CallsScreen(selectedTabIndex:widget.selectedTabIndex)),
+    //         (route) => false);
+    // Navigator.pop(context);
+    // setState(() {
+    //   print("again");
+    // });
+    // Navigator.pop(context).then((value) {
+    //   setState(() {
+    //     // refresh state
+    //   });
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => CallsScreen(selectedTabIndex:widget.selectedTabIndex),
+    //   ),
+    // );
+  }
+refresh(){
+   bla();
+    setState(() {
+       tabIndex=5;
+    });
+}
+// getTab(){
+//     return tabIndex;
+// }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return DefaultTabController(
-        length: 6,
-        initialIndex: widget.initialIndex,
+        key:UniqueKey(),
+      length:6,
+         initialIndex: tabIndex,
         child: Scaffold(
             appBar: AppBar(
+              // leading: IconButton(
+              //   icon: Icon(Icons.arrow_back, color: Colors.black),
+              //   onPressed: () => back(context)
+              // ),
               bottom: TabBar(
+                // key:UniqueKey(),
+                // controller:_tabController,
+                onTap: (index){
+    setState(() {
+      tabIndex = index;
+    });
+                },
                 isScrollable: true,
                 indicatorColor: Colors.green,
                 labelColor: Colors.white,
@@ -1138,11 +1180,14 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                   icon: new Icon(Icons.attach_money, size: 20.0),
                   tooltip: 'Add Charges',
                   onPressed: () {
-                    Navigator.pop(context);
+                    setState(() {
+                      widget.initialIndex = 5;
+                    });
+                    // Navigator.pop(context);
                     Navigator.push(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => new ChargesAdd(selectedCall.id)));
+                            builder: (context) => new ChargesAdd(selectedCall: selectedCall.id, notifyParent:refresh))).then((value) => setState(() {tabIndex=5;}));
                   },
                 ),
                 new IconButton(
@@ -1186,7 +1231,10 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                     child: Form(
                         key: this._formKey,
                         autovalidate:_autoValidate,
-                        child: TabBarView(children: [
+                        child: TabBarView(
+                            // key:UniqueKey(),
+                            // controller: _tabController,
+                            children: [
                           SingleChildScrollView(
                               child: Column(
                             children: <Widget>[
@@ -1395,6 +1443,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  keyboardType: TextInputType.number,
                                   readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -1516,6 +1565,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  autocorrect : false,
                                   readOnly: _isFormReadOnly,
                                   textCapitalization:
                                       TextCapitalization.characters,
@@ -1775,7 +1825,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               ),
                               new ListTile(
                                 title: new TextFormField(
-                                  readOnly: _isFormReadOnly,
+                                  readOnly: true,
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
@@ -1812,7 +1862,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               ),
                               new ListTile(
                                 title: new TextFormField(
-                                  readOnly: _isFormReadOnly,
+                                  readOnly: true,
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
@@ -2213,6 +2263,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                       if (value.isEmpty) {
                                         return 'Please select Tow Customer';
                                       }
+                                      else{
+                                        return null;
+                                      }
                                     },
                                     onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
@@ -2261,6 +2314,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  keyboardType: TextInputType.number,
                                   readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -2269,6 +2323,14 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                                   decoration: new InputDecoration(
                                     labelText: "Contact Phone",
                                   ),
+                                  validator: (value) {
+                                    if (value.isEmpty || value.length != 10) {
+                                      return 'Please enter a valid Contact Phone';
+                                    }
+                                    else{
+                                      return null;
+                                    }
+                                  },
                                   onSaved: (val) => setState(
                                       () => _call.dispatchContactPhone = val),
                                 ),
@@ -2314,7 +2376,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin {
                               ),
                               new ListTile(
                                 title: new TextFormField(
-                                  readOnly: _isFormReadOnly,
+                                  readOnly: true,
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),

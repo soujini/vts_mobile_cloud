@@ -29,7 +29,9 @@ import 'dart:async';
 import '../models/call.dart';
 
 class CallAdd extends StatefulWidget {
-  CallAdd() : super();
+  final Function notifyParent;
+  // final Function refresh;
+  CallAdd({Key key, this.notifyParent}) : super(key: key);
 //  method()=>createState().save2();
 
   @override
@@ -138,6 +140,12 @@ class CallAddState extends State<CallAdd> {
       _call.towedCityName = ud[0].storageCompanyCityName != null ? ud[0].storageCompanyCityName : '';
       _call.towedState = ud[0].storageCompanyState != 0 ? ud[0].storageCompanyState : 0;
       _call.towedStateName = ud[0].storageCompanyStateName != null ? ud[0].storageCompanyStateName: '';
+      _call.towedZipCode = ud[0].zipCode != null ? ud[0].zipCode: '';
+      _call.towedToCity = dd[0].towedToCity != 0 ? dd[0].towedToCity : 0;
+      _call.towedToCityName = dd[0].towedToCityName != null ? dd[0].towedToCityName : '';
+      _call.towedToState = dd[0].towedToState != 0 ? dd[0].towedToState : 0;
+      _call.towedToStateName = dd[0].towedToStateName != null ? dd[0].towedToStateName: '';
+      _call.towedToZipCode = dd[0].towedToZipCode != null ? dd[0].towedToZipCode: '';
       _call.storageCompany = dd[0].storageCompany != 0 ? dd[0].storageCompany : 0;
       _call.storageCompanyName = dd[0].storageCompanyName != null ? dd[0].storageCompanyName : '';
       _call.towedDiscountRate = dd[0].discountPercent != null ? dd[0].discountPercent : '';
@@ -468,7 +476,9 @@ class CallAddState extends State<CallAdd> {
       _driverController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: suggestion.wreckerDriverName))
               .value;
-      setTruck(suggestion.towTruck, suggestion.towTruckName);
+      if(suggestion.towTruck != 0) {
+        setTruck(suggestion.towTruck, suggestion.towTruckName);
+      }
     });
    //_formKey.currentState.validate();
   }
@@ -693,7 +703,16 @@ class CallAddState extends State<CallAdd> {
           new IconButton(
             icon: new Icon(Icons.save),
             tooltip: 'Save',
-            onPressed: () => {FocusScope.of(context).requestFocus(new FocusNode()),save()}
+             onPressed: () => {FocusScope.of(context).requestFocus(new FocusNode()),save()}
+        // onPressed: () => {
+        //  Navigator.pop(context),
+        // Navigator.push(
+        // context,
+        // new MaterialPageRoute(
+        // builder: (context) =>
+        // new CallsScreen()))
+        //
+        // }
           ),
         ],
       ),
@@ -821,6 +840,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    keyboardType: TextInputType.number,
                       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                       controller: this._yearController,
                       decoration: new InputDecoration(
@@ -942,6 +962,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    autocorrect: false,
                     textCapitalization: TextCapitalization.characters,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _licensePlateController,
@@ -1087,6 +1108,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    readOnly:true,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _dispatchDateController,
                     decoration: new InputDecoration(
@@ -1116,6 +1138,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    readOnly:true,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _dispatchReceivedTimeController,
                     decoration: new InputDecoration(
@@ -1143,6 +1166,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    readOnly:true,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedDateController,
                     decoration: new InputDecoration(
@@ -1170,6 +1194,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    readOnly:true,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedTimeController,
                     decoration: new InputDecoration(
@@ -1250,6 +1275,7 @@ class CallAddState extends State<CallAdd> {
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
                   title: new TextFormField(
+                    keyboardType: TextInputType.number,
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     controller: _towedZipCodeController,
                     decoration: new InputDecoration(

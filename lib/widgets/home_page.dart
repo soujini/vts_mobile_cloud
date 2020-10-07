@@ -8,8 +8,8 @@ import 'package:vts_mobile_cloud/screens/add_call_screen.dart';
 import '../providers/secureStoreMixin_provider.dart';
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
   final String title;
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -30,7 +30,9 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
   void initState(){
     super.initState();
     getRole();
+    // this._currentIndex=widget.index;
   }
+
   @override
   Widget build(BuildContext context) {
 //    getRole();
@@ -60,10 +62,12 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
             else if(index == 3){
               _infoScreen = InfoScreen();
             }
-            _currentIndex = index;
+            setState(() {
+              _currentIndex = index;
+            });
           });
-
         },
+
         currentIndex: _currentIndex,
       ),
       body: CustomNavigator(

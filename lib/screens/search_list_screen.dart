@@ -17,7 +17,7 @@ class SearchListScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           // automaticallyImplyLeading: true,
-          title: Text('Search List'),
+          title: Text('SEARCH LIST', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
 
         ),
             body:SearchCallsList(this.filterFields, this.userRole, this.dispatchPaging),

@@ -7,6 +7,7 @@ import 'package:vts_mobile_cloud/widgets/cancelled_calls_list.dart';
 import '../providers/secureStoreMixin_provider.dart';
 
 class CallsScreen extends StatefulWidget {
+  CallsScreen();
 
   @override
   State<StatefulWidget> createState() {
@@ -14,103 +15,99 @@ class CallsScreen extends StatefulWidget {
     return _CallsScreenState();
   }
 }
-
-class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin{
+//AutomaticKeepAliveClientMixin to keep tab controller alive
+class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, AutomaticKeepAliveClientMixin {
   String userRole;
   var dispatchPaging;
   var callsData;
+  int selectedTabIndex;
+  @override
+  bool wantKeepAlive = true;
+  var refreshMainTabController = "false";
 
-  getRole() async{
-   await  getSecureStore('userRole', (token) {
-      setState(() {
-        userRole=token;
-      });
-    });
-  }
-  getDispatchPaging() async{
-   await  getSecureStore('dispatchPaging', (token) {
-      setState(() {
-        dispatchPaging =_convertTobool(token);
-      });
-    });
-  }
-  bool _convertTobool(value) {
-    if (value is String) {
-      if (value.toLowerCase() == "true")
-        return true;
-      else
-        return false;
-    } else
-      return value;
-  }
-
-  void initState(){
+  void initState() {
     super.initState();
-    getRole();
-    getDispatchPaging();
-    callsData = Provider.of<Calls>(context, listen:false); //Required for the length
+    getRoleAndDispatchPagingAndSetSelectedTabIndex();
+    // callsData = Provider.of<Calls>(context, listen:false); //Required for the length
+  }
+   @override
+ void dispose(){
+   super.dispose();
+ }
+
+  void getRoleAndDispatchPagingAndSetSelectedTabIndex() async{
+     await getSecureStore('userRole', (token) {
+       userRole = token;
+     });
+    await  getSecureStore('dispatchPaging', (token) {
+      dispatchPaging = token;
+    });
   }
 
-//  @override
-//  void dispose(){
-//    super.dispose();
-//  }
+  void refresh() {
+    print("refreshing");
+   }
+
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    super.build(context);
+    return userRole != '' ?  DefaultTabController(
       length: 3,
-      child: Scaffold(
+       initialIndex:selectedTabIndex == null ? 0 : selectedTabIndex,
+      child:  Scaffold(
           appBar: AppBar(
             title: Text('CALLS', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
             bottom: TabBar(
               indicatorColor: Colors.green,
               labelColor: Colors.white,
-//              unselectedLabelColor: Colors.blueGrey,
+              onTap: (index) {
+                  setState(() {
+                  selectedTabIndex=index;
+                  });
+              },
               tabs: [
                 Tab(
                   icon: Icon(Icons.av_timer),
-                  child: Text("ACTIVE" +' ' +
-                      (callsData.activeCount != 0
-                          ? callsData.activeCount.toString()
-                          : ''
-                       ),
-                    style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
-                ),
+                  child: refreshMainTabController == "true" ? Text("ACTIVE",
+                      // ' ' +
+                      // (callsData.activeCount != 0
+                      //     ? callsData.activeCount.toString()
+                      //     : ''
+                       //),
+                    style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("ACTIVE",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
+                ) ,
                 Tab(
                   icon: Icon(Icons.alarm_on),
-                  child: Text("COMPLETED"
-                      ' ' +
-                      (callsData.completedCount != 0
-                          ? callsData.completedCount.toString()
-                          : ''),
-                      style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
+                    child: refreshMainTabController == "true" ? Text("COMPLETED",
+                        // ' ' +
+                        // (callsData.completedCount != 0
+                        //     ? callsData.completedCount.toString()
+                        //     : ''
+                        // ),
+                      style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("COMPLETED",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
                 ),
                 Tab(
                   icon: Icon(Icons.cancel),
-                  child: Text("CANCELLED"
-                      ' ' +
-                      (callsData.cancelledCount != 0
-                          ? callsData.cancelledCount.toString()
-                          : ''),
-                      style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
+                    child: refreshMainTabController == "true" ? Text("CANCELLED",
+                        // ' ' +
+                        // (callsData.cancelledCount != 0
+                        //     ? callsData.cancelledCount.toString()
+                        //     : ''
+                        // ),
+                      style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("CANCELLED",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
                 ),
               ],
             ),
 
           ),
-//          body: _isLoading
-//              ? Center(
-//                  child: CircularProgressIndicator(),
-//                )
-//              : CallsList()),
-          body: TabBarView(
+          body:  TabBarView(
             children: [
-              ActiveCallsList(userRole, dispatchPaging),
-              CompletedCallsList(userRole, dispatchPaging),
-              CancelledCallsList(userRole, dispatchPaging),
+               ActiveCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh, refreshMainTabController:refreshMainTabController),
+               CompletedCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController),
+               CancelledCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController),
             ],
-          )),
-    );
+          )) ,
+    ) :'';
   }
 }

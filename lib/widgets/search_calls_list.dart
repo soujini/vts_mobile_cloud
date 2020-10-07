@@ -10,32 +10,39 @@ import '../screens/vehicle_info.dart';
 import '../screens/add_edit_call.dart';
 import '../widgets/update_status.dart';
 
-class SearchCallsList extends StatelessWidget {
-  SearchCallsList(this.filterFields, this.userRole, this.dispatchPaging);
-  final String userRole;
+class SearchCallsList extends StatefulWidget {
+  var userRole;
   var dispatchPaging;
-   String filterFields="";
+  var filterFields;
+  SearchCallsList(this.filterFields, this.userRole, this.dispatchPaging);
 
+  @override
+  _SearchCallsList createState() => _SearchCallsList();
+}
+
+class _SearchCallsList extends State<SearchCallsList> {
   static const int PAGE_SIZE = 15;
+
   Future<List> _refreshCallsList(BuildContext context) async {
-    return await Provider.of<Calls>(context, listen:false)
-        .listMiniMobile('search', 0, PAGE_SIZE, filterFields)
+    return await Provider.of<Calls>(context, listen: false)
+        .listMiniMobile('search', 0, PAGE_SIZE, widget.filterFields)
         .catchError((onError) {
       showDialog(
           context: context,
-          builder: ((context) => AlertDialog(
-            title: Text("An error occured!"),
-            content:
-            Text("Oops! Something went wrong!" + onError.toString()),
-            actions: <Widget>[
-              FlatButton(
-                child: Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          )));
+          builder: ((context) =>
+              AlertDialog(
+                title: Text("An error occured!"),
+                content:
+                Text("Oops! Something went wrong!" + onError.toString()),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              )));
     });
   }
 
@@ -44,6 +51,7 @@ class SearchCallsList extends StatelessWidget {
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
+            key: UniqueKey(),
             errorBuilder: (context, error) {
               return Text(error);
             },
@@ -59,8 +67,10 @@ class SearchCallsList extends StatelessWidget {
             },
             pageSize: PAGE_SIZE,
             itemBuilder: this._itemBuilder,
-            pageFuture: (pageIndex) => Provider.of<Calls>(context, listen:false)
-                .listMiniMobile('search', pageIndex, PAGE_SIZE,filterFields)));
+            pageFuture: (pageIndex) =>
+                Provider.of<Calls>(context, listen: false)
+                    .listMiniMobile(
+                    'search', pageIndex, PAGE_SIZE, widget.filterFields)));
   }
 
   Widget _itemBuilder(context, searchedCalls, _) {
@@ -98,31 +108,45 @@ class SearchCallsList extends StatelessWidget {
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
-                              Provider.of<Calls>(context, listen:false).selectedCall= searchedCalls;
+                              Provider
+                                  .of<Calls>(context, listen: false)
+                                  .selectedCall = searchedCalls;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
-                                      new AddEditCallScreen(0)));
+                                      new AddEditCallScreen(0, 0)),).then((value) => setState(() {}));
                             },
 //                            textColor: Colors.grey,
                             icon: Icon(Icons.edit),
-                            label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
+                            label: Text('Edit Call', style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff303030)))),
                         FlatButton.icon(
                             onPressed: () {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(searchedCalls.id, searchedCalls.dispatchStatusName, searchedCalls.dispatchInstructions_string, userRole, dispatchPaging, searchedCalls.towType);
+                                    return UpdateStatus(searchedCalls.id,
+                                        searchedCalls.dispatchStatusName,
+                                        searchedCalls
+                                            .dispatchInstructions_string,
+                                        widget.userRole, widget.dispatchPaging,
+                                        searchedCalls.towType);
                                   });
                               // showDialogUpdateStatus(context);
                             },
                             textColor: Colors.grey,
                             icon: Icon(Icons.update),
-                            label: Text('Update Status', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
+                            label: Text('Update Status', style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xff303030)))),
                       ]),
                       Text(
-                          '\$${searchedCalls.towedTotalAmount.toStringAsFixed(2)}',
+                          '\$${searchedCalls.towedTotalAmount.toStringAsFixed(
+                              2)}',
                           //towedTotalAmount
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -131,10 +155,13 @@ class SearchCallsList extends StatelessWidget {
                       Padding(
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
-                            children: <Widget>[
-                              searchedCalls.towReasonName != null && searchedCalls.towReasonName != ''?
-                      Text((searchedCalls.towReasonName),
-                          style: TextStyle(color: Colors.grey, fontSize: 14)):Row()]))),
+                              children: <Widget>[
+                                searchedCalls.towReasonName != null &&
+                                    searchedCalls.towReasonName != '' ?
+                                Text((searchedCalls.towReasonName),
+                                    style: TextStyle(color: Colors.grey,
+                                        fontSize: 14)) : Row()
+                              ]))),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5),
                         child: (Column(
@@ -149,26 +176,28 @@ class SearchCallsList extends StatelessWidget {
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color:Color(0xff303030))),
+                                        color: Color(0xff303030))),
                                 Text(' '),
                                 Text(('(' + searchedCalls.color + ')'),
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color:Color(0xff303030))),
+                                        color: Color(0xff303030))),
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: (Column(
-                                children: <Widget>[
-                            new Row(
-                              children: <Widget>[
-                                Text((searchedCalls.towedInvoice),
-                                    style: TextStyle(
-                                        color: Colors.grey, fontSize: 14)),
-                              ],
-                            )]))),
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                child: (Column(
+                                    children: <Widget>[
+                                      new Row(
+                                        children: <Widget>[
+                                          Text((searchedCalls.towedInvoice),
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 14)),
+                                        ],
+                                      )
+                                    ]))),
                           ],
                         )),
                       ),
@@ -179,16 +208,22 @@ class SearchCallsList extends StatelessWidget {
                             new Row(
                               children: <Widget>[
                                 Text((searchedCalls.towCustomerName),
-                                    style: TextStyle(fontSize: 12,fontWeight: FontWeight.w500, color:Color(0xff303030))),
+                                    style: TextStyle(fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xff303030))),
                                 Text(' '),
                                 Text((searchedCalls.dispatchDate),
-                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color:Color(0xffB5B5B4))),
+                                    style: TextStyle(fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xffB5B5B4))),
                               ],
                             ),
                             new Row(
                               children: <Widget>[
                                 Text((searchedCalls.dispatchContact),
-                                    style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500, color:Color(0xff303030),)),
+                                    style: TextStyle(fontSize: 13,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xff303030),)),
                                 Text(' '),
                                 Padding(
                                     padding: EdgeInsets.symmetric(vertical: 5),
@@ -197,57 +232,117 @@ class SearchCallsList extends StatelessWidget {
                                           new GestureDetector(
                                             onTap: () {
                                               launch("tel://" +
-                                                  searchedCalls.dispatchContactPhone);
+                                                  searchedCalls
+                                                      .dispatchContactPhone);
                                             },
                                             child: Text(
-                                                (searchedCalls.dispatchContactPhone),
-                                                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color:Color(0xff6C89BA),)),
-                                          )]))),
+                                                (searchedCalls
+                                                    .dispatchContactPhone),
+                                                style: TextStyle(fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Color(0xff6C89BA),)),
+                                          )
+                                        ]))),
                               ],
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: (Column(
-                                children: <Widget>[
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (searchedCalls.towedStreet != null ? searchedCalls.towedStreet :''  +
-                                        ' ' +
-                                        searchedCalls.towedStreetTwo != null ? searchedCalls.towedStreetTwo:'' +
-                                        ' ' +
-                                        searchedCalls.towedCityName != null ? searchedCalls.towedCityName:'' +
-                                        ' ' +
-                                        searchedCalls.towedStateName != null ? searchedCalls.towedStateName:'' +
-                                        ' ' +
-                                        searchedCalls.towedZipCode  != null ? searchedCalls.towedZipCode:''),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
-                              ],
-                            )]))),
-                            searchedCalls.towedToStreet != null && searchedCalls.towedToStreet != ''?
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                child: (Column(
+                                    children: <Widget>[
+                                      new Row(
+                                        children: <Widget>[
+                                          Text(
+                                              (searchedCalls.towedStreet != null
+                                                  ? searchedCalls.towedStreet
+                                                  : '' +
+                                                  ' ' +
+                                                  searchedCalls
+                                                      .towedStreetTwo != null
+                                                  ? searchedCalls.towedStreetTwo
+                                                  : '' +
+                                                  ' ' +
+                                                  searchedCalls.towedCityName !=
+                                                  null ? searchedCalls
+                                                  .towedCityName : '' +
+                                                  ' ' +
+                                                  searchedCalls
+                                                      .towedStateName != null
+                                                  ? searchedCalls.towedStateName
+                                                  : '' +
+                                                  ' ' +
+                                                  searchedCalls.towedZipCode !=
+                                                  null ? searchedCalls
+                                                  .towedZipCode : ''),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13,
+                                                  color: Color(0xff303030))),
+                                        ],
+                                      )
+                                    ]))),
+                            searchedCalls.towedToStreet != null &&
+                                searchedCalls.towedToStreet != '' ?
                             Padding(
-                              padding: EdgeInsets.symmetric(vertical: 5),
-                              child: (Column(
-                                children: <Widget>[
-                            new Row(
-                              children: <Widget>[
-                                Text(
-                                    (searchedCalls.towedToStreet != null ? searchedCalls.towedToStreet :''  +
-                                        ' ' +
-                                        searchedCalls.towedToStreetTwo != null ? searchedCalls.towedToStreetTwo :''  +
-                                        ' ' +
-                                        searchedCalls.towedToCityName != null ? searchedCalls.towedToCityName :''  +
-                                        ' ' +
-                                        searchedCalls.towedToStateName != null ? searchedCalls.towedToStateName :''  +
-                                        ' ' +
-                                        searchedCalls.towedToZipCode != null ? searchedCalls.towedToZipCode :''),
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                child: (Column(
+                                    children: <Widget>[
+                                      new Row(
+                                        children: <Widget>[
+                                          Text(
+                                              (searchedCalls.towedToStreet !=
+                                                  null ? searchedCalls
+                                                  .towedToStreet : '' +
+                                                  ' ' +
+                                                  searchedCalls
+                                                      .towedToStreetTwo != null
+                                                  ? searchedCalls
+                                                  .towedToStreetTwo
+                                                  : '' +
+                                                  ' ' +
+                                                  searchedCalls
+                                                      .towedToCityName != null
+                                                  ? searchedCalls
+                                                  .towedToCityName
+                                                  : '' +
+                                                  ' ' +
+                                                  searchedCalls
+                                                      .towedToStateName != null
+                                                  ? searchedCalls
+                                                  .towedToStateName
+                                                  : '' +
+                                                  ' ' +
+                                                  searchedCalls
+                                                      .towedToZipCode != null
+                                                  ? searchedCalls.towedToZipCode
+                                                  : ''),
 
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600, fontSize: 13,color:Color(0xff303030))),
-                              ],
-                            ),
-                                  ]))) : Row()
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 13,
+                                                  color: Color(0xff303030))),
+                                        ],
+                                      ),
+                                    ]))) : Row(),
+                            Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: (Column(
+                                    children: <Widget>[
+                                      searchedCalls
+                                          .dispatchInstructions_string !=
+                                          null && searchedCalls
+                                          .dispatchInstructions_string != '' &&
+                                          searchedCalls
+                                              .dispatchInstructions_string !=
+                                              'null' && searchedCalls
+                                          .dispatchInstructions_string != '--'
+                                          ?
+                                      Text((searchedCalls
+                                          .dispatchInstructions_string),
+                                          style: TextStyle(fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: Color(0xff6C89BA)))
+                                          : Row(),
+                                    ]))),
                           ],
                         )),
                       ),
@@ -256,207 +351,4 @@ class SearchCallsList extends StatelessWidget {
           //Divider()
         ]));
   }
-
-//  @override
-//  Widget build(BuildContext context) {
-//    return RefreshIndicator(
-//        onRefresh: () => _refreshCallsList(context),
-//        child: PagewiseListView(
-//            errorBuilder: (context, error) {
-//              return Text(error);
-//            },
-//            showRetry: false,
-//            loadingBuilder: (context) {
-//              return Loader();
-////              return CircularProgressIndicator(
-//////                backgroundColor: Colors.green,
-////              );
-//            },
-//            noItemsFoundBuilder: (context) {
-//              return Text('No Items Found');
-//            },
-//            pageSize: PAGE_SIZE,
-//            itemBuilder: this._itemBuilder,
-//            pageFuture: (pageIndex) => Provider.of<Calls>(context)
-//                .listMiniMobile('search', pageIndex, PAGE_SIZE,filterFields)));
-//  }
-//
-//  Widget _itemBuilder(context, searchedCalls, _) {
-//    return
-//    GestureDetector(
-//        onTap: () {
-//          Navigator.push(
-//              context,
-//              new MaterialPageRoute(
-//                  builder: (context) => new VehicleInfoScreen(searchedCalls)));
-//        },
-//        child: Column(children: <Widget>[
-//          Card(
-//              child: Padding(
-//                  padding: EdgeInsets.all(10),
-//                  child: Column(
-//                    crossAxisAlignment: CrossAxisAlignment.start,
-//                    children: <Widget>[
-//                      Row(children: [
-//                        CircularPercentIndicator(
-//                          radius: 40.0,
-//                          lineWidth: 5.0,
-//                          percent: searchedCalls.progressPercentage,
-////                                        header: new Text("Icon header"),
-//                          center: new Icon(Icons.directions_car,
-//                              size: 15.0, color: Colors.black),
-//                          backgroundColor: Colors.black12,
-//                          progressColor: searchedCalls.progressStyleColor,
-//                        ),
-//                        Expanded(child: SizedBox()),
-//                        Text((searchedCalls.dispatchStatusName.toUpperCase()),
-//                            // .toUpperCase(),
-//                            style: TextStyle(
-//                                fontSize: 14,
-//                                fontWeight: FontWeight.bold,
-//                                color: searchedCalls.progressStyleColor)),
-//                        //Expanded(child: SizedBox()),
-//                        FlatButton.icon(
-//                            onPressed: () {
-//                              Navigator.push(
-//                                  context,
-//                                  new MaterialPageRoute(
-//                                      builder: (context) =>
-//                                      new AddEditCallScreen()));
-//                            },
-//                            textColor: Colors.grey,
-//                            icon: Icon(Icons.edit),
-//                            label: Text('Edit Call')),
-//                        FlatButton.icon(
-//                            onPressed: () {
-//                              showDialog(
-//                                  context: context,
-//                                  builder: (BuildContext context) {
-//                                    return UpdateStatus(int.parse(searchedCalls.id),searchedCalls.dispatchStatusName, searchedCalls.dispatchInstructions_string);
-//                                  });
-//                              // showDialogUpdateStatus(context);
-//                            },
-//                            textColor: Colors.grey,
-//                            icon: Icon(Icons.update),
-//                            label: Text('Update Status')),
-//                      ]),
-//                      Text(
-//                          '\$${searchedCalls.towedTotalAmount.toStringAsFixed(2)}',
-//                          //towedTotalAmount
-//                          style: TextStyle(
-//                              fontWeight: FontWeight.bold,
-//                              color: Colors.green,
-//                              fontSize: 14)),
-//                      Text((searchedCalls.towReasonName),
-//                          style: TextStyle(color: Colors.grey, fontSize: 14)),
-//                      Padding(
-//                        padding: EdgeInsets.symmetric(vertical: 5),
-//                        child: (Column(
-//                          children: <Widget>[
-//                            new Row(
-//                              children: <Widget>[
-//                                Text(
-//                                    (searchedCalls.vehicleYear +
-//                                        ' ' +
-//                                        searchedCalls.vehicleYearMakeModelName),
-//                                    style: TextStyle(
-//                                        fontSize: 16,
-//                                        fontWeight: FontWeight.bold)),
-//                                Text(' '),
-//                                Text(('(' + searchedCalls.color + ')'),
-//                                    style: TextStyle(
-//                                        fontSize: 16,
-//                                        fontWeight: FontWeight.bold)),
-//                              ],
-//                            ),
-//                            new Row(
-//                              children: <Widget>[
-//                                Text((searchedCalls.towedInvoice),
-//                                    style: TextStyle(
-//                                        color: Colors.grey, fontSize: 14)),
-//                              ],
-//                            ),
-//                          ],
-//                        )),
-//                      ),
-//                      Padding(
-//                        padding: EdgeInsets.symmetric(vertical: 5),
-//                        child: (Column(
-//                          children: <Widget>[
-//                            new Row(
-//                              children: <Widget>[
-//                                Text((searchedCalls.towCustomerName),
-//                                    style: TextStyle(fontSize: 14)),
-//                                Text(' '),
-//                                Text((searchedCalls.dispatchDate),
-//                                    style: TextStyle(fontSize: 14)),
-//
-////                                          Text(
-////                                              (DateFormat('MM-dd-yyyy')
-////                                                  .format(searchedCalls
-////                                                  .dispatchDate)),
-////                                              style: TextStyle(
-////                                                  fontSize: 14)),
-//                                Text(' '),
-////                                          Text(
-////                                              ('(' +
-////                                                  DateFormat('H:mm')
-////                                                      .format(searchedCalls[
-////                                                  index]
-////                                                      .dispatchDispatchTime) +
-////                                                  ')'),
-////                                              style: TextStyle(
-////                                                  color: Colors.grey,
-////                                                  fontSize: 14)),
-//                              ],
-//                            ),
-//                            new Row(
-//                              children: <Widget>[
-//                                Text((searchedCalls.dispatchContact),
-//                                    style: TextStyle(fontSize: 14)),
-//                                Text(' '),
-//                                Text((searchedCalls.dispatchContactPhone),
-//                                    style: TextStyle(fontSize: 14)),
-//                              ],
-//                            ),
-//                            new Row(
-//                              children: <Widget>[
-//                                Text(
-//                                    (searchedCalls.towedStreet +
-//                                        ' ' +
-//                                        searchedCalls.towedStreetTwo +
-//                                        ' ' +
-//                                        searchedCalls.towedCityName +
-//                                        ' ' +
-//                                        searchedCalls.towedStateName +
-//                                        ' ' +
-//                                        searchedCalls.towedZipCode),
-//                                    style: TextStyle(
-//                                        color: Colors.grey, fontSize: 14)),
-//                              ],
-//                            ),
-//                            new Row(
-//                              children: <Widget>[
-//                                Text(
-//                                    (searchedCalls.towedToStreet +
-//                                        ' ' +
-//                                        searchedCalls.towedToStreetTwo +
-//                                        ' ' +
-//                                        searchedCalls.towedToCityName +
-//                                        ' ' +
-//                                        searchedCalls.towedToStateName +
-//                                        ' ' +
-//                                        searchedCalls.towedToZipCode),
-//                                    style: TextStyle(
-//                                        color: Colors.grey, fontSize: 14)),
-//                              ],
-//                            ),
-//                          ],
-//                        )),
-//                      ),
-//                    ],
-//                  ))),
-//          //Divider()
-//        ]));
-//  }
 }

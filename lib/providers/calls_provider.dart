@@ -110,9 +110,13 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "vehicleLicenseState:"+_call.vehicleLicenseState.toString(),
       "vehicleOdometer:"+_call.vehicleOdometer.toString(),
       "towType:"+_call.towType.toString(),
+      "towReason:"+ _call.towReason.toString(),
       'towAuthorization:'+_call.towAuthorization.toString(),
-      "dispatchDate:"+_call.dispatchDate.toString(),
-      "dispatchReceivedTime:"+_call.dispatchReceivedTime.toString(),
+      "towJurisdiction:"+ _call.towJurisdiction.toString(),
+      "towedDate:"+_call.towedDate.toString(),
+      "towedTime:"+formattedTowedTime,
+      "dispatchDate:"+_call.dispatchDate.toString(), //not in view
+      "dispatchReceivedTime:"+_call.dispatchReceivedTime.toString(),//not in view
       "towedStreet:"+_call.towedStreet.toString(),
       "towedStreetTwo:"+_call.towedStreetTwo.toString(),
       "towedCity:"+_call.towedCity.toString(),
@@ -131,19 +135,21 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "dispatchContactPhone:"+_call.dispatchContactPhone.toString(),
       "dispatchPriorityLevel:"+_call.dispatchPriorityLevel.toString(),
       "dispatchETAMaximum:"+_call.dispatchETAMaximum.toString(),
+      "towedStatus:"+_call.towedStatus.toString(),
+      "pinNumber:"+pinNumber,
+      "systemRuntimeType:2",
+      'dispatchETAMinutes:'+_call.dispatchETAMinutes,
 //      "dispatchResponseID:"+call.dispatchResponseID.toString(),
 //      "dispatchAuthorizationNumber:"+call.dispatchAuthorizationNumber.toString(),
 //      "dispatchProviderResponse:"+call.dispatchProviderResponse.toString(),
-      "towedStatus:"+_call.towedStatus.toString(),
-      "pinNumber:"+pinNumber,
+
 //      "vehicleStyle:"+call.vehicleStyle.toString(),
-      "towReason:"+ _call.towReason.toString(),
-      "towJurisdiction:"+ _call.towJurisdiction.toString(),
-      "towedDate:"+_call.towedDate.toString(),
-      "towedTime:"+formattedTowedTime,
-      "systemRuntimeType:2",
+
+
+
+
       // "dispatchInstructions:" +dispatchInstructionsBytes.toString(),
-      'dispatchETAMinutes:'+_call.dispatchETAMinutes,
+
     ];
     print(fieldList);
     filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != null).toList();
@@ -231,10 +237,13 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "storageReceivedTime:"+dateAndTime.time.toString(),
       "towedToStreet:"+call.towedToStreet.toString(),
       "towedStreet:"+call.towedStreet.toString(),
+      "towedStreetTwo:"+call.towedStreetTwo.toString(),
       "towedCity:"+call.towedCity.toString(),
       "towedState:"+call.towedState.toString(),
       "towedZipCode:"+call.towedZipCode.toString(),
-      "towedStreetTwo:"+call.towedStreetTwo.toString(),
+      "towedToCity:"+call.towedCity.toString(),
+      "towedToState:"+call.towedState.toString(),
+      "towedToZipCode:"+call.towedZipCode.toString(),
       "wreckerCompany:"+call.wreckerCompany.toString(),
       "towedStatus:C",
       "wreckerDriver:"+call.wreckerDriver.toString(),
@@ -483,6 +492,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     await getSecureStore('pinNumber', (token) {
       pinNumber=token;
     });
+    await  getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
     await getSecureStore('restrictWreckerDriver', (token) {
       restrictWreckerDriver=token;
     });
@@ -542,6 +554,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "<towedStatus>${towedStatus}</towedStatus>"
         "<listAfterInsert>${listAfterInsert}</listAfterInsert>"
         "<currentDayList>${currentDayList}</currentDayList>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
         "<activeDispatch>${activeDispatch}</activeDispatch>"
         "</listMiniMobile>"
         "</soap:Body>"
@@ -569,21 +582,25 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     if (mode == 'active') {
       getActiveCalls(extractedData, count);
       _activeCount = count;
-//      notifyListeners();
+      notifyListeners();
       return activeCalls;
-    } else if (mode == 'completed') {
+    }
+    else if (mode == 'completed') {
       getCompletedCalls(extractedData, count);
       _completedCount = count;
-//      notifyListeners();
+     // notifyListeners();
       return completedCalls;
-    } else if (mode == "cancelled") {
-     _cancelledCount=count;
+    }
+    else if (mode == "cancelled") {
       getCancelledCalls(extractedData,count);
+     _cancelledCount=count;
+      // notifyListeners();
       return cancelledCalls;
     }
     else if (mode == "search") {
-      _searchedCount=count;
+
       getSearchedCalls(extractedData, count);
+      _searchedCount=count;
 
       return searchedCalls;
     }
@@ -598,6 +615,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     final List<Call> activeCalls = [];
     if (count == 1) {
       activeCalls.add(Call(
+          count: count,
         id: (_activeCallsFiltered["id"] != "0"
             ? int.parse(_activeCallsFiltered["id"])
             : 0),
@@ -712,6 +730,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
 
       for (var i = 0; i < _activeCallsFiltered.length; i++) {
         activeCalls.add(Call(
+          count:count,
           id: (_activeCallsFiltered[i]["id"] != "0"
               ? int.parse(_activeCallsFiltered[i]["id"])
               : 0),
@@ -830,6 +849,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     final List<Call> completedCalls = [];
     if (count == 1) {
       completedCalls.add(Call(
+        count:count,
         id: (_completedCallsFiltered["id"] != "0"
             ? int.parse(_completedCallsFiltered["id"])
             : 0),
@@ -944,6 +964,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       for (var i = 0; i < _completedCallsFiltered.length; i++) {
 //      var a = _activeCallsFiltered.id;
         completedCalls.add(Call(
+          count:count,
           id: (_completedCallsFiltered[i]["id"] != "0"
               ? int.parse(_completedCallsFiltered[i]["id"])
               : 0),
@@ -1062,6 +1083,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     final List<Call> cancelledCalls = [];
     if (count == 1) {
       cancelledCalls.add(Call(
+        count:count,
         id: (_cancelledCallsFiltered["id"] != "0"
             ? int.parse(_cancelledCallsFiltered["id"])
             : 0),
@@ -1176,6 +1198,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       for (var i = 0; i < _cancelledCallsFiltered.length; i++) {
 //      var a = _activeCallsFiltered.id;
         cancelledCalls.add(Call(
+          count:count,
           id: (_cancelledCallsFiltered[i]["id"] != "0"
               ? int.parse(_cancelledCallsFiltered[i]["id"])
               : 0),
@@ -1294,6 +1317,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     final List<Call> cancelledCalls = [];
     if (count == 1) {
       cancelledCalls.add(Call(
+        count:count,
         id: (_cancelledCallsFiltered["id"] != "0"
             ? int.parse(_cancelledCallsFiltered["id"])
             : 0),
@@ -1407,6 +1431,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     else if(count > 1){
       for (var i = 0; i < _cancelledCallsFiltered.length; i++) {
         cancelledCalls.add(Call(
+          count:count,
           id: (_cancelledCallsFiltered[i]["id"] != "0"
               ? int.parse(_cancelledCallsFiltered[i]["id"])
               : 0),

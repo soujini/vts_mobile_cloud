@@ -142,7 +142,7 @@ class _MyAppState extends State<MyApp>{
           bottomAppBarColor: colorCustom,
           fontFamily: 'Montserrat',
       ),
-      home: (pageMode == "login") ? LoginPage(setScreen: setScreen) : MyHomePage(title: "Fluttter App"),
+      home: (pageMode == "login") ? LoginPage(setScreen: setScreen) : MyHomePage(title: "VTS MOBILE CLOUD"),
 
     ));
   }
