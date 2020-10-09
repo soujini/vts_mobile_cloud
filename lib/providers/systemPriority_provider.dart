@@ -141,13 +141,13 @@ class SystemPrioritiesVM with ChangeNotifier, SecureStoreMixin {
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["items"]["systemPriorityLevelSummarys"];
 
-    final count = await data["soap:Envelope"]["soap:Body"]
-    ["listMiniResponse"]["listMiniResult"]["count"];
+    int count = (int.parse(data["soap:Envelope"]["soap:Body"]
+    ["listMiniResponse"]["listMiniResult"]["count"]));
 
-    if(count == "1"){
+    if(count == 1 || iStart == count){
       systemPriorities.add(new SystemPriority.fromJson(extractedData));
     }
-    else if (count != "1" && count != "0"){
+    else if (count > 1){
       for (int i = 0; i < extractedData.length; i++) {
         systemPriorities.add(new SystemPriority.fromJson(extractedData[i]));
       }

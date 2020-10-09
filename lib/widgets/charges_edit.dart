@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vts_mobile_cloud/providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
-import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
-import 'package:vts_mobile_cloud/widgets/tow_charges_modal.dart';
 import '../providers/towedVehicleCharges_provider.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 
@@ -94,45 +92,6 @@ class _ChargesEditState extends State<ChargesEdit> {
     }
   }
 
-//  setTowCharge(id, name) {
-//    getAndSetDefaultCharges(id);
-//    setState(() {
-//      _charge.towCharges = id;
-//      _towChargesController.value =
-//          new TextEditingController.fromValue(new TextEditingValue(text: name))
-//              .value;
-//    });
-//    _formKey.currentState.validate();
-//  }
-
-  // getAndSetDefaultCharges(towCharges) async {
-  //   var selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
-  //   var towCustomer = selectedCall[0].towCustomer;
-  //   var towType = selectedCall[0].towType;
-  //
-  //   enableDisableDiscount();
-  //
-  //   await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-  //       .getDefaultCharges(towCharges, towCustomer, towType);
-  //   var defaultCharges =
-  //       Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-  //           .defaultCharges[0];
-  //   setState(() {
-  //     _charge.chargesQuantity = defaultCharges.chargesQuantity;
-  //     _charge.discountQuantity = defaultCharges.discountQuantity;
-  //     _charge.chargesRate = defaultCharges.chargesRate;
-  //
-  //     _chargesQuantityController.value = new TextEditingController.fromValue(
-  //             new TextEditingValue(text: defaultCharges.chargesQuantity))
-  //         .value;
-  //     _discountQuantityController.value = new TextEditingController.fromValue(
-  //             new TextEditingValue(text: defaultCharges.discountQuantity))
-  //         .value;
-  //     _chargesRateController.value = new TextEditingController.fromValue(
-  //             new TextEditingValue(text: defaultCharges.chargesRate))
-  //         .value;
-  //   });
-  // }
   _showErrorMessage(BuildContext context, errorMessage) {
     Scaffold.of(context).showSnackBar(
         new SnackBar(

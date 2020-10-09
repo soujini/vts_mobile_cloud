@@ -96,7 +96,6 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
     }
   }
   save() async {
-
     final form = _formKey.currentState;
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     _charge.towedVehicle = selectedCall.id;

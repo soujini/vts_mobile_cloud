@@ -114,19 +114,19 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       'towAuthorization:'+_call.towAuthorization.toString(),
       "towJurisdiction:"+ _call.towJurisdiction.toString(),
       "towedDate:"+_call.towedDate.toString(),
-      "towedTime:"+formattedTowedTime,
+      "towedTime:"+_call.towedTime.toString().replaceAll(':','.'),//not in view
       "dispatchDate:"+_call.dispatchDate.toString(), //not in view
-      "dispatchReceivedTime:"+_call.dispatchReceivedTime.toString(),//not in view
+      // "dispatchReceivedTime:"+_call.dispatchReceivedTime.toString().replaceAll(':','.'),//not in view
       "towedStreet:"+_call.towedStreet.toString(),
       "towedStreetTwo:"+_call.towedStreetTwo.toString(),
       "towedCity:"+_call.towedCity.toString(),
       "towedState:"+_call.towedState.toString(),
-      "towedZipCode:"+_call.towedZipCode.toString(),
+      // "towedZipCode:"+_call.towedZipCode.toString(), //removed this from view and here
       "towedToStreet:"+_call.towedToStreet.toString(),
       "towedToStreetTwo:"+_call.towedToStreetTwo.toString(),
       "towedToCity:"+_call.towedToCity.toString(),
       "towedToState:"+_call.towedToState.toString(),
-      "towedToZipCode:"+_call.towedToZipCode.toString(),
+      // "towedToZipCode:"+_call.towedToZipCode.toString(),//removed this from view and here
       "wreckerCompany:"+_call.wreckerCompany.toString(),
       "wreckerDriver:"+_call.wreckerDriver.toString(),
       "towTruck:"+_call.towTruck.toString(),
@@ -134,27 +134,19 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "dispatchContact:"+_call.dispatchContact.toString(),
       "dispatchContactPhone:"+_call.dispatchContactPhone.toString(),
       "dispatchPriorityLevel:"+_call.dispatchPriorityLevel.toString(),
-      "dispatchETAMaximum:"+_call.dispatchETAMaximum.toString(),
+      // "dispatchETAMaximum:"+_call.dispatchETAMaximum.toString(),
       "towedStatus:"+_call.towedStatus.toString(),
       "pinNumber:"+pinNumber,
       "systemRuntimeType:2",
-      'dispatchETAMinutes:'+_call.dispatchETAMinutes,
+      'dispatchETAMinutes:'+_call.dispatchETAMinutes.toString(),
 //      "dispatchResponseID:"+call.dispatchResponseID.toString(),
 //      "dispatchAuthorizationNumber:"+call.dispatchAuthorizationNumber.toString(),
 //      "dispatchProviderResponse:"+call.dispatchProviderResponse.toString(),
-
 //      "vehicleStyle:"+call.vehicleStyle.toString(),
-
-
-
-
       // "dispatchInstructions:" +dispatchInstructionsBytes.toString(),
-
     ];
-    print(fieldList);
-    filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != null).toList();
-    xmlValues = filteredFieldList.map((v) => '<string>$v</string>').join();
-
+    // filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != null).toList();
+    xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
         "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -232,27 +224,29 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "dispatchDate:"+call.dispatchDate.toString(),
       "dispatchReceivedTime:"+call.dispatchReceivedTime.toString(),
       "towedDate:"+call.towedDate.toString(),
-      "towedTime:"+call.towedTime.toString(),
+      "towedTime:"+call.towedTime.toString().replaceAll(':','.'),
       "storageReceivedDate:"+dateAndTime.date.toString(),
-      "storageReceivedTime:"+dateAndTime.time.toString(),
-      "towedToStreet:"+call.towedToStreet.toString(),
+      "storageReceivedTime:"+dateAndTime.time.toString().replaceAll(':','.'),
       "towedStreet:"+call.towedStreet.toString(),
       "towedStreetTwo:"+call.towedStreetTwo.toString(),
       "towedCity:"+call.towedCity.toString(),
       "towedState:"+call.towedState.toString(),
       "towedZipCode:"+call.towedZipCode.toString(),
-      "towedToCity:"+call.towedCity.toString(),
-      "towedToState:"+call.towedState.toString(),
-      "towedToZipCode:"+call.towedZipCode.toString(),
+      "towedToStreet:"+call.towedToStreet.toString(),
+      "towedToCity:"+call.towedToCity.toString(),
+      "towedToState:"+call.towedToState.toString(),
+      "towedToZipCode:"+call.towedToZipCode.toString(),
       "wreckerCompany:"+call.wreckerCompany.toString(),
       "towedStatus:C",
       "wreckerDriver:"+call.wreckerDriver.toString(),
       "towTruck:"+call.towTruck.toString(),
       "towBillTo:"+call.towBillTo.toString(),
       'towedInvoice:'+call.towedInvoice.toString(),//newTowedInvoice =>Check
-      "towedPONumber:"+call.towedPONumber.toString(),
+      // "towedPONumber:"+call.towedPONumber.toString(),
       "pinNumber:"+pinNumber,
-       "systemRuntimeType:2"
+      "systemRuntimeType:2",
+      "dispatchPriorityLevel:1", // not in view
+      "vehicleLicenseType:1" //not in view
     ];
     xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
@@ -573,35 +567,32 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     final jsondata = xml2json.toParker();
     final data = json.decode(jsondata);
     final extractedData = await data["soap:Envelope"]["soap:Body"]
-            ["listMiniMobileResponse"]["listMiniMobileResult"]["items"]
-        ["towedVehicleSummarys"];
+            ["listMiniMobileResponse"]["listMiniMobileResult"]["items"]["towedVehicleSummarys"];
 
-    int count = ( int.parse(data["soap:Envelope"]["soap:Body"]
+    int count = (int.parse(data["soap:Envelope"]["soap:Body"]
         ["listMiniMobileResponse"]["listMiniMobileResult"]["count"]));
 
     if (mode == 'active') {
-      getActiveCalls(extractedData, count);
+      getActiveCalls(extractedData, count, iStart);
       _activeCount = count;
       notifyListeners();
       return activeCalls;
     }
     else if (mode == 'completed') {
-      getCompletedCalls(extractedData, count);
+      getCompletedCalls(extractedData, count, iStart);
       _completedCount = count;
      // notifyListeners();
       return completedCalls;
     }
     else if (mode == "cancelled") {
-      getCancelledCalls(extractedData,count);
+      getCancelledCalls(extractedData,count, iStart);
      _cancelledCount=count;
       // notifyListeners();
       return cancelledCalls;
     }
     else if (mode == "search") {
-
-      getSearchedCalls(extractedData, count);
+      getSearchedCalls(extractedData, count, iStart);
       _searchedCount=count;
-
       return searchedCalls;
     }
   }
@@ -611,9 +602,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     _callDetails=callDetails;
     //notifyListeners();
   }
-  getActiveCalls(_activeCallsFiltered, count) {
+  getActiveCalls(_activeCallsFiltered, count, iStart) {
     final List<Call> activeCalls = [];
-    if (count == 1) {
+    if (count == 1 || count == iStart) {
       activeCalls.add(Call(
           count: count,
         id: (_activeCallsFiltered["id"] != "0"
@@ -845,9 +836,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       _activeCalls = activeCalls;
 //      notifyListeners();
   }
-  getCompletedCalls(_completedCallsFiltered, count) {
+  getCompletedCalls(_completedCallsFiltered, count, iStart) {
     final List<Call> completedCalls = [];
-    if (count == 1) {
+    if (count == 1 || count == iStart) {
       completedCalls.add(Call(
         count:count,
         id: (_completedCallsFiltered["id"] != "0"
@@ -1079,9 +1070,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       _completedCalls = completedCalls;
       notifyListeners();
   }
-  getCancelledCalls(_cancelledCallsFiltered, count) {
+  getCancelledCalls(_cancelledCallsFiltered, count, iStart) {
     final List<Call> cancelledCalls = [];
-    if (count == 1) {
+    if (count == 1 || count == iStart) {
       cancelledCalls.add(Call(
         count:count,
         id: (_cancelledCallsFiltered["id"] != "0"
@@ -1313,9 +1304,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     _cancelledCalls = cancelledCalls;
     notifyListeners();
   }
-  getSearchedCalls(_cancelledCallsFiltered, count) {
+  getSearchedCalls(_cancelledCallsFiltered, count, iStart) {
     final List<Call> cancelledCalls = [];
-    if (count == 1) {
+    if (count == 1 || count == iStart) {
       cancelledCalls.add(Call(
         count:count,
         id: (_cancelledCallsFiltered["id"] != "0"

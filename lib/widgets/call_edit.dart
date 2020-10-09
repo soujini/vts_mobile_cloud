@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
 import 'package:vts_mobile_cloud/widgets/charges_add.dart';
 import 'package:vts_mobile_cloud/widgets/tow_jurisdiction_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_reason_modal.dart';
@@ -51,6 +50,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   DateTime _date = DateTime.now();
   final _call = Call();
   String userRole;
+  String userId;
   var dispatchPaging;
   bool isLoading = false;
   int tabIndex = 0;
@@ -176,6 +176,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
     if(userRole == "3"){
       _isFormReadOnly = true;
     }
+  }
+  getUserId() async {
+    await getSecureStore('userId', (token) {
+      setState(() {
+        userId = token;
+      });
+    });
   }
 
   getDispatchPaging() async {
@@ -415,6 +422,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       _towedStateController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: shortName != null ? shortName : ''))
           .value;
+
+      //Empty City
+      _call.towedCity=0;
+      _call.towedCityName="";
+      _towedCityController.value = new TextEditingController.fromValue(
+          new TextEditingValue(text: ''))
+          .value;
     });
   }
 
@@ -434,6 +448,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       _call.towedToStateName = name != null ? name : '';
       _towedToStateController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: shortName != null ? shortName : ''))
+          .value;
+
+      //Empty City
+      _call.towedToCity=0;
+      _call.towedToCityName="";
+      _towedToCityController.value = new TextEditingController.fromValue(
+          new TextEditingValue(text: ''))
           .value;
     });
   }
@@ -797,7 +818,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
         .value;
 
     //ReceivedTime
-//    _call.dispatchReceivedTime = x[0].dispatchReceivedTime;
+    // _call.dispatchReceivedTime = x[0].dispatchReceivedTime != null ? x[0].dispatchReceivedTime : '';
 //    _dispatchReceivedTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchReceivedTime))
 //            .value;
@@ -885,7 +906,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //            .value;
 
     //dispatchETAMaximum
-//    _call.dispatchETAMaximum = x[0].dispatchETAMaximum;
+   _call.dispatchETAMaximum = x[0].dispatchETAMaximum != null ? x[0].dispatchETAMaximum : '0';
 //    _dispatchETAMaximumController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchETAMaximum))
 //            .value;
@@ -1054,6 +1075,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   void initState() {
     super.initState();
     getRole();
+    getUserId();
     selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
   }
 
@@ -1095,9 +1117,12 @@ refresh(){
        tabIndex=5;
     });
 }
-// getTab(){
-//     return tabIndex;
-// }
+  refreshNotes(){
+    setState(() {
+      tabIndex=4;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -1198,7 +1223,7 @@ refresh(){
                     Navigator.push(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => new NotesAdd()));
+                            builder: (context) => new NotesAdd(notifyParent:refreshNotes))).then((value) => setState(() {tabIndex=4;}));
                   },
                   //onPressed: () => save(),
                 ),
@@ -1956,12 +1981,7 @@ refresh(){
                               new ListTile(
                                 title: new TextFormField(
                                     readOnly: true,
-                                    enabled: _call.towedState.toString() ==
-                                                'null' ||
-                                            _call.towedState.toString() == '' ||
-                                            _call.towedState.toString() == '0' && _isFormReadOnly == false
-                                        ? false
-                                        : true,
+                                    enabled: !_isFormReadOnly,
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),
@@ -2053,14 +2073,7 @@ refresh(){
                               new ListTile(
                                 title: new TextFormField(
                                     readOnly: true,
-
-                                    enabled: _call.towedToState.toString() ==
-                                                'null' ||
-                                            _call.towedToState.toString() ==
-                                                '' ||
-                                            _call.towedToState.toString() == '0' && _isFormReadOnly == false
-                                        ? false
-                                        : true,
+                                    enabled: !_isFormReadOnly,
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),
@@ -3100,11 +3113,11 @@ refresh(){
 //                        ],
 //                      )),
                           Column(children: <Widget>[
-                            Expanded(child: TowedVehicleNotesList())
+                            Expanded(child: TowedVehicleNotesList(userRole:userRole, userId:userId, notifyParent:refreshNotes))
                           ]),
 
                           Column(children: <Widget>[
-                            Expanded(child: TowedVehicleChargesList(userRole))
+                            Expanded(child: TowedVehicleChargesList(userRole:userRole, notifyParent:refresh))
                           ]),
                         ])))));
   }

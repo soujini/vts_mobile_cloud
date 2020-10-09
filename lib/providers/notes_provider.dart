@@ -49,6 +49,8 @@ class NotesVM with ChangeNotifier, SecureStoreMixin {
   String timeZoneName="";
   List<Note> _notes = [];
 
+  var notesCreateResponse;
+
   List<Note> get notes {
     return [..._notes]; //gets a copy of the items
   }
@@ -108,6 +110,7 @@ class NotesVM with ChangeNotifier, SecureStoreMixin {
 
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["createResponse"]["createResult"];
+    notesCreateResponse = Map.from(extractedData);
   }
 }
 bool _convertTobool(value) {

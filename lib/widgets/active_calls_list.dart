@@ -15,6 +15,7 @@ class ActiveCallsList extends StatefulWidget {
   int selectedTabIndex = 0;
   final Function notifyParent;
   var refreshMainTabController;
+
   ActiveCallsList({Key key, this.userRole, this.dispatchPaging, this.notifyParent, this.refreshMainTabController}) : super(key: key);
 
   @override
@@ -22,12 +23,11 @@ class ActiveCallsList extends StatefulWidget {
 }
 class _ActiveCallsList extends State<ActiveCallsList> {
   static const int PAGE_SIZE = 15;
-
+  String s1;
   // @override
-  // void initState() {
-  //   super.initState();
-  //   widget.notifyParent();
-  // }
+  void initState() {
+    super.initState();
+  }
 
   Future<List> _refreshCallsList(BuildContext context) async {
     return await Provider.of<Calls>(context, listen:false)
@@ -78,6 +78,7 @@ class _ActiveCallsList extends State<ActiveCallsList> {
   }
 
   Widget _itemBuilder(context, activeCalls, index) {
+    activeCalls.dispatchInstructions_string = activeCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
     return GestureDetector(
         onTap: () {
           Navigator.push(

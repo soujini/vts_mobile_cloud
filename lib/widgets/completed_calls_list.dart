@@ -68,6 +68,7 @@ class _CompletedCallsList extends State<CompletedCallsList> {
   }
 
   Widget _itemBuilder(context, completedCalls, index) {
+    completedCalls.dispatchInstructions_string = completedCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
     return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -129,7 +130,7 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                                   });
                               // showDialogUpdateStatus(context);
                             },
-                            icon: Icon(Icons.update, size:14),
+                            icon: Icon(Icons.update),
                             label: Text('Update Status', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                       ]),
                       Text(
@@ -145,7 +146,8 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                             children: <Widget>[
                               completedCalls.towReasonName != null && completedCalls.towReasonName != ''?
                       Text((completedCalls.towReasonName),
-                          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))):Row(),]))),
+                              style: TextStyle(color: Colors.grey,
+                              fontSize: 14)):Row(),]))),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
@@ -176,8 +178,9 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                             new Row(
                               children: <Widget>[
                                 Text((completedCalls.towedInvoice),
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w500, fontSize: 12,  color:Color(0xffB5B5B4))),
+                                  style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14)),
                               ],
                             )]))),
                           ],

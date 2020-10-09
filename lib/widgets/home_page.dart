@@ -16,12 +16,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
+  int _currentIndex = 0;
+  String userRole;
   CallsScreen _callsScreen = CallsScreen();
   SearchCallScreen _searchCallScreen = SearchCallScreen();
   AddCallScreen _addCallScreen = AddCallScreen();
   InfoScreen _infoScreen = InfoScreen();
-  int _currentIndex = 0;
-  String userRole;
+
 
   // Custom navigator takes a global key if you want to access the
   // navigator from outside it's widget tree subtree
@@ -30,6 +31,7 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
   void initState(){
     super.initState();
     getRole();
+    AddCallScreen _addCallScreen = AddCallScreen(currentIndex: _currentIndex);
     // this._currentIndex=widget.index;
   }
 
@@ -57,14 +59,14 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
               _searchCallScreen = SearchCallScreen();
             }
             else if(index == 2){
-              _addCallScreen = AddCallScreen();
+              _addCallScreen = AddCallScreen(currentIndex: _currentIndex);
             }
             else if(index == 3){
               _infoScreen = InfoScreen();
             }
-            setState(() {
+            // setState(() {
               _currentIndex = index;
-            });
+            // });
           });
         },
 

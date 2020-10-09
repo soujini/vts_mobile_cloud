@@ -117,13 +117,13 @@ class VehicleYearMakeModelsVM with ChangeNotifier, SecureStoreMixin {
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["items"]["vehicleYearMakeModelSummarys"];
 
-    final count = await data["soap:Envelope"]["soap:Body"]
-    ["listMiniResponse"]["listMiniResult"]["count"];
+    int count = (int.parse(data["soap:Envelope"]["soap:Body"]
+    ["listMiniResponse"]["listMiniResult"]["count"]));
 
-    if(count == "1"){
+    if(count == 1 || iStart == count){
       tc.add(new VehicleYearMakeModel.fromJson(extractedData));
     }
-    else if (count != "1" && count != "0"){
+    else if (count > 1){
       for (int i = 0; i < extractedData.length; i++) {
         tc.add(new VehicleYearMakeModel.fromJson(extractedData[i]));
       }

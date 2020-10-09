@@ -68,6 +68,7 @@ class _CancelledCallsList extends State<CancelledCallsList> {
   }
 
   Widget _itemBuilder(context, cancelledCalls, index) {
+    cancelledCalls.dispatchInstructions_string = cancelledCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
     return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -108,7 +109,6 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                         FlatButton.icon(
                             onPressed: () {
                               Provider.of<Calls>(context, listen:false).selectedCall = cancelledCalls;
-                              // Navigator.pop(context);
                               Navigator.push(
                                 context,
                                 new MaterialPageRoute(
@@ -133,7 +133,6 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                       ]),
                       Text(
                           '\$${cancelledCalls.towedTotalAmount.toStringAsFixed(2)}',
-                          //towedTotalAmount
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,

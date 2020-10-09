@@ -168,17 +168,17 @@ class TowChargesVM with ChangeNotifier, SecureStoreMixin{
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["items"]["relationTowChargesSummarys"];
 
-    final count = await data["soap:Envelope"]["soap:Body"]
-    ["listMiniResponse"]["listMiniResult"]["count"];
+    int count = (int.parse(data["soap:Envelope"]["soap:Body"]
+    ["listMiniResponse"]["listMiniResult"]["count"]));
 
-    if (count == "1") {
+    if (count == 1 || iStart == count) {
       if (mode == "add-charge-mode") {
 
       }
       else
       tc.add(new TowCharge.fromJson(extractedData));
     }
-    else if (count != "1" && count != "0") {
+    else if (count > 1) {
       if (mode == "add-charge-mode") {
         await TVCVM.listMini(0, 100, selectedCall.toString()); //Charges List
         var x = TVCVM.towedVehicleCharges;

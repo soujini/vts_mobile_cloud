@@ -182,14 +182,14 @@ class TowedVehiclePicturesVM with ChangeNotifier, SecureStoreMixin {
     int count = (int.parse(data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["count"]));
 
-    getTowedVehiclePictures(extractedData, count);
+    getTowedVehiclePictures(extractedData, count, iStart);
     return towedVehiclePictures;
   }
 
-  getTowedVehiclePictures(extractedData, count) {
+  getTowedVehiclePictures(extractedData, count, iStart) {
     final List<TowedVehiclePicture> towedVehiclePicturess = [];
 
-    if (count == 1) {
+    if (count == 1 || iStart == count) {
       towedVehiclePicturess.add(new TowedVehiclePicture.fromJson(extractedData));
     }
 

@@ -100,6 +100,7 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
 
   var createResponse;
   var chargesUpdateResponse;
+  var chargesDeleteResponse;
 
   List<TowedVehicleCharge> get towedVehicleCharges {
     return [..._towedVehicleCharges]; //gets a copy of the items
@@ -175,6 +176,9 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
    await  getSecureStore('timeZoneName', (token) {
       timeZoneName=token;
     });
+    await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
 
     fieldList = [
       "pinNumber:"+pinNumber,
@@ -222,7 +226,7 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
 
     chargesUpdateResponse = Map.from(extractedData);
   }
-  Future<List> delete(id,towedVehicle) async {
+  Future<void> delete(id,towedVehicle) async {
 
    await  getSecureStore('userId', (token) {
       userId=token;
@@ -266,6 +270,7 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
 
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["deleteResponse"]["deleteResult"];
+   chargesDeleteResponse = Map.from(extractedData);
   }
   Future<List> listMini(int pageIndex, int pageSize,String _towedVehicle) async {
     int iStart = 0;
@@ -322,14 +327,14 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
     int count = (int.parse(data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["count"]));
 
-    getTowedVehicleCharges(extractedData, count);
+    getTowedVehicleCharges(extractedData, count, iStart);
     return towedVehicleCharges;
   }
 
-  getTowedVehicleCharges(extractedData, count) {
+  getTowedVehicleCharges(extractedData, count, iStart) {
     final List<TowedVehicleCharge> towedVehicleCharges = [];
 
-    if (count == 1) {
+    if (count == 1 || iStart == count) {
       towedVehicleCharges.add(new TowedVehicleCharge.fromJson(extractedData));
     }
 

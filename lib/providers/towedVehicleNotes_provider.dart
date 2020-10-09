@@ -91,11 +91,121 @@ class TowedVehicleNotesVM with ChangeNotifier, SecureStoreMixin {
   String pinNumber="";
   String timeZoneName="";
 
+  var selectedNote = new TowedVehicleNote();
+
   List<TowedVehicleNote> _towedVehicleNotes = [];
   List<TowedVehicleNote> notes;
 
+  var notesDeleteResponse;
+  var notesUpdateResponse;
+
   List<TowedVehicleNote> get towedVehicleNotes {
     return [..._towedVehicleNotes]; //gets a copy of the items
+  }
+
+  Future<void> update(note) async {
+    List<String> fieldList;
+    String xmlValues="";
+
+    await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+    await  getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
+    await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+
+    fieldList = [
+      "pinNumber:"+pinNumber,
+      "vehicleCreatedByUserId:"+userId,
+      "towedVehicle:"+note.towedVehicle.toString(),
+      'ownerNotes:'+note.ownerNotes.toString(),
+      'paymentNotes:'+note.paymentNotes.toString(),
+    ];
+    xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<update xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<id>${note.id}</id>"
+        "<fieldList>${xmlValues}</fieldList>"
+        "<vehicleNotes_string>${note.vehicleNotes_string}</vehicleNotes_string>"
+        "<updateFlag>true</updateFlag>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
+        "</update>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'https://cktsystems.com/vtscloud/WebServices/towedVehicleNotesTable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/update",
+          "Host": "cktsystems.com"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["updateResponse"]["updateResult"];
+
+    notesUpdateResponse = Map.from(extractedData);
+  }
+  Future<void> delete(id,towedVehicle) async {
+
+    await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+    await  getSecureStore('pinNumber', (token) {
+      pinNumber=token;
+    });
+    await  getSecureStore('timeZoneName', (token) {
+      timeZoneName=token;
+    });
+
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<delete xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<id>${id}</id>"
+        "<pinNumber>${pinNumber}</pinNumber>"
+        "<towedVehicle>${towedVehicle}</towedVehicle>"
+        "<timeZoneName>${timeZoneName}</timeZoneName>"
+        "</delete>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'https://cktsystems.com/vtscloud/WebServices/towedvehicleNotesTable.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/delete",
+          "Host": "cktsystems.com"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["deleteResponse"]["deleteResult"];
+    notesDeleteResponse = Map.from(extractedData);
   }
 
   Future<List> listMini(int pageIndex, int pageSize, String _towedVehicle) async {
@@ -155,13 +265,13 @@ class TowedVehicleNotesVM with ChangeNotifier, SecureStoreMixin {
     int count = (int.parse(data["soap:Envelope"]["soap:Body"]
     ["listMiniResponse"]["listMiniResult"]["count"]));
 
-    getTowedVehicleNotes(extractedData, count);
+    getTowedVehicleNotes(extractedData, count, iStart);
     return towedVehicleNotes;
   }
-  getTowedVehicleNotes(extractedData, count) {
+  getTowedVehicleNotes(extractedData, count, iStart) {
     final List<TowedVehicleNote> towedVehicleNotes = [];
 
-    if(count == 1){
+    if(count == 1 || iStart == count){
       towedVehicleNotes.add(new TowedVehicleNote.fromJson(extractedData));
     }
     else if(count > 1) {

@@ -58,9 +58,6 @@ class _SearchCallsList extends State<SearchCallsList> {
             showRetry: false,
             loadingBuilder: (context) {
               return Loader();
-//              return CircularProgressIndicator(
-////                backgroundColor: Colors.green,
-//              );
             },
             noItemsFoundBuilder: (context) {
               return Text('No Items Found');
@@ -73,7 +70,8 @@ class _SearchCallsList extends State<SearchCallsList> {
                     'search', pageIndex, PAGE_SIZE, widget.filterFields)));
   }
 
-  Widget _itemBuilder(context, searchedCalls, _) {
+  Widget _itemBuilder(context, searchedCalls, index) {
+    searchedCalls.dispatchInstructions_string = searchedCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
     return GestureDetector(
         onTap: () {
           Navigator.push(
@@ -82,7 +80,14 @@ class _SearchCallsList extends State<SearchCallsList> {
                   builder: (context) => new VehicleInfoScreen(searchedCalls)));
         },
         child: Column(children: <Widget>[
+          index == 0 ? Padding(
+              padding: EdgeInsets.all(15),
+              child:Text("Total "+searchedCalls.count.toString(), style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff1C3764)))) : Text(''),
           Card(
+              elevation: 0,
               child: Padding(
                   padding: EdgeInsets.all(15),
                   child: Column(
@@ -93,10 +98,9 @@ class _SearchCallsList extends State<SearchCallsList> {
                           radius: 40.0,
                           lineWidth: 5.0,
                           percent: searchedCalls.progressPercentage,
-//                                        header: new Text("Icon header"),
                           center: new Icon(Icons.directions_car,
                               size: 12.0, color: Colors.black),
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.black12,
                           progressColor: searchedCalls.progressStyleColor,
                         ),
                         Expanded(child: SizedBox()),
@@ -108,17 +112,15 @@ class _SearchCallsList extends State<SearchCallsList> {
                         //Expanded(child: SizedBox()),
                         FlatButton.icon(
                             onPressed: () {
-                              Provider
-                                  .of<Calls>(context, listen: false)
-                                  .selectedCall = searchedCalls;
+                              Provider.of<Calls>(context, listen: false).selectedCall = searchedCalls;
                               Navigator.push(
                                   context,
                                   new MaterialPageRoute(
                                       builder: (context) =>
                                       new AddEditCallScreen(0, 0)),).then((value) => setState(() {}));
                             },
-//                            textColor: Colors.grey,
-                            icon: Icon(Icons.edit),
+                            textColor: Colors.grey,
+                            icon: Icon(Icons.edit, size:14),
                             label: Text('Edit Call', style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -138,16 +140,14 @@ class _SearchCallsList extends State<SearchCallsList> {
                               // showDialogUpdateStatus(context);
                             },
                             textColor: Colors.grey,
-                            icon: Icon(Icons.update),
+                            icon: Icon(Icons.update, size:14),
                             label: Text('Update Status', style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xff303030)))),
                       ]),
                       Text(
-                          '\$${searchedCalls.towedTotalAmount.toStringAsFixed(
-                              2)}',
-                          //towedTotalAmount
+                          '\$${searchedCalls.towedTotalAmount.toStringAsFixed( 2)}',
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.green,
@@ -156,14 +156,12 @@ class _SearchCallsList extends State<SearchCallsList> {
                           padding: EdgeInsets.symmetric(vertical: 5),
                           child: (Column(
                               children: <Widget>[
-                                searchedCalls.towReasonName != null &&
-                                    searchedCalls.towReasonName != '' ?
-                                Text((searchedCalls.towReasonName),
-                                    style: TextStyle(color: Colors.grey,
-                                        fontSize: 14)) : Row()
-                              ]))),
+                                searchedCalls.towReasonName != null && searchedCalls.towReasonName != ''?
+                                Text((searchedCalls.towReasonName.toUpperCase()),
+                                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color:Color(0xffB5B5B4))):Row(),]))),
+
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 5),
+                        padding: EdgeInsets.symmetric(vertical: 10),
                         child: (Column(
                           children: <Widget>[
                             new Row(
@@ -176,13 +174,13 @@ class _SearchCallsList extends State<SearchCallsList> {
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xff303030))),
+                                        color:Color(0xff303030))),
                                 Text(' '),
                                 Text(('(' + searchedCalls.color + ')'),
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
-                                        color: Color(0xff303030))),
+                                        color:Color(0xff303030))),
                               ],
                             ),
                             Padding(
@@ -193,11 +191,9 @@ class _SearchCallsList extends State<SearchCallsList> {
                                         children: <Widget>[
                                           Text((searchedCalls.towedInvoice),
                                               style: TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 14)),
+                                                  fontWeight: FontWeight.w500, fontSize: 12,  color:Color(0xffB5B5B4))),
                                         ],
-                                      )
-                                    ]))),
+                                      )]))),
                           ],
                         )),
                       ),
@@ -327,22 +323,9 @@ class _SearchCallsList extends State<SearchCallsList> {
                                 padding: EdgeInsets.symmetric(vertical: 10),
                                 child: (Column(
                                     children: <Widget>[
-                                      searchedCalls
-                                          .dispatchInstructions_string !=
-                                          null && searchedCalls
-                                          .dispatchInstructions_string != '' &&
-                                          searchedCalls
-                                              .dispatchInstructions_string !=
-                                              'null' && searchedCalls
-                                          .dispatchInstructions_string != '--'
-                                          ?
-                                      Text((searchedCalls
-                                          .dispatchInstructions_string),
-                                          style: TextStyle(fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              color: Color(0xff6C89BA)))
-                                          : Row(),
-                                    ]))),
+                                      searchedCalls.dispatchInstructions_string != null && searchedCalls.dispatchInstructions_string != '' && searchedCalls.dispatchInstructions_string != 'null' && searchedCalls.dispatchInstructions_string != '--'?
+                                      Text((searchedCalls.dispatchInstructions_string),
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color:Color(0xff6C89BA))):Row(),]))),
                           ],
                         )),
                       ),

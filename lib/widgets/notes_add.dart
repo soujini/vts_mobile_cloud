@@ -8,7 +8,8 @@ import 'package:vts_mobile_cloud/widgets/loader.dart';
 enum SingingCharacter { Owner, Payment }
 class NotesAdd extends StatefulWidget {
   bool isLoading = false;
-//  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructions_string);
+  final Function notifyParent;
+  NotesAdd({Key key, this.notifyParent}): super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -19,6 +20,7 @@ class NotesAdd extends StatefulWidget {
 class _NotesAddState extends State<NotesAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _note = Note();
+  bool _autoValidate = true;
   SingingCharacter _character;
 
   var _vehicleNotes_stringController = new TextEditingController();
@@ -28,42 +30,54 @@ class _NotesAddState extends State<NotesAdd> {
 //      _formKey.currentState.reset();
 //    });
 //  }
+  _showErrorMessage(BuildContext context, errorMessage) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+            backgroundColor: Colors.lightGreen,
+            content: Text(errorMessage,
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+                ))));
+  }
 
   save() async {
     this.setState(() {
-      widget.isLoading=true;
+      widget.isLoading = true;
     });
     final form = _formKey.currentState;
-
-    var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
+    var selectedCall = Provider
+        .of<Calls>(context, listen: false)
+        .selectedCall;
 
     _note.towedVehicle = selectedCall.id;
-    if(_note.paymentNotes == null){
-      _note.paymentNotes=false;
+    if (_note.paymentNotes == null) {
+      _note.paymentNotes = false;
     }
-    if(_note.ownerNotes == null){
-      _note.ownerNotes=false;
+    if (_note.ownerNotes == null) {
+      _note.ownerNotes = false;
     }
-    form.save();
-    await Provider.of<NotesVM>(context, listen:false).create(_note).then((res) {
-      Navigator.pop(context);
+    if (form.validate()) {
+      form.save();
+      await Provider.of<NotesVM>(context, listen: false).create(_note);
+      var notesCreateResponse = Provider
+          .of<NotesVM>(context, listen: false)
+          .notesCreateResponse;
+      if (notesCreateResponse["errorStatus"] == "false") {
+        widget.isLoading = false;
+        _showErrorMessage(context, notesCreateResponse["errorMessage"]);
+      }
+      else {
+        widget.isLoading = false;
+        Navigator.pop(context);
+        widget.notifyParent();
+      }
+    }
+    else {
       this.setState(() {
-        widget.isLoading=false;
+        widget.isLoading = false;
       });
-      Navigator.push(
-          context,
-          new MaterialPageRoute(
-              builder: (context) =>
-              new AddEditCallScreen(4,0)));
-    });
+  //invalid fields
+    }
   }
-
-
-//      if (form.validate()) {
-//        form.save();
-//        await Provider.of<NotesVM>(context).create(_note);
-//      }
-
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +90,7 @@ class _NotesAddState extends State<NotesAdd> {
     body: Container(
         child: widget.isLoading == true ? Center(child:Loader()) :Form(
       key: _formKey,
+          autovalidate: _autoValidate,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -95,6 +110,9 @@ class _NotesAddState extends State<NotesAdd> {
               validator: (value) {
                 if (value.isEmpty) {
                   return 'Please enter Notes';
+                }
+                else{
+                  return null;
                 }
               },
                onSaved: (val) => setState(() => _note.vehicleNotes_string = val),

@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
-import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
+import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/widgets/charges_edit.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 import '../providers/calls_provider.dart';
 import '../providers/towedVehicleCharges_provider.dart';
 
 class TowedVehicleChargesList extends StatefulWidget {
-  TowedVehicleChargesList(this.userRole);
+  TowedVehicleChargesList({Key key, this.userRole, this.notifyParent});
+
   final String userRole;
+  final Function notifyParent;
+  bool isLoading=false;
 
   @override
   _TowedVehicleChargesList createState() => _TowedVehicleChargesList();
 }
 class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
   static const int PAGE_SIZE = 15;
-  bool isLoading=false;
+
   Future<List> _refreshCallsList(BuildContext context) async {
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     return await Provider.of<TowedVehicleChargesVM>(context, listen: false)
@@ -40,18 +43,48 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
     });
   }
 
-  Future deleteCharge(BuildContext context, id) async {
-      isLoading=true;
+  _showErrorMessage(BuildContext context, errorMessage) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+            backgroundColor: Colors.lightGreen,
+            content: Text(errorMessage,
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+                ))));
+  }
+  Future deleteCharge(id, towCharges, towedVehicle) async {
+       setState(() {
+      widget.isLoading = true;
+       });
 
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
-    await Provider.of<TowedVehicleChargesVM>(context, listen: false)
-        .delete(id, selectedCall.id)
-        .then((res) {
-      setState(() {
-        isLoading=false;
-      });
-    });
+    await Provider.of<TowedVehicleChargesVM>(context, listen: false).delete(id, selectedCall.id);
+     var chargesDeleteResponse = Provider.of<TowedVehicleChargesVM>(context, listen: false).chargesDeleteResponse;
+       setState(() {
 
+       });
+     if (chargesDeleteResponse["errorStatus"] == "false") {
+      widget.isLoading = false;
+      _showErrorMessage(context, chargesDeleteResponse["errorMessage"]);
+    }
+    else {
+      //call process change charge
+      await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+          .processChangeCharges(towedVehicle,towCharges);
+      var processChangeChargeResponse = Provider
+          .of<ProcessTowedVehiclesVM>(context, listen: false)
+          .processChangeChargeResponse;
+
+      if (processChangeChargeResponse["errorStatus"] == "false") {
+        widget.isLoading = false;
+        _showErrorMessage(
+            context, processChangeChargeResponse["errorMessage"]);
+      }
+      else {
+        setState(() {
+          widget.isLoading = false;
+        });
+      }
+    }
   }
   refresh(){
   setState(() {
@@ -81,7 +114,8 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
             pageSize: PAGE_SIZE,
             itemBuilder: this._itemBuilder,
             pageFuture: (pageIndex) =>
-                Provider.of<TowedVehicleChargesVM>(context, listen: false)
+                Provider.
+                of<TowedVehicleChargesVM>(context, listen: false)
                     .listMini(
                         pageIndex, PAGE_SIZE, selectedCall.id.toString())));
   }
@@ -125,47 +159,6 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                           listen: false)
                           .selectedCharge
                           = towedVehicleCharges;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .towCharges = towedVehicleCharges.towCharges;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .towChargesName =
-                      //     towedVehicleCharges.towChargesName;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .chargesQuantity =
-                      //     towedVehicleCharges.chargesQuantity;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .discountQuantity =
-                      //     towedVehicleCharges.discountQuantity;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .chargesRate = towedVehicleCharges.chargesRate;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .discountRate = towedVehicleCharges.discountRate;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .discountApply =
-                      //     towedVehicleCharges.discountApply;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .chargesTaxable =
-                      //     towedVehicleCharges.chargesTaxable;
-                      // Provider.of<TowedVehicleChargesVM>(context,
-                      //     listen: false)
-                      //     .selectedCharge
-                      //     .totalCharges = towedVehicleCharges.totalCharges;
                     },
                   )),
               Visibility(
@@ -184,7 +177,7 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                               title: Text(
                                   'DELETE CHARGE', style: TextStyle(fontSize: 16,
                                   fontWeight: FontWeight.bold, color:Color(0xff1C3764))),
-                              content: isLoading == true ? Center(child:Loader()):SingleChildScrollView(
+                              content: widget.isLoading == true ? Center(child:Loader()):SingleChildScrollView(
                                 child: ListBody(
                                   children: <Widget>[
                                     Text(
@@ -210,10 +203,9 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                                   child: Text('Yes'),
                                   onPressed: () {
                                     Navigator.of(context).pop();
-
                                     deleteCharge(
-                                        context, towedVehicleCharges.id);
-                                  },
+                                         towedVehicleCharges.id, towedVehicleCharges.towCharges, towedVehicleCharges.towedVehicle);
+                                    },
                                 ),
                                 FlatButton(
                                   shape: RoundedRectangleBorder(

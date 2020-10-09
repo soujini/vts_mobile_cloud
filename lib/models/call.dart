@@ -677,7 +677,7 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       wreckerDriverName: parsedJson["wreckerDriverName"],
       towTruckName: parsedJson["towTruckName"],
       towTruck: int.parse(parsedJson["towTruck"]),
-//      dispatchReceivedTime: parsedJson["dispatchReceivedTime"],
+      // dispatchReceivedTime: parsedJson["dispatchReceivedTime"],
 //      dispatchEnrouteTime: parsedJson["dispatchEnrouteTime"],
 //      dispatchOnsiteTime: parsedJson["dispatchOnsiteTime"],
 //      dispatchRollingTime: parsedJson["dispatchRollingTime"],

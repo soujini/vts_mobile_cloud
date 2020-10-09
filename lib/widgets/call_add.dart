@@ -109,6 +109,11 @@ class CallAddState extends State<CallAdd> {
     setTowedInvoice(ud[0].storageCompany);
 
     setState(() {
+      //other default to 0 or ''
+      _call.wreckerDriver=0;
+      _call.towTruck=0;
+      _call.towedStreetTwo='';
+      // --------------------------
       _call.dispatchDate = _dispatchDateController.text;
       _call.dispatchReceivedTime = _dispatchReceivedTimeController.text;
       _call.towedDate = _towedDateController.text;
@@ -141,11 +146,18 @@ class CallAddState extends State<CallAdd> {
       _call.towedState = ud[0].storageCompanyState != 0 ? ud[0].storageCompanyState : 0;
       _call.towedStateName = ud[0].storageCompanyStateName != null ? ud[0].storageCompanyStateName: '';
       _call.towedZipCode = ud[0].zipCode != null ? ud[0].zipCode: '';
+      _towedCityController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedCityName)).value;
+      _towedStateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedStateName)).value;
+      _call.towedToStreet = dd[0].towedToStreet != null ? dd[0].towedToStreet : '';
+      _call.towedToStreetTwo = dd[0].towedToStreetTwo != null ? dd[0].towedToStreetTwo : '';
+      _towedToStreetController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStreet)).value;
       _call.towedToCity = dd[0].towedToCity != 0 ? dd[0].towedToCity : 0;
       _call.towedToCityName = dd[0].towedToCityName != null ? dd[0].towedToCityName : '';
       _call.towedToState = dd[0].towedToState != 0 ? dd[0].towedToState : 0;
       _call.towedToStateName = dd[0].towedToStateName != null ? dd[0].towedToStateName: '';
       _call.towedToZipCode = dd[0].towedToZipCode != null ? dd[0].towedToZipCode: '';
+      _towedToCityController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedToCityName)).value;
+      _towedToStateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStateName)).value;
       _call.storageCompany = dd[0].storageCompany != 0 ? dd[0].storageCompany : 0;
       _call.storageCompanyName = dd[0].storageCompanyName != null ? dd[0].storageCompanyName : '';
       _call.towedDiscountRate = dd[0].discountPercent != null ? dd[0].discountPercent : '';
@@ -195,18 +207,18 @@ class CallAddState extends State<CallAdd> {
         _towedToStateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStateName)).value;
       }
 
-      if (dd[0].towedToStreet != null) {
-        _call.towedToStreet = dd[0].towedToStreet;
-        _towedToStreetController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStreet)).value;
-        _call.towedToStreetTwo = dd[0].towedToStreetTwo;
-        _call.towedToCity = dd[0].towedToCity;
-        _call.towedToState = dd[0].towedToState;
-        _call.towedToZipCode = dd[0].towedToZipCode;
-        _call.towedToCityName = dd[0].towedToCityName;
-        _towedToCityController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToCityName)).value;
-        _call.towedToStateName = dd[0].towedToStateName;
-        _towedToStateController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedToStateName)).value;
-      }
+      // if (dd[0].towedToStreet != null) {
+      //   _call.towedToStreet = dd[0].towedToStreet;
+      //   _towedToStreetController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStreet)).value;
+      //   _call.towedToStreetTwo = dd[0].towedToStreetTwo;
+      //   _call.towedToCity = dd[0].towedToCity;
+      //   _call.towedToState = dd[0].towedToState;
+      //   _call.towedToZipCode = dd[0].towedToZipCode;
+      //   _call.towedToCityName = dd[0].towedToCityName;
+      //   _towedToCityController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToCityName)).value;
+      //   _call.towedToStateName = dd[0].towedToStateName;
+      //   _towedToStateController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedToStateName)).value;
+      // }
 
 
       if (_convertTobool(dd[0].defaultVIN) == true){
@@ -446,6 +458,16 @@ class CallAddState extends State<CallAdd> {
     });
    //_formKey.currentState.validate();
   }
+  setTowedToCity(id, name) {
+    setState(() {
+      _call.towedToCity = id;
+      _call.towedToCityName = name;
+      _towedToCityController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: name))
+              .value;
+    });
+    //_formKey.currentState.validate();
+  }
 
   setTowedState(id, name, shortName) {
     setState(() {
@@ -456,6 +478,16 @@ class CallAddState extends State<CallAdd> {
               .value;
     });
    //_formKey.currentState.validate();
+  }
+  setTowedToState(id, name, shortName) {
+    setState(() {
+      _call.towedToState = id;
+      _call.towedToStateName = name;
+      _towedToStateController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: shortName))
+              .value;
+    });
+    //_formKey.currentState.validate();
   }
 
   setCompany(id, name) {
@@ -693,6 +725,9 @@ class CallAddState extends State<CallAdd> {
     else
       return null;
   }
+  bla(){
+    widget.notifyParent();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -703,7 +738,8 @@ class CallAddState extends State<CallAdd> {
           new IconButton(
             icon: new Icon(Icons.save),
             tooltip: 'Save',
-             onPressed: () => {FocusScope.of(context).requestFocus(new FocusNode()),save()}
+             // onPressed: () => {FocusScope.of(context).requestFocus(new FocusNode()),save()}
+        onPressed: () => {bla()}
         // onPressed: () => {
         //  Navigator.pop(context),
         // Navigator.push(
@@ -1271,19 +1307,19 @@ class CallAddState extends State<CallAdd> {
                       }),
                 ),
 
-                new ListTile(
-                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
-                  dense:true,
-                  title: new TextFormField(
-                    keyboardType: TextInputType.number,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    controller: _towedZipCodeController,
-                    decoration: new InputDecoration(
-                      labelText: "Zip Code",
-                    ),
-                    onSaved: (val) => setState(() => _call.towedZipCode = val),
-                  ),
-                ),
+                // new ListTile(
+                //   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                //   dense:true,
+                //   title: new TextFormField(
+                //     keyboardType: TextInputType.number,
+                //     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                //     controller: _towedZipCodeController,
+                //     decoration: new InputDecoration(
+                //       labelText: "Zip Code",
+                //     ),
+                //     onSaved: (val) => setState(() => _call.towedZipCode = val),
+                //   ),
+                // ),
                 new ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
                   dense:true,
@@ -1295,6 +1331,45 @@ class CallAddState extends State<CallAdd> {
                     ),
                     onSaved: (val) => setState(() => _call.towedToStreet = val),
                   ),
+                ),
+                new ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
+                  title: new TextFormField(
+                      readOnly:true,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      controller: this._towedToStateController,
+                      decoration: new InputDecoration(
+                        labelText: "State",
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => new SystemStateModal(
+                                    setSystemState: setTowedToState)));
+                      }),
+                ),
+                new ListTile(
+                  contentPadding: EdgeInsets.symmetric(horizontal:  0.0),
+                  dense:true,
+                  title: new TextFormField(
+                      readOnly:true,
+                      enabled:  _call.towedToState.toString() == 'null' || _call.towedToState.toString() == '' || _call.towedToState.toString() == '0'  ? false : true ,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      controller: this._towedToCityController,
+                      decoration: new InputDecoration(
+                        labelText: "City",
+                        suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) =>
+                                new SystemCityModal(setCity: setTowedToCity, stateId:_call.towedToState.toString())));
+                      }),
                 ),
                 new ListTile(
                   contentPadding: EdgeInsets.symmetric(horizontal:  0.0),

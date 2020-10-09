@@ -54,9 +54,10 @@ class TowTypeModal extends StatelessWidget {
                               Padding(
                                   padding: EdgeInsets.only(bottom: 5, top: 5),
                                   child: Row(children: <Widget>[
-                                    Text(suggestion.towAuthorizationName,
+                                    Flexible(
+                                    child:Text(suggestion.towAuthorizationName,
                                         style: TextStyle(
-                                            color: Colors.grey, fontSize: 14))
+                                            color: Colors.grey, fontSize: 14)))
                                   ])),
                               Padding(
                                   padding: EdgeInsets.only(bottom: 10, top: 5),
@@ -73,9 +74,10 @@ class TowTypeModal extends StatelessWidget {
                               Padding(
                                   padding: EdgeInsets.only(bottom: 10, top: 5),
                                   child: Row(children: <Widget>[
-                                  Text(suggestion.towJurisdictionName,
+                                    Flexible(
+                                  child:Text(suggestion.towJurisdictionName,
                                       style: TextStyle(
-                                          color: Colors.grey, fontSize: 14)),
+                                          color: Colors.grey, fontSize: 14))),
                                     ])),
                               Divider(color: Colors.black38),
                             ],
