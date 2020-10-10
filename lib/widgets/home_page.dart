@@ -31,8 +31,14 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
   void initState(){
     super.initState();
     getRole();
-    AddCallScreen _addCallScreen = AddCallScreen(currentIndex: _currentIndex);
+    // AddCallScreen _addCallScreen = AddCallScreen(currentIndex: _currentIndex, notifyParent: refreshToCalls);
     // this._currentIndex=widget.index;
+  }
+
+  refreshToCalls(){
+    setState(() {
+      _currentIndex=0;
+    });
   }
 
   @override
@@ -59,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
               _searchCallScreen = SearchCallScreen();
             }
             else if(index == 2){
-              _addCallScreen = AddCallScreen(currentIndex: _currentIndex);
+              _addCallScreen = AddCallScreen(currentIndex: _currentIndex, notifyParent: refreshToCalls);
             }
             else if(index == 3){
               _infoScreen = InfoScreen();
@@ -88,10 +94,23 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
       });
     });
   }
-  getScreen(){
+  getScreen() {
 //    if(_currentIndex == -1){
 //      return LoginPage(),
 //    }
+    if (userRole != null && userRole == "3") {
+      if (_currentIndex == 0) {
+        return _callsScreen;
+      }
+      else if (_currentIndex == 1) {
+        return _searchCallScreen;
+      }
+      else if (_currentIndex == 2) {
+        return _infoScreen;
+      }
+    }
+    else {
+
     if(_currentIndex == 0){
       return _callsScreen;
     }
@@ -106,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
     {
       return _infoScreen;
     }
+  }
   }
 
   final _itemsDriver = [

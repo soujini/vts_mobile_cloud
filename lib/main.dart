@@ -141,6 +141,8 @@ class _MyAppState extends State<MyApp>{
           primarySwatch: colorCustom,
           bottomAppBarColor: colorCustom,
           fontFamily: 'Montserrat',
+        textSelectionColor: Color(0xff1C3764).withOpacity(0.2),
+        textSelectionHandleColor: Color(0xff1C3764),
       ),
       home: (pageMode == "login") ? LoginPage(setScreen: setScreen) : MyHomePage(title: "VTS MOBILE CLOUD"),
 

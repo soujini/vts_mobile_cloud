@@ -69,7 +69,11 @@ class _SearchCallsList extends State<SearchCallsList> {
                     .listMiniMobile(
                     'search', pageIndex, PAGE_SIZE, widget.filterFields)));
   }
+  refresh(){
+    setState(() {
 
+    });
+  }
   Widget _itemBuilder(context, searchedCalls, index) {
     searchedCalls.dispatchInstructions_string = searchedCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
     return GestureDetector(
@@ -130,14 +134,17 @@ class _SearchCallsList extends State<SearchCallsList> {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(searchedCalls.id,
-                                        searchedCalls.dispatchStatusName,
-                                        searchedCalls
-                                            .dispatchInstructions_string,
-                                        widget.userRole, widget.dispatchPaging,
-                                        searchedCalls.towType);
+
+                                    return UpdateStatus(
+                                        id: searchedCalls.id,
+                                        dispatchStatusName: searchedCalls.dispatchStatusName,
+                                        dispatchInstructionsString:searchedCalls.dispatchInstructions_string,
+                                        userRole:widget.userRole,
+                                        dispatchPaging: widget.dispatchPaging,
+                                        towType: searchedCalls.towType,
+                                        notifyParent:refresh
+                                    );
                                   });
-                              // showDialogUpdateStatus(context);
                             },
                             textColor: Colors.grey,
                             icon: Icon(Icons.update, size:14),
@@ -249,12 +256,12 @@ class _SearchCallsList extends State<SearchCallsList> {
                                         children: <Widget>[
                                           Text(
                                               (searchedCalls.towedStreet != null
-                                                  ? searchedCalls.towedStreet
+                                                  ? searchedCalls.towedStreet.replaceAll("\\", "")
                                                   : '' +
                                                   ' ' +
                                                   searchedCalls
                                                       .towedStreetTwo != null
-                                                  ? searchedCalls.towedStreetTwo
+                                                  ? searchedCalls.towedStreetTwo.replaceAll("\\", "")
                                                   : '' +
                                                   ' ' +
                                                   searchedCalls.towedCityName !=
@@ -287,12 +294,12 @@ class _SearchCallsList extends State<SearchCallsList> {
                                           Text(
                                               (searchedCalls.towedToStreet !=
                                                   null ? searchedCalls
-                                                  .towedToStreet : '' +
+                                                  .towedToStreet.replaceAll("\\", "") : '' +
                                                   ' ' +
                                                   searchedCalls
                                                       .towedToStreetTwo != null
                                                   ? searchedCalls
-                                                  .towedToStreetTwo
+                                                  .towedToStreetTwo.replaceAll("\\", "")
                                                   : '' +
                                                   ' ' +
                                                   searchedCalls
@@ -321,7 +328,8 @@ class _SearchCallsList extends State<SearchCallsList> {
                                     ]))) : Row(),
                             Padding(
                                 padding: EdgeInsets.symmetric(vertical: 10),
-                                child: (Column(
+                                child: (Row(
+                                    // crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
                                       searchedCalls.dispatchInstructions_string != null && searchedCalls.dispatchInstructions_string != '' && searchedCalls.dispatchInstructions_string != 'null' && searchedCalls.dispatchInstructions_string != '--'?
                                       Text((searchedCalls.dispatchInstructions_string),

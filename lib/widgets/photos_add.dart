@@ -12,6 +12,9 @@ import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 
 class PhotosAdd extends StatefulWidget {
+  final Function notifyParent;
+  PhotosAdd({Key key, this.notifyParent}): super(key: key);
+
   @override
   createState() {
     return _PhotosAddState();
@@ -93,6 +96,14 @@ class _PhotosAddState extends State<PhotosAdd> {
       _picture.base64Photo = base64.encode(imageBytes);
     });
   }
+  _showErrorMessage(BuildContext context, errorMessage) {
+    Scaffold.of(context).showSnackBar(
+        new SnackBar(
+            backgroundColor: Colors.lightGreen,
+            content: Text(errorMessage,
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
+                ))));
+  }
   Future save() async{
     this.setState(() {
       isLoading=true;
@@ -100,7 +111,6 @@ class _PhotosAddState extends State<PhotosAdd> {
     final form = _formKey.currentState;
     var selectedCall = Provider.of<Calls>(context, listen:false).selectedCall;
     _picture.towedVehicle = selectedCall.id;
-//    _picture.vehicleNotes= "";
 if(selectedOptionIndex == 0){
   _picture.vehiclePictureType=4;
 }
@@ -126,19 +136,20 @@ else if(selectedOptionIndex == 7){
   _picture.vehiclePictureType=8;
 }
 
-//   form.save();
-//    print(form);
-    await Provider.of<TowedVehiclePicturesVM>(context, listen:false).create(_picture)
-   .then((res) {
-      this.setState(() {
-        isLoading=false;
-      });
-     Navigator.push(
-         context,
-         new MaterialPageRoute(
-             builder: (context) =>
-             new AddEditCallScreen(0,0)));
-   });
+    await Provider.of<TowedVehiclePicturesVM>(context, listen:false).create(_picture);
+    var picturesCreateResponse = Provider.of<TowedVehiclePicturesVM>(context, listen: false).picturesCreateResponse;
+
+
+    if (picturesCreateResponse["errorStatus"] == "false") {
+      isLoading = false;
+      _showErrorMessage(context, picturesCreateResponse["errorMessage"]);
+    }
+    else {
+      isLoading = false;
+      Navigator.pop(context);
+      widget.notifyParent();
+    }
+
   }
 
   @override
@@ -146,7 +157,7 @@ else if(selectedOptionIndex == 7){
     return Scaffold(
       // home: Scaffold(
         appBar: AppBar(
-          title: Text("Add Photo"),
+          title: Text('ADD PHOTO', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
         ),
         body:  isLoading == true? Center(child:Loader()): SingleChildScrollView(
             child:Center(

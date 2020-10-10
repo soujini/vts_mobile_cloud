@@ -605,46 +605,46 @@ class CallAddState extends State<CallAdd> {
   }
 
   save() async {
-    _showDialog(context);
-    await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-        .checkForDuplicateTickets(_call);
+      _showDialog(context);
+      await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+          .checkForDuplicateTickets(_call);
 
-    if (Provider
-        .of<ProcessTowedVehiclesVM>(context, listen: false)
-        .duplicateData["errorStatus"] == "true") {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return DuplicateCall(save2: save2);
-          });
-      //Add Yes or No Button and Rock it
-    }
-    else {
-      await Provider.of<Calls>(context, listen: false).create(_call);
-      var response = Provider
-          .of<Calls>(context, listen: false)
-          .createResponse;
-      if (response["errorStatus"] == "false") {
-        _showErrorMessage(context, response["errorMessage"]);
+      if (Provider
+          .of<ProcessTowedVehiclesVM>(context, listen: false)
+          .duplicateData["errorStatus"] == "true") {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return DuplicateCall(save2: save2);
+            });
+        //Add Yes or No Button and Rock it
       }
       else {
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) =>
-                new SuccessScreen("Call Successfully Added!")));
-
-        Timer(Duration(milliseconds: 3000), () {
-          Navigator.pop(context);
+        await Provider.of<Calls>(context, listen: false).create(_call);
+        var response = Provider
+            .of<Calls>(context, listen: false)
+            .createResponse;
+        if (response["errorStatus"] == "false") {
+          _showErrorMessage(context, response["errorMessage"]);
+        }
+        else {
           Navigator.push(
               context,
               new MaterialPageRoute(
                   builder: (context) =>
-                  new CallsScreen()));
-        });
+                  new SuccessScreen("Call Successfully Added!")));
+
+          Timer(Duration(milliseconds: 3000), () {
+            Navigator.pop(context);
+            refreshToMainScreen();
+          });
+        }
       }
     }
-  }
+    // else{
+    //   //print("invalid input fields");
+    // }
+  // }
 
 //  save() async {
 //    _formKey[0].currentState.save();
@@ -725,7 +725,7 @@ class CallAddState extends State<CallAdd> {
     else
       return null;
   }
-  bla(){
+  refreshToMainScreen(){
     widget.notifyParent();
   }
 
@@ -733,23 +733,15 @@ class CallAddState extends State<CallAdd> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+
         title: Text('ADD CALL', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
         actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.save),
-            tooltip: 'Save',
-             // onPressed: () => {FocusScope.of(context).requestFocus(new FocusNode()),save()}
-        onPressed: () => {bla()}
-        // onPressed: () => {
-        //  Navigator.pop(context),
-        // Navigator.push(
-        // context,
-        // new MaterialPageRoute(
-        // builder: (context) =>
-        // new CallsScreen()))
-        //
-        // }
-          ),
+          // new IconButton(
+          //
+          //   icon: new Icon(Icons.save),
+          //   tooltip: 'Save',
+          //    onPressed: () => {FocusScope.of(context).requestFocus(new FocusNode()),save()}
+          // ),
         ],
       ),
       body: Container(

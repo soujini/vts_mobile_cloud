@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:vts_mobile_cloud/widgets/charges_add.dart';
+import 'package:vts_mobile_cloud/widgets/photos_list.dart';
 import 'package:vts_mobile_cloud/widgets/tow_jurisdiction_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_reason_modal.dart';
 import '../providers/secureStoreMixin_provider.dart';
@@ -36,7 +37,6 @@ class CallEdit extends StatefulWidget {
   int selectedTabIndex;
 
   CallEdit(this.initialIndex, this.selectedTabIndex) : super();
-
 
   @override
   _CallEditState createState() => _CallEditState();
@@ -680,18 +680,25 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
         .value;
 
     //Towed Street
-    _call.towedStreet = x[0].towedStreet != null && x[0].towedStreet != 'null'
-        ? x[0].towedStreet
-        : '';
+      if( x[0].towedStreet != null && x[0].towedStreet != 'null')
+        {
+          _call.towedStreet =  x[0].towedStreet.replaceAll("\\", "");
+        }
+      else{
+        _call.towedStreet = "";
+              }
     _towedStreetController.value = new TextEditingController.fromValue(
             new TextEditingValue(text: _call.towedStreet))
         .value;
 
     //Towed Street2
-    _call.towedStreetTwo =
-        x[0].towedStreetTwo != null && x[0].towedStreetTwo != 'null'
-            ? x[0].towedStreetTwo
-            : '';
+      if( x[0].towedStreetTwo != null && x[0].towedStreetTwo != 'null')
+      {
+        _call.towedStreetTwo =  x[0].towedStreetTwo.replaceAll("\\", "");
+      }
+      else{
+        _call.towedStreetTwo = "";
+      }
     _towedStreetTwoController.value = new TextEditingController.fromValue(
             new TextEditingValue(text: _call.towedStreetTwo))
         .value;
@@ -717,13 +724,25 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //            .value;
 
     //TowedToStreet
-    _call.towedToStreet = x[0].towedToStreet;
+    if( x[0].towedToStreet != null && x[0].towedToStreet != 'null')
+    {
+      _call.towedToStreet =  x[0].towedToStreet.replaceAll("\\", "");
+    }
+    else{
+      _call.towedToStreet = "";
+    }
     _towedToStreetController.value = new TextEditingController.fromValue(
             new TextEditingValue(text: x[0].towedToStreet))
         .value;
 
     //Towed Street2
-    _call.towedToStreetTwo = x[0].towedToStreetTwo;
+    if( x[0].towedToStreetTwo != null && x[0].towedToStreetTwo != 'null')
+    {
+      _call.towedToStreetTwo =  x[0].towedToStreetTwo.replaceAll("\\", "");
+    }
+    else{
+      _call.towedToStreetTwo = "";
+    }
     _towedToStreetTwoController.value = new TextEditingController.fromValue(
             new TextEditingValue(text: x[0].towedToStreetTwo))
         .value;
@@ -780,12 +799,12 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
     setTowCustomer(x[0].towCustomer, x[0].towCustomerName);
 
     //Instructions
-    _call.dispatchInstructions_string = x[0].dispatchInstructions_string;
+    _call.dispatchInstructions_string = x[0].dispatchInstructions_string != null ? x[0].dispatchInstructions_string.replaceAll("\\n", "\n"): '';
     _dispatchInstructions_stringController.value =
         new TextEditingController.fromValue(new TextEditingValue(
-                text: x[0].dispatchInstructions_string != null &&
-                        x[0].dispatchInstructions_string != 'null'
-                    ? x[0].dispatchInstructions_string
+                text: _call.dispatchInstructions_string != null &&
+                    _call.dispatchInstructions_string != 'null'
+                    ? _call.dispatchInstructions_string
                     : ''))
             .value;
 
@@ -1081,7 +1100,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
   @override
   void dispose() {
-    // _pageController.dispose();
     super.dispose();
   }
   back(BuildContext context){
@@ -1122,13 +1140,19 @@ refresh(){
       tabIndex=4;
     });
   }
+  refreshPictures(){
+    setState(() {
+      tabIndex=6;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     // TODO: implement build
     return DefaultTabController(
         key:UniqueKey(),
-      length:6,
+      length:7,
          initialIndex: tabIndex,
         child: Scaffold(
             appBar: AppBar(
@@ -1140,9 +1164,9 @@ refresh(){
                 // key:UniqueKey(),
                 // controller:_tabController,
                 onTap: (index){
-    setState(() {
-      tabIndex = index;
-    });
+    // setState(() {
+    //   tabIndex = index;
+    // });
                 },
                 isScrollable: true,
                 indicatorColor: Colors.green,
@@ -1178,6 +1202,10 @@ refresh(){
                     icon: Icon(Icons.attach_money, size: 18.0),
                     text: "CHARGES",
                   ),
+                  Tab(
+                    icon: Icon(Icons.camera_roll, size: 18.0),
+                    text: "PHOTOS",
+                  ),
                 ],
               ),
               // automaticallyImplyLeading: true,
@@ -1191,13 +1219,14 @@ refresh(){
                     showDialog(
                         context: context,
                         builder: (BuildContext context) {
+
                           return UpdateStatus(
-                              selectedCall.id,
-                              selectedCall.dispatchStatusName,
-                              selectedCall.dispatchInstructions_string,
-                              userRole,
-                              dispatchPaging,
-                              selectedCall.towType);
+                              id: selectedCall.id,
+                              dispatchStatusName: selectedCall.dispatchStatusName,
+                              dispatchInstructionsString:selectedCall.dispatchInstructions_string,
+                              userRole:userRole,
+                              dispatchPaging: dispatchPaging,
+                              towType: selectedCall.towType);
                         });
                   },
                 ),
@@ -1228,13 +1257,13 @@ refresh(){
                   //onPressed: () => save(),
                 ),
                 new IconButton(
-                  icon: new Icon(Icons.camera_alt, size: 20.0),
+                  icon: new Icon(Icons.add_a_photo, size: 20.0),
                   tooltip: 'Add Photo',
                   onPressed: () {
                     Navigator.push(
                         context,
                         new MaterialPageRoute(
-                            builder: (context) => new PhotosAdd()));
+                            builder: (context) => new PhotosAdd(notifyParent:refreshPictures))).then((value) => setState(() {tabIndex=6;}));
                   },
                 ),
                 new IconButton(
@@ -1257,8 +1286,7 @@ refresh(){
                         key: this._formKey,
                         autovalidate:_autoValidate,
                         child: TabBarView(
-                            // key:UniqueKey(),
-                            // controller: _tabController,
+                            key:UniqueKey(),
                             children: [
                           SingleChildScrollView(
                               child: Column(
@@ -1301,6 +1329,7 @@ refresh(){
                                     labelText: "Invoice # *",
                                   ),
                                   validator: validateInvoice,
+                                  onTap: () => {_towedInvoiceController.selection = TextSelection(baseOffset: 0, extentOffset: _towedInvoiceController.value.text.length)},
                                   onSaved: (val) =>
                                       setState(() => _call.towedInvoice = val),
                                 ),
@@ -1315,6 +1344,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "PO #",
                                   ),
+                                  onTap: () => {_towedPONumberController.selection = TextSelection(baseOffset: 0, extentOffset: _towedPONumberController.value.text.length)},
                                   onSaved: (val) =>
                                       setState(() => _call.towedPONumber = val),
                                 ),
@@ -1329,6 +1359,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Member #",
                                   ),
+                                  onTap: () => {_dispatchMemberController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchMemberController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.dispatchMemberNumber = val),
                                 ),
@@ -1340,10 +1371,11 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitAmountController,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   decoration: new InputDecoration(
                                     labelText: "Limit \$",
                                   ),
+                                  onTap: () => {_dispatchLimitAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchLimitAmountController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.dispatchLimitAmount = val),
                                 ),
@@ -1355,10 +1387,11 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitMilesController,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   decoration: new InputDecoration(
                                     labelText: "Limit Miles",
                                   ),
+                                  onTap: () => {_dispatchLimitMilesController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchLimitMilesController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.dispatchLimitMiles = val),
                                 ),
@@ -1366,7 +1399,7 @@ refresh(){
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _towedDiscountRateController,
-//                              keyboardType: TextInputType.number,
+//                              keyboardType: TextInputType.numberWithOptions(decimal: true),
 //                              decoration: new InputDecoration(
 //                                labelText: "Discount Rate",
 //                              ),
@@ -1382,7 +1415,7 @@ refresh(){
 //                          new ListTile(
 //                            title: new TextFormField(
 //                              controller: _towedDiscountAmountController,
-//                              keyboardType: TextInputType.number,
+//                              keyboardType: TextInputType.numberWithOptions(decimal: true),
 //                              decoration: new InputDecoration(
 //                                labelText: "Discount Amount",
 //                              ),
@@ -1433,6 +1466,7 @@ refresh(){
                                     ),
                                   ),
                                   validator: validateVIN,
+                                  onTap: () => {_vinController.selection = TextSelection(baseOffset: 0, extentOffset: _vinController.value.text.length)},
                                   onSaved: (val) =>
                                       setState(() => _call.VIN = val),
                                 ),
@@ -1479,7 +1513,8 @@ refresh(){
                                     // suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
                                   ),
                                   validator: validateYear,
-                                    onSaved: (val) =>
+                                  onTap: () => {_yearController.selection = TextSelection(baseOffset: 0, extentOffset: _yearController.value.text.length)},
+                                  onSaved: (val) =>
                                   setState(() => _call.vehicleYear = int.parse(val)),
                                 ),
                               ),
@@ -1606,6 +1641,7 @@ refresh(){
                                       return 'Please enter License Plate';
                                     }
                                   },
+                                  onTap: () => {_licensePlateController.selection = TextSelection(baseOffset: 0, extentOffset: _licensePlateController.value.text.length)},
                                 ),
                               ),
                               new ListTile(
@@ -1738,6 +1774,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Odometer",
                                   ),
+                                  onTap: () => {_vehicleOdomoeterController.selection = TextSelection(baseOffset: 0, extentOffset: _vehicleOdomoeterController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.vehicleOdometer = val),
                                 ),
@@ -1937,6 +1974,7 @@ refresh(){
                                       return 'Please enter location';
                                     }
                                   },
+                                  onTap: () => {_towedStreetController.selection = TextSelection(baseOffset: 0, extentOffset: _towedStreetController.value.text.length)},
                                   onSaved: (val) =>
                                       setState(() => _call.towedStreet = val),
                                 ),
@@ -1951,6 +1989,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "",
                                   ),
+                                  onTap: () => {_towedStreetTwoController.selection = TextSelection(baseOffset: 0, extentOffset: _towedStreetTwoController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.towedStreetTwo = val),
                                 ),
@@ -2023,6 +2062,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Destination",
                                   ),
+                                  onTap: () => {_towedToStreetController.selection = TextSelection(baseOffset: 0, extentOffset: _towedToStreetController.value.text.length)},
                                   onSaved: (val) =>
                                       setState(() => _call.towedToStreet = val),
                                 ),
@@ -2037,11 +2077,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "",
                                   ),
-                                  // validator: (value) {
-                                  //   if (value.isEmpty) {
-                                  //     return 'Please enter StreetTwo';
-                                  //   }
-                                  // },
+                                  onTap: () => {_towedToStreetTwoController.selection = TextSelection(baseOffset: 0, extentOffset: _towedToStreetTwoController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.towedToStreetTwo = val),
                                 ),
@@ -2306,6 +2342,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Instructions",
                                   ),
+                                  onTap: () => {_dispatchInstructions_stringController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchInstructions_stringController.value.text.length)},
                                   onSaved: (val) => setState(() => {
                                         _call.dispatchInstructions_string = val
                                       }),
@@ -2321,6 +2358,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Contact",
                                   ),
+                                  onTap: () => {_dispatchContactController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchContactController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.dispatchContact = val),
                                 ),
@@ -2337,13 +2375,14 @@ refresh(){
                                     labelText: "Contact Phone",
                                   ),
                                   validator: (value) {
-                                    if (value.isEmpty || value.length != 10) {
+                                    if (value.length > 1 && value.length < 10) {
                                       return 'Please enter a valid Contact Phone';
                                     }
                                     else{
                                       return null;
                                     }
                                   },
+                                  onTap: () => {_dispatchContactPhoneController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchContactPhoneController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.dispatchContactPhone = val),
                                 ),
@@ -2383,6 +2422,7 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "ETA",
                                   ),
+                                  onTap: () => {_dispatchETAMinutesController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchETAMinutesController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.dispatchETAMinutes = val),
                                 ),
@@ -2398,6 +2438,7 @@ refresh(){
                                     labelText: "Call Date",
                                     suffixIcon: IconButton(
                                       onPressed: () {
+                                        _isFormReadOnly == false ?
                                         DatePicker.showDatePicker(context,
                                             showTitleActions: true,
                                             //  minTime: DateTime(2018, 3, 5),
@@ -2414,7 +2455,7 @@ refresh(){
 //                              String formattedTime2 = DateFormat('kk^mm').format(now);
                                         },
                                             currentTime: DateTime.now(),
-                                            locale: LocaleType.en);
+                                            locale: LocaleType.en):null;
                                       }, //_controller.clear(),
                                       icon: Icon(Icons.date_range, size: 14),
                                     ),
@@ -3119,6 +3160,9 @@ refresh(){
                           Column(children: <Widget>[
                             Expanded(child: TowedVehicleChargesList(userRole:userRole, notifyParent:refresh))
                           ]),
+                              Column(children: <Widget>[
+                                Expanded(child: PhotosList(userRole:userRole, notifyParent:refresh))
+                              ]),
                         ])))));
   }
 }

@@ -385,19 +385,28 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
     final List<User> dd = [];
 
     dd.add(new User.fromJson(extractedData));
-    final storage = new FlutterSecureStorage();
     _userData = dd;
-    setSecureStore("userName",  extractedData["userName"]);
-    setSecureStore("userId",  extractedData["id"]);
-    setSecureStore("pinNumber",  extractedData["pinNumber"]);
-    setSecureStore("timeZoneName",  extractedData["systemTimeZoneName"]);
-    setSecureStore("userRole",  extractedData["userRole"]);
-    setSecureStore("userRoleName",  extractedData["userRoleName"]);
-    setSecureStore("dispatchPaging",  extractedData["dispatchPaging"]);
-    setSecureStore("restrictWreckerDriver",  extractedData["restrictWreckerDriver"]);
+    if(extractedData["errorStatus"] == "true"){
+      setSecureStore("userName",  extractedData["userName"]);
+      setSecureStore("userId",  extractedData["id"]);
+      setSecureStore("pinNumber",  extractedData["pinNumber"]);
+      setSecureStore("timeZoneName",  extractedData["systemTimeZoneName"]);
+      setSecureStore("userRole",  extractedData["userRole"]);
+      setSecureStore("userRoleName",  extractedData["userRoleName"]);
+      setSecureStore("dispatchPaging",  extractedData["dispatchPaging"]);
+      setSecureStore("restrictWreckerDriver",  extractedData["restrictWreckerDriver"]);
+
+     }
+    else{
+       //print("nothing is set");
+     }
   }
 }
+setSecureTokens(){
+  final storage = new FlutterSecureStorage();
 
+
+}
 bool _convertTobool(value) {
   if (value is String) {
     if (value.toLowerCase() == "true")

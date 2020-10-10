@@ -13,7 +13,8 @@ class UpdateStatus extends StatefulWidget {
   var dispatchPaging;
   int towType;
   bool isLoading=false;
-  UpdateStatus(this.id, this.dispatchStatusName, this.dispatchInstructionsString, this.userRole, this.dispatchPaging, this.towType);
+  final Function notifyParent;
+  UpdateStatus({Key key, this.id, this.dispatchStatusName, this.dispatchInstructionsString, this.userRole, this.dispatchPaging, this.towType,this.notifyParent});
 
   @override
   State<StatefulWidget> createState() {
@@ -79,8 +80,8 @@ class _UpdateStatusState extends State<UpdateStatus> {
                   child: Text('No'),
                   onPressed: () {
                     Navigator.of(context).pop();
-                    Navigator.push(context,
-                        new MaterialPageRoute(builder: (context) => new CallsScreen()));
+                    // Navigator.push(context,
+                    //     new MaterialPageRoute(builder: (context) => new CallsScreen()));
                   },
                 ),
               ],
@@ -151,8 +152,9 @@ class _UpdateStatusState extends State<UpdateStatus> {
                 child: Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.push(context,
-                      new MaterialPageRoute(builder: (context) => new CallsScreen()));
+                  widget.notifyParent();
+                  // Navigator.push(context,
+                  //     new MaterialPageRoute(builder: (context) => new CallsScreen()));
                 },
               ),
             ],
@@ -175,7 +177,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
     setState(() =>widget.isLoading=true);
        Provider.of<Calls>(context, listen: false)
            .update(
-           widget.id, selectedStatus, widget.dispatchInstructionsString, mode, moveStatus,widget.towType)
+           widget.id, selectedStatus, widget.dispatchInstructionsString != "null" || widget.dispatchInstructionsString != null ? widget.dispatchInstructionsString : '' , mode, moveStatus,widget.towType)
            .then((res) {
          setState(() =>widget.isLoading=false);
          if(selectedStatus == 'Dispatch' && widget.dispatchPaging == true) {
@@ -183,8 +185,9 @@ class _UpdateStatusState extends State<UpdateStatus> {
          }
          else{
            Navigator.pop(context);
-           Navigator.push(context,
-               new MaterialPageRoute(builder: (context) => new CallsScreen()));
+           widget.notifyParent();
+           // Navigator.push(context,
+           //     new MaterialPageRoute(builder: (context) => new CallsScreen()));
          }
        });
   }

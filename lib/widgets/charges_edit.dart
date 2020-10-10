@@ -21,6 +21,7 @@ class _ChargesEditState extends State<ChargesEdit> {
   bool isLoading = false;
   var _charge = TowedVehicleCharge();
   var _enableDiscountApply = false;
+  bool isChargesQuantitySelected=false;
 
   var _towChargesController = new TextEditingController();
   var _chargesQuantityController = new TextEditingController();
@@ -34,8 +35,8 @@ class _ChargesEditState extends State<ChargesEdit> {
       final text = _chargesQuantityController.text;
       _chargesQuantityController.value = _chargesQuantityController.value.copyWith(
         text: text,
-        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
-        composing: TextRange.empty,
+        // selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+        // composing: TextRange.empty,
       );
     });
 
@@ -43,8 +44,8 @@ class _ChargesEditState extends State<ChargesEdit> {
       final text = _chargesRateController.text;
       _chargesRateController.value = _chargesRateController.value.copyWith(
         text: text,
-        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
-        composing: TextRange.empty,
+        // selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+        // composing: TextRange.empty,
       );
     });
      _charge = Provider.of<TowedVehicleChargesVM>(context, listen: false).selectedCharge;
@@ -148,7 +149,9 @@ class _ChargesEditState extends State<ChargesEdit> {
     }
   }
   calculateTotalChargesOnQuantityChange(val){
-    setState(() => _charge.chargesQuantity = val);
+    // setState(() => _charge.chargesQuantity = val);
+    _charge.chargesQuantity = val;
+
     double total = double.parse(val).floor() * double.parse(_charge.chargesRate);
     String totalCharges =  total.toStringAsFixed(2);
 
@@ -160,7 +163,8 @@ class _ChargesEditState extends State<ChargesEdit> {
         .value;
   }
   calculateTotalChargesOnRateChange(val){
-    setState(() => _charge.chargesRate = val);
+    // setState(() => _charge.chargesRate = val);
+    _charge.chargesRate = val;
     double total = double.parse(val) * double.parse(_charge.chargesQuantity);
     String totalCharges =  total.toStringAsFixed(2);
 
@@ -214,7 +218,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   controller: this._chargesQuantityController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   decoration: new InputDecoration(
                     labelText: 'Quantity',
                   ),
@@ -226,6 +230,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                      return null;
                    }
                    },
+                  onTap: () => {_chargesQuantityController.selection = TextSelection(baseOffset: 0, extentOffset: _chargesQuantityController.value.text.length)},
                   onChanged: (val) => calculateTotalChargesOnQuantityChange(val),
                   onSaved: (val) =>
                       setState(() => _charge.chargesQuantity = val),
@@ -239,15 +244,11 @@ class _ChargesEditState extends State<ChargesEdit> {
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   controller: this._discountQuantityController,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
-                  //  },
+                  onTap: () => {_discountQuantityController.selection = TextSelection(baseOffset: 0, extentOffset: _discountQuantityController.value.text.length)},
                   onSaved: (val) =>
                       setState(() => _charge.discountQuantity = val),
                 ),
@@ -259,7 +260,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
                     labelText: 'Rate *',
@@ -272,6 +273,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                      return null;
                    }
                    },
+                  onTap: () => {_chargesRateController.selection = TextSelection(baseOffset: 0, extentOffset: _chargesRateController.value.text.length)},
                   onChanged: (val) => calculateTotalChargesOnRateChange(val),
                   onSaved: (val) => setState(() => _charge.chargesRate = val),
                 ),
@@ -284,12 +286,12 @@ class _ChargesEditState extends State<ChargesEdit> {
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   enabled: false,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _discountRateController,
                   decoration: new InputDecoration(
                     labelText: 'Discount',
                   ),
-
+                  onTap: () => {_chargesRateController.selection = TextSelection(baseOffset: 0, extentOffset: _chargesRateController.value.text.length)},
                   onSaved: (val) => setState(() => _charge.discountRate = val),
                 ),
               ),
@@ -327,7 +329,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                   readOnly: true,
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   // readOnly: true,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _totalChargesController,
                   decoration: new InputDecoration(
                     labelText: 'Total Charges',

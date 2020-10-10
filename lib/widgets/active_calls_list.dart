@@ -76,6 +76,11 @@ class _ActiveCallsList extends State<ActiveCallsList> {
               ));
     ;
   }
+  refresh(){
+    setState(() {
+
+    });
+  }
 
   Widget _itemBuilder(context, activeCalls, index) {
     activeCalls.dispatchInstructions_string = activeCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
@@ -127,6 +132,7 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                                 new MaterialPageRoute(
                                     builder: (context) =>
                                     new AddEditCallScreen(0, widget.selectedTabIndex)),).then((value) => setState(() {}));
+                              // new AddEditCallScreen(0, widget.selectedTabIndex)));
                             },
                             icon: Icon(Icons.edit, size:14),
                             label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
@@ -136,10 +142,15 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return
-                                      UpdateStatus(activeCalls.id,
-                                          activeCalls.dispatchStatusName,
-                                          activeCalls
-                                              .dispatchInstructions_string, widget.userRole, widget.dispatchPaging, activeCalls.towType);
+                                      UpdateStatus(
+                                          id: activeCalls.id,
+                                          dispatchStatusName: activeCalls.dispatchStatusName,
+                                          dispatchInstructionsString:activeCalls.dispatchInstructions_string,
+                                          userRole:widget.userRole,
+                                          dispatchPaging: widget.dispatchPaging,
+                                          towType: activeCalls.towType,
+                                          notifyParent:refresh
+                                      );
                                   });
                             },
                             icon: Icon(Icons.update, size:14),
@@ -242,9 +253,9 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                                 new Row(
                                   children: <Widget>[
                                     Text(
-                                        (activeCalls.towedStreet != null ? activeCalls.towedStreet :''  +
+                                        (activeCalls.towedStreet != null ? activeCalls.towedStreet.replaceAll("\\", "") :''  +
                                             ' ' +
-                                            activeCalls.towedStreetTwo != null ? activeCalls.towedStreetTwo:'' +
+                                            activeCalls.towedStreetTwo != null ? activeCalls.towedStreetTwo.replaceAll("\\", ""):'' +
                                             ' ' +
                                             activeCalls.towedCityName != null ? activeCalls.towedCityName:'' +
                                             ' ' +
@@ -265,9 +276,9 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                                 new Row(
                                   children: <Widget>[
                                     Text(
-                                        (activeCalls.towedToStreet != null ? activeCalls.towedToStreet :''  +
+                                        (activeCalls.towedToStreet != null ? activeCalls.towedToStreet.replaceAll("\\", "") :''  +
                                             ' ' +
-                                            activeCalls.towedToStreetTwo != null ? activeCalls.towedToStreetTwo :''  +
+                                            activeCalls.towedToStreetTwo != null ? activeCalls.towedToStreetTwo.replaceAll("\\", "") :''  +
                                             ' ' +
                                             activeCalls.towedToCityName != null ? activeCalls.towedToCityName :''  +
                                             ' ' +

@@ -10,14 +10,15 @@ class AddCallScreen extends StatefulWidget {
 }
 class _AddCallScreen extends State<AddCallScreen> {
   refresh(){
-    // widget.notifyParent();
-    setState(() {
-      widget.currentIndex=0;
-    });
+     widget.notifyParent();
+    // setState(() {
+    //   widget.currentIndex=0;
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
+
     return CallAdd(notifyParent:refresh);
   }
 }

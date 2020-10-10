@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
         setState(() {
           _state = 2;
         });
-        Timer(Duration(milliseconds: 500), () {
+        Timer(Duration(milliseconds: 1000), () {
           widget.setScreen("home");
         });
       } else {
@@ -77,7 +77,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               child: new ListView(
                 children: <Widget>[
                   Padding(
-                      // padding: new EdgeInsets.symmetric(vertical: 50.0),
                       padding: new EdgeInsets.all(50),
                       child: SizedBox(
                         height: 100.0,
@@ -94,6 +93,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         bottom: 0,
                       ),
                       child: TextFormField(
+                        autofocus: false,
                           onEditingComplete: () {
                             this.submit(context);
                             FocusScope.of(context).requestFocus(new FocusNode());
@@ -126,7 +126,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                             _user.userName = value;
                           })),
                   Padding(
-                    //padding: EdgeInsets.only(top: 15.0),
                     padding: EdgeInsets.only(
                       left: 15,
                       top: 15,
@@ -134,6 +133,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       bottom: 0,
                     ),
                     child: TextFormField(
+                        autofocus: false,
                         onEditingComplete: () {
                           this.submit(context);
                           FocusScope.of(context).requestFocus(new FocusNode());
@@ -168,7 +168,6 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                         }),
                   ),
                   Padding(
-                    //padding: EdgeInsets.only(top: 15.0),
                     padding: EdgeInsets.only(
                       left: 15,
                       top: 15,

@@ -66,6 +66,11 @@ class _CompletedCallsList extends State<CompletedCallsList> {
             pageFuture: (pageIndex) => Provider.of<Calls>(context, listen:false)
                 .listMiniMobile('completed', pageIndex, PAGE_SIZE,"")));
   }
+  refresh(){
+    setState(() {
+
+    });
+  }
 
   Widget _itemBuilder(context, completedCalls, index) {
     completedCalls.dispatchInstructions_string = completedCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
@@ -126,7 +131,16 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(completedCalls.id, completedCalls.dispatchStatusName, completedCalls.dispatchInstructions_string, widget.userRole, widget.dispatchPaging, completedCalls.towType);
+
+                                    return UpdateStatus(
+                                        id: completedCalls.id,
+                                        dispatchStatusName: completedCalls.dispatchStatusName,
+                                        dispatchInstructionsString:completedCalls.dispatchInstructions_string,
+                                        userRole:widget.userRole,
+                                        dispatchPaging: widget.dispatchPaging,
+                                        towType: completedCalls.towType,
+                                        notifyParent:refresh
+                                    );
                                   });
                               // showDialogUpdateStatus(context);
                             },
@@ -231,11 +245,11 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                               new Row(
                                 children: <Widget>[
                                   Text(
-                                      (completedCalls.towedStreet != null ? completedCalls.towedStreet :''  +
+                                      (completedCalls.towedStreet != null ? completedCalls.towedStreet.replaceAll("\\", "") : ''  +
                                           ' ' +
-                                          completedCalls.towedStreetTwo != null ? completedCalls.towedStreetTwo:'' +
+                                          completedCalls.towedStreetTwo != null ? completedCalls.towedStreetTwo.replaceAll("\\", "") : '' +
                                           ' ' +
-                                          completedCalls.towedCityName != null ? completedCalls.towedCityName:'' +
+                                          completedCalls.towedCityName != null ? completedCalls.towedCityName : '' +
                                           ' ' +
                                           completedCalls.towedStateName != null ? completedCalls.towedStateName:'' +
                                           ' ' +

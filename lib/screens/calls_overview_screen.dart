@@ -20,7 +20,7 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
   String userRole;
   var dispatchPaging;
   var callsData;
-  int selectedTabIndex;
+  int selectedTabIndex = 0;
   @override
   bool wantKeepAlive = true;
   var refreshMainTabController = "false";
@@ -103,9 +103,9 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
           ),
           body:  TabBarView(
             children: [
-               ActiveCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh, refreshMainTabController:refreshMainTabController),
-               CompletedCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController),
-               CancelledCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController),
+              selectedTabIndex == 0 ? ActiveCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh, refreshMainTabController:refreshMainTabController) : Text(''),
+              selectedTabIndex == 1 ? CompletedCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController) : Text(''),
+              selectedTabIndex == 2 ? CancelledCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController) : Text(''),
             ],
           )) ,
     ) :'';

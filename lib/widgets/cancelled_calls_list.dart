@@ -66,6 +66,11 @@ class _CancelledCallsList extends State<CancelledCallsList> {
             pageFuture: (pageIndex) => Provider.of<Calls>(context, listen:false)
                 .listMiniMobile('cancelled', pageIndex, PAGE_SIZE,"")));
   }
+  refresh(){
+    setState(() {
+
+    });
+  }
 
   Widget _itemBuilder(context, cancelledCalls, index) {
     cancelledCalls.dispatchInstructions_string = cancelledCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
@@ -123,7 +128,15 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return UpdateStatus(cancelledCalls.id,cancelledCalls.dispatchStatusName, cancelledCalls.dispatchInstructions_string, widget.userRole, widget.dispatchPaging, cancelledCalls.towType);
+                                    return UpdateStatus(
+                                    id: cancelledCalls.id,
+                                    dispatchStatusName: cancelledCalls.dispatchStatusName,
+                                    dispatchInstructionsString:cancelledCalls.dispatchInstructions_string,
+                                    userRole:widget.userRole,
+                                    dispatchPaging: widget.dispatchPaging,
+                                    towType: cancelledCalls.towType,
+                                    notifyParent:refresh
+                                    );
                                   });
                               // showDialogUpdateStatus(context);
                             },
@@ -226,9 +239,9 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                               new Row(
                                 children: <Widget>[
                                   Text(
-                                      (cancelledCalls.towedStreet != null ? cancelledCalls.towedStreet :''  +
+                                      (cancelledCalls.towedStreet != null ? cancelledCalls.towedStreet.replaceAll("\\", "") :''  +
                                           ' ' +
-                                          cancelledCalls.towedStreetTwo != null ? cancelledCalls.towedStreetTwo :''  +
+                                          cancelledCalls.towedStreetTwo != null ? cancelledCalls.towedStreetTwo.replaceAll("\\", "") :''  +
                                           ' ' +
                                           cancelledCalls.towedCityName != null ? cancelledCalls.towedCityName :''  +
                                           ' ' +
@@ -248,9 +261,9 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                               new Row(
                                 children: <Widget>[
                                   Text(
-                                      (cancelledCalls.towedToStreet != null ? cancelledCalls.towedToStreet :''  +
+                                      (cancelledCalls.towedToStreet != null ? cancelledCalls.towedToStreet.replaceAll("\\", "") :''  +
                                           ' ' +
-                                          cancelledCalls.towedToStreetTwo != null ? cancelledCalls.towedToStreetTwo :''  +
+                                          cancelledCalls.towedToStreetTwo != null ? cancelledCalls.towedToStreetTwo.replaceAll("\\", "") :''  +
                                           ' ' +
                                           cancelledCalls.towedToCityName != null ? cancelledCalls.towedToCityName :''  +
                                           ' ' +

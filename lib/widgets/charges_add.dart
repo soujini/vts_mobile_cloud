@@ -131,10 +131,6 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                  widget.isLoading = false;
                 Navigator.pop(context);
                 widget.notifyParent();
-                // Navigator.pop(context);
-               // Navigator.push(context,
-               //     new MaterialPageRoute(
-               //         builder: (context) => new AddEditCallScreen(5,0)));
              }
            }
          }
@@ -163,8 +159,6 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
         ),
         body: widget.isLoading == true? Center(child:Loader()):Container(
             child: SingleChildScrollView(
-                // child: AlertDialog(
-                //content:
                 child: Form(
           key: _formKey,
                   autovalidate: _autoValidate,
@@ -200,25 +194,21 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                 title: new TextFormField(
                   readOnly: _isFormReadOnly,
                   onEditingComplete: () {
-                    // this.save();
                     FocusScope.of(context).requestFocus(new FocusNode());
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _chargesQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Quantity *',
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
                   ),
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please select Quantity';
                     }
                   },
+                  onTap: () => {_chargesQuantityController.selection = TextSelection(baseOffset: 0, extentOffset: _chargesQuantityController.value.text.length)},
                   onSaved: (val) =>
                       setState(() => _charge.chargesQuantity = val),
                 ),
@@ -227,25 +217,16 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                 title: new TextFormField(
                   readOnly: _isFormReadOnly,
                   onEditingComplete: () {
-                    // this.save();
                     FocusScope.of(context).requestFocus(new FocusNode());
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _discountQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
                   ),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter Charges';
-//                    }
-                  //  },
+                  onTap: () => {_discountQuantityController.selection = TextSelection(baseOffset: 0, extentOffset: _discountQuantityController.value.text.length)},
                   onSaved: (val) =>
                       setState(() => _charge.discountQuantity = val),
                 ),
@@ -254,26 +235,21 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                 title: new TextFormField(
                   readOnly: _isFormReadOnly && _charge.chargesRate != "0.00",
                   onEditingComplete: () {
-                    // this.save();
                     FocusScope.of(context).requestFocus(new FocusNode());
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
                     labelText: 'Rate *',
-//                    suffixIcon: IconButton(
-//                      //onPressed: () => _getVIN(), //_controller.clear(),
-//                      icon: Icon(Icons.autorenew),
-//                    ),
                   ),
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please select Rate';
                     }
                   },
-                  //  },
+                  onTap: () => {_chargesRateController.selection = TextSelection(baseOffset: 0, extentOffset: _chargesRateController.value.text.length)},
                   onSaved: (val) => setState(() => _charge.chargesRate = val),
                 ),
               ),
