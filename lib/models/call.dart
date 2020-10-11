@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
+import 'dart:math';
 
 class Call {
   bool errorStatus;
@@ -10,6 +10,7 @@ class Call {
   String pinNumber;
   String dispatchStatusName;
   double towedTotalAmount;
+  double towedSubTotal;
   String towReasonName;
   int vehicleModel;
   int vehicleYearMakeModel;
@@ -305,6 +306,7 @@ class Call {
     @required this.id,
     @required this.dispatchStatusName,
     @required this.towedTotalAmount,
+    @required this.towedSubTotal,
     @required this.towReasonName,
     @required this.vehicleMakeName,
     this.vehicleModel,
@@ -603,6 +605,7 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       id: int.parse(parsedJson["id"]),
       dispatchStatusName: parsedJson["dispatchStatusName"],
       towedTotalAmount: double.parse(parsedJson["towedTotalAmount"]),
+      towedSubTotal:double.parse(parsedJson["towedSubTotal"]),
 //      towReasonName: parsedJson["towReasonName"],
       vehicleMakeName: parsedJson["vehicleMakeName"],
       vehicleYearMakeModel: int.parse(parsedJson["vehicleYearMakeModel"]),
@@ -773,9 +776,12 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
 //      towedDiscountRate: parsedJson["towedDiscountRate"] != null
 //          ? parsedJson["towedDiscountRate"]
 //          : '',
-//      towedDiscountAmount: parsedJson["towedDiscountAmount"] != null
-//          ? parsedJson["towedDiscountAmount"]
-//          : '',
+      towedDiscountRate:parsedJson["towedDiscountRate"] != null ? parsedJson["towedDiscountRate"] : '0.00',
+      towedDiscountAmount:parsedJson["towedDiscountAmount"] != null ? parsedJson["towedDiscountAmount"] : '0.00',
+      // towedDiscountAmount: double.parse(parsedJson["towedDiscountAmount"]),
+     // towedDiscountAmount: parsedJson["towedDiscountAmount"] != null
+     //     ? parsedJson["towedDiscountAmount"]
+     //     : '',
 //    vehicleYearMakeModel: parsedJson["vehicleYearMakeModel"],
 //    towedToCity: parsedJson["towedToCity"],
 //    towedToState: parsedJson["towedToState"],

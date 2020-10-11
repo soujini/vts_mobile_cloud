@@ -160,8 +160,8 @@ class CallAddState extends State<CallAdd> {
       _towedToStateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStateName)).value;
       _call.storageCompany = dd[0].storageCompany != 0 ? dd[0].storageCompany : 0;
       _call.storageCompanyName = dd[0].storageCompanyName != null ? dd[0].storageCompanyName : '';
-      _call.towedDiscountRate = dd[0].discountPercent != null ? dd[0].discountPercent : '';
-      _call.towedDiscountAmount = dd[0].discountRate != null ? dd[0].discountRate : '';
+      // _call.towedDiscountRate = dd[0].discountPercent != null ? dd[0].discountPercent : '';
+      // _call.towedDiscountAmount = dd[0].discountRate != null ? dd[0].discountRate : '';
       _call.vehicleMake = dd[0].vehicleMake != 0 ? dd[0].vehicleMake : 0;
       _call.vehicleMakeName = dd[0].vehicleMakeName != null ? dd[0].vehicleMakeName : '';
       _makeController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.vehicleMakeName)).value;

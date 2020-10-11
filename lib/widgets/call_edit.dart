@@ -31,6 +31,7 @@ import 'package:vts_mobile_cloud/widgets/wrecker_company_modal.dart';
 import 'package:vts_mobile_cloud/widgets/wrecker_driver_modal.dart';
 import 'package:vts_mobile_cloud/widgets/towed_vehicle_notes_list.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
+import 'package:flutter/services.dart';
 
 class CallEdit extends StatefulWidget {
   var initialIndex;
@@ -162,8 +163,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   var _dispatchLimitAmountController = new TextEditingController();
   var _dispatchLimitMilesController = new TextEditingController();
 
-//  var _towedDiscountRateController=new TextEditingController();
-//  var _towedDiscountAmountController=new TextEditingController();
+ var _towedDiscountRateController=new TextEditingController();
+ var _towedDiscountAmountController=new TextEditingController();
 //  var _vehicleLicenseYearController = new TextEditingController();
   var _dispatchETAMinutesController = new TextEditingController();
 
@@ -572,17 +573,19 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
               new TextEditingValue(text: x[0].dispatchLimitMiles))
           .value;
 
+      //Towed Sub Total
+      _call.towedSubTotal = x[0].towedSubTotal;
       //Discount Rate
-//      _call.towedDiscountRate = x[0].towedDiscountRate;
-//      _towedDiscountRateController.value =
-//          new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedDiscountRate))
-//              .value;
+     _call.towedDiscountRate = x[0].towedDiscountRate;
+     _towedDiscountRateController.value =
+         new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedDiscountRate.toString()))
+             .value;
 
       //Discount Amount
-//      _call.towedDiscountAmount = x[0].towedDiscountAmount;
-//      _towedDiscountAmountController.value =
-//          new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedDiscountAmount))
-//              .value;
+     _call.towedDiscountAmount = x[0].towedDiscountAmount;
+     _towedDiscountAmountController.value =
+         new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedDiscountAmount.toString()))
+             .value;
 
       //VIN
       _call.VIN = x[0].VIN != null ? x[0].VIN : '';
@@ -1022,12 +1025,38 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   }
 
   String validateVIN(String value) {
-    Pattern pattern = "^[^iIoOqQ'-]{10,17}\$";
+    Pattern pattern =  "^[^iIoOqQ'-]{10,17}\$";
     RegExp regex = new RegExp(pattern);
     if (!regex.hasMatch(value) && value != "NOVIN")
       return 'Please enter a valid VIN';
     else
       return null;
+  }
+
+  String validateDiscountRate(String value) {
+    print(double.parse(value));
+    return null;
+    // if(double.parse(value).toStringAsFixed(2) < double.parse("0") || double.parse(value) > 100){
+    //   return 'Please enter a valid Discount Rate %';
+    // }
+    // else{
+    //   return null;
+    // }
+   // Pattern pattern = "^([0-9]\.[0-9]{1}|[0-9]\.[0-9]{2}|\.[0-9]{2}|[1-9][0-9]\.[0-9]{1}|[1-9][0-9]\.[0-9]{2}|[0-9][0-9]|[1-9][0-9]\.[0-9]{2})\$|^([0-9]|[0-9][0-9]|[0-99])\$|^100\$";
+   //  // Pattern pattern = "^(\+|\-)(0|([1-9][0-9]*))(\.[0-9]{1,2})?\$)|(^(0{0,1}|([1-9][0-9]*))(\.[0-9]{1,2})?\$";
+   //   RegExp regex = new RegExp(pattern);
+   //  if (!regex.hasMatch(value))
+   //    return 'Please enter a valid Discount Rate %';
+   //  else
+   //    return null;
+  }
+  String validateDiscountAmount(String value) {
+    if(double.parse(value) > _call.towedSubTotal){
+    return "Please enter a valid Discount Amount (Max : \$" +_call.towedSubTotal.toStringAsFixed(2) + ")";
+    }
+else{
+  return null;
+    }
   }
 
   String validateLocation(String value) {
@@ -1396,38 +1425,40 @@ refresh(){
                                       () => _call.dispatchLimitMiles = val),
                                 ),
                               ),
-//                          new ListTile(
-//                            title: new TextFormField(
-//                              controller: _towedDiscountRateController,
-//                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-//                              decoration: new InputDecoration(
-//                                labelText: "Discount Rate",
-//                              ),
-//                              validator: (value) {
-//                                if (value.isEmpty) {
-//                                  return 'Please enter Discount Rate';
-//                                }
-//                              },
-//                              onSaved: (val) =>
-//                                  setState(() => _call.towedDiscountRate = val),
-//                            ),
-//                          ),
-//                          new ListTile(
-//                            title: new TextFormField(
-//                              controller: _towedDiscountAmountController,
-//                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-//                              decoration: new InputDecoration(
-//                                labelText: "Discount Amount",
-//                              ),
-//                              validator: (value) {
-//                                if (value.isEmpty) {
-//                                  return 'Please enter Discount Amount';
-//                                }
-//                              },
-//                              onSaved: (val) =>
-//                                  setState(() => _call.towedDiscountAmount = val),
-//                            ),
-//                          ),
+                         new ListTile(
+                           title: new TextFormField(
+                             readOnly: _isFormReadOnly,
+                             style: TextStyle(
+                                 fontSize: 14,
+                                 fontWeight: FontWeight.w500),
+                             controller: _towedDiscountRateController,
+                             keyboardType: TextInputType.phone ,
+                             decoration: new InputDecoration(
+                               labelText: "Discount Rate % (Range 0 - 100)",
+                             ),
+                             validator: validateDiscountRate,
+                             onTap: () => {_towedDiscountRateController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountRateController.value.text.length)},
+                             onSaved: (val) =>
+                                 setState(() => _call.towedDiscountRate = double.parse(val)),
+                           ),
+                         ),
+                         new ListTile(
+                           title: new TextFormField(
+                             readOnly: _isFormReadOnly,
+                             style: TextStyle(
+                                 fontSize: 14,
+                                 fontWeight: FontWeight.w500),
+                             controller: _towedDiscountAmountController,
+                             keyboardType: TextInputType.numberWithOptions(decimal: true),
+                             decoration: new InputDecoration(
+                               labelText: "Discount Amount (Max : \$" +_call.towedSubTotal.toString() + ")",
+                             ),
+                             validator: validateDiscountAmount,
+                             onTap: () => {_towedDiscountAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountAmountController.value.text.length)},
+                             onSaved: (val) =>
+                                 setState(() => _call.towedDiscountAmount = double.parse(val)),
+                           ),
+                         ),
 //                          ListTile(
 //                            leading: Container(
 //                              width: 100,
