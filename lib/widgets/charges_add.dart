@@ -7,6 +7,8 @@ import 'package:vts_mobile_cloud/widgets/tow_charges_modal.dart';
 import '../providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
+import 'dart:math' as math;
+import 'package:flutter/services.dart';
 
 class ChargesAdd extends StatefulWidget {
   int selectedCall=0;
@@ -32,7 +34,6 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
   var _chargesQuantityController = new TextEditingController();
   var _discountQuantityController = new TextEditingController();
   var _chargesRateController = new TextEditingController();
-
 
 
   setTowCharge(id, name) {
@@ -198,7 +199,8 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  // inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
+                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
                   controller: _chargesQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Quantity *',
@@ -221,7 +223,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
                   controller: _discountQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',
@@ -239,7 +241,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
                     labelText: 'Rate *',

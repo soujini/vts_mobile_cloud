@@ -5,7 +5,14 @@ import 'package:vts_mobile_cloud/providers/notes_provider.dart';
 import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 
-enum SingingCharacter { Owner, Payment }
+enum SingingCharacter{
+ Owner, Payment
+}
+Map<String, bool> notesType = {
+  "Owner": true,
+  "Payment": false,
+
+};
 class NotesAdd extends StatefulWidget {
   bool isLoading = false;
   final Function notifyParent;
@@ -21,8 +28,9 @@ class _NotesAddState extends State<NotesAdd> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _note = Note();
   bool _autoValidate = true;
-  SingingCharacter _character;
 
+
+  SingingCharacter _character = SingingCharacter.Payment;
   var _vehicleNotes_stringController = new TextEditingController();
 
 //  void _reset() {
@@ -30,6 +38,11 @@ class _NotesAddState extends State<NotesAdd> {
 //      _formKey.currentState.reset();
 //    });
 //  }
+  void initState(){
+    super.initState();
+    _note.paymentNotes=true;
+    _note.ownerNotes=false;
+  }
   _showErrorMessage(BuildContext context, errorMessage) {
     Scaffold.of(context).showSnackBar(
         new SnackBar(
@@ -49,12 +62,12 @@ class _NotesAddState extends State<NotesAdd> {
         .selectedCall;
 
     _note.towedVehicle = selectedCall.id;
-    if (_note.paymentNotes == null) {
-      _note.paymentNotes = false;
-    }
-    if (_note.ownerNotes == null) {
-      _note.ownerNotes = false;
-    }
+    // if (_note.paymentNotes == null) {
+    //   _note.paymentNotes = false;
+    // }
+    // if (_note.ownerNotes == null) {
+    //   _note.ownerNotes = false;
+    // }
     if (form.validate()) {
       form.save();
       await Provider.of<NotesVM>(context, listen: false).create(_note);
@@ -124,7 +137,7 @@ class _NotesAddState extends State<NotesAdd> {
                   value: SingingCharacter.Owner,
                                 groupValue: _character,
                                 onChanged: (SingingCharacter value) {
-                                  setState(() { _character = value;  _note.paymentNotes=true; });
+                                  setState(() { _character = value;  _note.ownerNotes=true;_note.paymentNotes=false;});
                                 },
                   )),
           ListTile(
@@ -133,7 +146,7 @@ class _NotesAddState extends State<NotesAdd> {
                   value: SingingCharacter.Payment,
                                 groupValue: _character,
                                 onChanged: (SingingCharacter value) {
-                                  setState(() { _character = value; _note.ownerNotes=true; });
+                                  setState(() { _character = value; _note.paymentNotes=true;  _note.ownerNotes=false;});
                                 },
                   )),
           FlatButton(

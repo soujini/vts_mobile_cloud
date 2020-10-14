@@ -15,7 +15,9 @@ class CancelledCallsList extends StatefulWidget {
   int selectedTabIndex;
   final Function notifyParent;
   var refreshMainTabController;
-  CancelledCallsList({Key key, this.userRole, this.dispatchPaging, this.selectedTabIndex, this.notifyParent, this.refreshMainTabController}) : super(key: key);
+  int selectedCallsTabIndex;
+
+  CancelledCallsList({Key key, this.userRole, this.dispatchPaging, this.selectedTabIndex, this.notifyParent, this.refreshMainTabController,this.selectedCallsTabIndex}) : super(key: key);
 
   @override
   _CancelledCallsList createState() => _CancelledCallsList();
@@ -129,12 +131,9 @@ class _CancelledCallsList extends State<CancelledCallsList> {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return UpdateStatus(
-                                    id: cancelledCalls.id,
-                                    dispatchStatusName: cancelledCalls.dispatchStatusName,
-                                    dispatchInstructionsString:cancelledCalls.dispatchInstructions_string,
+                                        selectedCall: cancelledCalls,
                                     userRole:widget.userRole,
                                     dispatchPaging: widget.dispatchPaging,
-                                    towType: cancelledCalls.towType,
                                     notifyParent:refresh
                                     );
                                   });

@@ -125,7 +125,7 @@ class _PhotosList extends State<PhotosList> {
                   Spacer(),
 
                   Visibility(
-                      // visible: (widget.userRole == "3" && towedVehicleNotes.vehicleCreatedByUserId.toString() == widget.userId.toString()) || widget.userRole != "3" ? true : false,
+                      visible: (widget.userRole == "3" && towedVehiclePictures.vehicleCreatedByUserId.toString() == widget.userId.toString()) || widget.userRole != "3" ? true : false,
                       // visible:towedVehicleNotes.vehicleCreatedByUserId != userId && widget.userRole == "3" ? false :true,
                       // visible:true,
                       child: IconButton(

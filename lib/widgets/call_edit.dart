@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/widgets/charges_add.dart';
 import 'package:vts_mobile_cloud/widgets/photos_list.dart';
 import 'package:vts_mobile_cloud/widgets/tow_jurisdiction_modal.dart';
@@ -76,7 +77,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //              )));
 //    });
 //  }
-//   _tabController = TabController();
   var _billToController = new TextEditingController();
   var _towedInvoiceController = new TextEditingController();
   var _dispatchMemberController = new TextEditingController();
@@ -840,43 +840,43 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
         .value;
 
     //ReceivedTime
-    // _call.dispatchReceivedTime = x[0].dispatchReceivedTime != null ? x[0].dispatchReceivedTime : '';
+     _call.dispatchReceivedTime = x[0].dispatchReceivedTime != null ? x[0].dispatchReceivedTime : '';
 //    _dispatchReceivedTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchReceivedTime))
 //            .value;
 
     //Dispatch
-//    _call.dispatchDispatchTime = x[0].dispatchDispatchTime;
+    _call.dispatchDispatchTime = x[0].dispatchDispatchTime != null ? x[0].dispatchDispatchTime : '';
 //    _dispatchDispatchTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchDispatchTime))
 //            .value;
 
     //Enroute
-//    _call.dispatchEnrouteTime = x[0].dispatchEnrouteTime;
+    _call.dispatchEnrouteTime = x[0].dispatchEnrouteTime != null ? x[0].dispatchReceivedTime : '';
 //    _dispatchEnrouteTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchEnrouteTime))
 //            .value;
 
     //Onsite
-//    _call.dispatchOnsiteTime = x[0].dispatchOnsiteTime;
+    _call.dispatchOnsiteTime = x[0].dispatchOnsiteTime != null ? x[0].dispatchOnsiteTime : '';
 //    _dispatchOnsiteTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchOnsiteTime))
 //            .value;
 
     //Rolling
-//    _call.dispatchRollingTime = x[0].dispatchRollingTime;
+    _call.dispatchRollingTime = x[0].dispatchRollingTime != null ? x[0].dispatchRollingTime : '';
 //    _dispatchRollingTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchRollingTime))
 //            .value;
 
     //Arrived
-//    _call.dispatchArrivedTime = x[0].dispatchArrivedTime;
+    _call.dispatchArrivedTime = x[0].dispatchArrivedTime != null ? x[0].dispatchArrivedTime : '';
 //    _dispatchArrivedTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchArrivedTime))
 //            .value;
 
     //Cleared
-//    _call.dispatchClearedTime = x[0].dispatchClearedTime;
+    _call.dispatchClearedTime = x[0].dispatchClearedTime != null ? x[0].dispatchClearedTime : '';
 //    _dispatchClearedTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchClearedTime))
 //            .value;
@@ -1033,29 +1033,44 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       return null;
   }
 
+  // resetDiscountAmount(){
+  //     _call.towedDiscountAmount = "0.00";
+  //     _towedDiscountAmountController.value =
+  //         new TextEditingController.fromValue(
+  //             new TextEditingValue(text: _call.towedDiscountAmount.toString()))
+  //             .value;
+  // }
+  //
+  // resetDiscountRate(){
+  //     _call.towedDiscountRate = "0.00";
+  //     _towedDiscountRateController.value =
+  //         new TextEditingController.fromValue(
+  //             new TextEditingValue(text: _call.towedDiscountRate.toString()))
+  //             .value;
+  // }
+
   String validateDiscountRate(String value) {
-    print(double.parse(value));
-    return null;
-    // if(double.parse(value).toStringAsFixed(2) < double.parse("0") || double.parse(value) > 100){
-    //   return 'Please enter a valid Discount Rate %';
-    // }
-    // else{
-    //   return null;
-    // }
-   // Pattern pattern = "^([0-9]\.[0-9]{1}|[0-9]\.[0-9]{2}|\.[0-9]{2}|[1-9][0-9]\.[0-9]{1}|[1-9][0-9]\.[0-9]{2}|[0-9][0-9]|[1-9][0-9]\.[0-9]{2})\$|^([0-9]|[0-9][0-9]|[0-99])\$|^100\$";
-   //  // Pattern pattern = "^(\+|\-)(0|([1-9][0-9]*))(\.[0-9]{1,2})?\$)|(^(0{0,1}|([1-9][0-9]*))(\.[0-9]{1,2})?\$";
-   //   RegExp regex = new RegExp(pattern);
-   //  if (!regex.hasMatch(value))
-   //    return 'Please enter a valid Discount Rate %';
-   //  else
-   //    return null;
+    if(value != ''){
+      if(double.tryParse(value) != null){ //valid num
+        if(double.parse(value) >= 0 && double.parse(value) <= 100){
+          return null;
+        }
+        else{
+          return 'Please enter a valid Discount Rate %';
+        }
+      }
+    }
   }
   String validateDiscountAmount(String value) {
-    if(double.parse(value) > _call.towedSubTotal){
-    return "Please enter a valid Discount Amount (Max : \$" +_call.towedSubTotal.toStringAsFixed(2) + ")";
-    }
-else{
-  return null;
+    if(value != ''){
+      if(double.tryParse(value) != null){ //valid num
+        if(double.parse(value) >= 0 && double.parse(value) <= _call.towedSubTotal){
+          return null;
+        }
+        else{
+          return 'Please enter a valid Discount Amount';
+        }
+      }
     }
   }
 
@@ -1095,18 +1110,31 @@ else{
       await Provider.of<Calls>(context, listen: false).updateCall(_call);
       var response = Provider.of<Calls>(context, listen: false).updateResponse;
       if (response['errorStatus'] == "true") {
+        await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+            .processChangeCharges(_call.id, 0);
+        var processChangeChargeResponse = Provider
+            .of<ProcessTowedVehiclesVM>(context, listen: false)
+            .processChangeChargeResponse;
+        if (processChangeChargeResponse["errorStatus"] == "false") {
+          isLoading = false;
+          _showErrorMessage(
+              context, processChangeChargeResponse["errorMessage"]);
+        }
+        else{
           setState(() {
             isLoading = false;
           });
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) =>
-                    new SuccessScreen("Call Successfully Updated!")));
+          Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (context) =>
+                      new SuccessScreen("Call Successfully Updated!")));
 
-        Timer(Duration(milliseconds: 3000), () {
-          Navigator.pop(context);
-        });
+          Timer(Duration(milliseconds: 3000), () {
+            Navigator.pop(context);
+
+          });
+        }
       } else {
           isLoading = false;
         _showErrorMessage(context, response['errorMessage']);
@@ -1118,13 +1146,18 @@ else{
   }
 
   var selectedCall;
-
+  bool shouldListenTowedDiscountRateController = false;
+  bool shouldListenTowedDiscountAmountController = false;
   @override
   void initState() {
     super.initState();
     getRole();
     getUserId();
     selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+
+    // Start listening to changes.
+    // _towedDiscountRateController.addListener(resetDiscountAmount);
+    // _towedDiscountAmountController.addListener(resetDiscountRate);
   }
 
   @override
@@ -1174,9 +1207,17 @@ refresh(){
       tabIndex=6;
     });
   }
+  refreshPage(){
+    bla();
+    setState(() {
+      tabIndex=0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    shouldListenTowedDiscountRateController=true;
+    shouldListenTowedDiscountAmountController=true;
     super.build(context);
     // TODO: implement build
     return DefaultTabController(
@@ -1241,24 +1282,24 @@ refresh(){
               title: Text('EDIT CALL',
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
               actions: <Widget>[
-                new IconButton(
-                  icon: new Icon(Icons.update, size: 20.0),
-                  tooltip: 'Update Status',
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-
-                          return UpdateStatus(
-                              id: selectedCall.id,
-                              dispatchStatusName: selectedCall.dispatchStatusName,
-                              dispatchInstructionsString:selectedCall.dispatchInstructions_string,
-                              userRole:userRole,
-                              dispatchPaging: dispatchPaging,
-                              towType: selectedCall.towType);
-                        });
-                  },
-                ),
+                // new IconButton(
+                //   icon: new Icon(Icons.update, size: 20.0),
+                //   tooltip: 'Update Status',
+                //   onPressed: () {
+                //     showDialog(
+                //         context: context,
+                //         builder: (BuildContext context) {
+                //
+                //           return UpdateStatus(
+                //               selectedCall:selectedCall,
+                //               userRole:userRole,
+                //               dispatchPaging: dispatchPaging,
+                //               notifyParent: refreshPage,
+                //               fromPage: "edit_call",
+                //               );
+                //         });
+                //   },
+                // ),
                 new IconButton(
                   icon: new Icon(Icons.attach_money, size: 20.0),
                   tooltip: 'Add Charges',
@@ -1400,7 +1441,7 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitAmountController,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
                                   decoration: new InputDecoration(
                                     labelText: "Limit \$",
                                   ),
@@ -1416,7 +1457,7 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitMilesController,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
                                   decoration: new InputDecoration(
                                     labelText: "Limit Miles",
                                   ),
@@ -1437,9 +1478,10 @@ refresh(){
                                labelText: "Discount Rate % (Range 0 - 100)",
                              ),
                              validator: validateDiscountRate,
+                             onChanged: (val) => {_towedDiscountAmountController.clear()},
                              onTap: () => {_towedDiscountRateController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountRateController.value.text.length)},
                              onSaved: (val) =>
-                                 setState(() => _call.towedDiscountRate = double.parse(val)),
+                                 setState(() => _call.towedDiscountRate = val),
                            ),
                          ),
                          new ListTile(
@@ -1449,14 +1491,15 @@ refresh(){
                                  fontSize: 14,
                                  fontWeight: FontWeight.w500),
                              controller: _towedDiscountAmountController,
-                             keyboardType: TextInputType.numberWithOptions(decimal: true),
+                             keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
                              decoration: new InputDecoration(
                                labelText: "Discount Amount (Max : \$" +_call.towedSubTotal.toString() + ")",
                              ),
                              validator: validateDiscountAmount,
+                             onChanged: (val) => {_towedDiscountRateController.clear()},
                              onTap: () => {_towedDiscountAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountAmountController.value.text.length)},
                              onSaved: (val) =>
-                                 setState(() => _call.towedDiscountAmount = double.parse(val)),
+                                 setState(() => _call.towedDiscountAmount = val),
                            ),
                          ),
 //                          ListTile(
@@ -1677,7 +1720,8 @@ refresh(){
                               ),
                               new ListTile(
                                 title: new TextFormField(
-                                    readOnly: _isFormReadOnly,
+                                    readOnly: true,
+                                    enabled: !_isFormReadOnly,
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),

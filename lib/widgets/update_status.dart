@@ -6,15 +6,14 @@ import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class UpdateStatus extends StatefulWidget {
-  int id=0;
-  String dispatchStatusName="";
-  String dispatchInstructionsString="";
+  var selectedCall;
   String userRole;
   var dispatchPaging;
-  int towType;
+  var fromPage;
   bool isLoading=false;
   final Function notifyParent;
-  UpdateStatus({Key key, this.id, this.dispatchStatusName, this.dispatchInstructionsString, this.userRole, this.dispatchPaging, this.towType,this.notifyParent});
+
+  UpdateStatus({Key key, this.selectedCall, this.userRole, this.dispatchPaging,this.notifyParent, this.fromPage});
 
   @override
   State<StatefulWidget> createState() {
@@ -29,7 +28,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
   String selectedStatus="";
 
   smsDriver(BuildContext context) async{
-    await Provider.of<ProcessTowedVehiclesVM>(context, listen:false).processDriverSMSMessage(widget.id);
+    await Provider.of<ProcessTowedVehiclesVM>(context, listen:false).processDriverSMSMessage(widget.selectedCall.id);
     var response = Provider.of<ProcessTowedVehiclesVM>(context, listen:false).smsResult;
     if(response[0].errorStatus == false){
      Navigator.of(context).pop();
@@ -96,12 +95,12 @@ class _UpdateStatusState extends State<UpdateStatus> {
         // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Clear Ticket'),
+            title: Text('Clear Call'),
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
                   Text(
-                      "Are you sure you want to move this ticket to Tow or Impound?"),
+                      "Are you sure you want to move this call to Tow or Impound?"),
                 ],
               ),
             ),
@@ -174,20 +173,22 @@ class _UpdateStatusState extends State<UpdateStatus> {
   }
 
   setStatus(String mode, bool moveStatus){
-    setState(() =>widget.isLoading=true);
+    // setState(() =>widget.isLoading=true);
        Provider.of<Calls>(context, listen: false)
            .update(
-           widget.id, selectedStatus, widget.dispatchInstructionsString != "null" || widget.dispatchInstructionsString != null ? widget.dispatchInstructionsString : '' , mode, moveStatus,widget.towType)
+           widget.selectedCall, selectedStatus, mode, moveStatus)
            .then((res) {
-         setState(() =>widget.isLoading=false);
+         // setState(() =>widget.isLoading=false);
          if(selectedStatus == 'Dispatch' && widget.dispatchPaging == true) {
            showSMSDriverDialog();
          }
          else{
            Navigator.pop(context);
            widget.notifyParent();
-           // Navigator.push(context,
-           //     new MaterialPageRoute(builder: (context) => new CallsScreen()));
+           // if(widget.fromPage != "edit_call")
+           //   {
+           //      widget.notifyParent();
+           //   }
          }
        });
   }
@@ -228,7 +229,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
 //                          child: Text('ACCEPT')))
 //              ),
             Visibility(
-              visible:widget.dispatchStatusName == "Dispatch" || widget.dispatchStatusName == "Received" || widget.dispatchStatusName == "Enroute" ? true : false,
+              visible:widget.selectedCall.dispatchStatusName == "Dispatch" || widget.selectedCall.dispatchStatusName == "Received" || widget.selectedCall.dispatchStatusName == "Enroute" ? true : false,
               child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -244,7 +245,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            if(widget.dispatchStatusName != "Dispatch"){
+                            if(widget.selectedCall.dispatchStatusName != "Dispatch"){
                               setState(() =>selectedStatus="Dispatch");
                             }
                             else{
@@ -254,7 +255,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           child: Text('DISPATCH')))
               )),
             Visibility(
-                visible:widget.dispatchStatusName == "Enroute" || widget.dispatchStatusName == "Dispatch" || widget.dispatchStatusName == "Onsite" ? true : false,
+                visible:widget.selectedCall.dispatchStatusName == "Enroute" || widget.selectedCall.dispatchStatusName == "Dispatch" || widget.selectedCall.dispatchStatusName == "Onsite" ? true : false,
               child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -270,7 +271,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            if(widget.dispatchStatusName != "Enroute") {
+                            if(widget.selectedCall.dispatchStatusName != "Enroute") {
                               setState(() => selectedStatus = "Enroute");
                             }
                             else{
@@ -281,7 +282,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           child: Text('ENROUTE')))
               )),
             Visibility(
-              visible:widget.dispatchStatusName == "Onsite" || widget.dispatchStatusName == "Enroute" || widget.dispatchStatusName == "Rolling" ? true : false,
+              visible:widget.selectedCall.dispatchStatusName == "Onsite" || widget.selectedCall.dispatchStatusName == "Enroute" || widget.selectedCall.dispatchStatusName == "Rolling" ? true : false,
               child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -298,7 +299,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
 
                           onPressed: () {
-                            if(widget.dispatchStatusName != "Onsite") {
+                            if(widget.selectedCall.dispatchStatusName != "Onsite") {
                               setState(() => selectedStatus = "Onsite");
                             }
                             else{
@@ -309,7 +310,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           child: Text('ONSITE')))
               )),
             Visibility(
-              visible:widget.dispatchStatusName == "Rolling" || widget.dispatchStatusName == "Onsite" || widget.dispatchStatusName == "Arrived" ? true : false,
+              visible:widget.selectedCall.dispatchStatusName == "Rolling" || widget.selectedCall.dispatchStatusName == "Onsite" || widget.selectedCall.dispatchStatusName == "Arrived" ? true : false,
               child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -325,7 +326,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            if(widget.dispatchStatusName != "Rolling") {
+                            if(widget.selectedCall.dispatchStatusName != "Rolling") {
                               setState(() => selectedStatus = "Rolling");
                             }
                             else{
@@ -335,7 +336,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           child: Text('ROLLING')))
               )),
             Visibility(
-                visible:widget.dispatchStatusName == "Arrived" || widget.dispatchStatusName == "Rolling" || widget.dispatchStatusName == "Cleared" ? true : false,
+                visible:widget.selectedCall.dispatchStatusName == "Arrived" || widget.selectedCall.dispatchStatusName == "Rolling" || widget.selectedCall.dispatchStatusName == "Cleared" ? true : false,
               child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -351,7 +352,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           padding: EdgeInsets.all(8.0),
                           splashColor: Colors.blueAccent,
                           onPressed: () {
-                            if(widget.dispatchStatusName != "Arrived") {
+                            if(widget.selectedCall.dispatchStatusName != "Arrived") {
                               setState(() => selectedStatus = "Arrived");
                             }
                             else{
@@ -362,7 +363,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           child: Text('ARRIVED')))
               )),
             Visibility(
-                visible:widget.dispatchStatusName == "Cleared" || widget.dispatchStatusName == "Arrived" && widget.userRole != "3" ? true : false,
+                visible:widget.selectedCall.dispatchStatusName == "Cleared" || widget.selectedCall.dispatchStatusName == "Arrived" && widget.userRole != "3" ? true : false,
               child:Padding(
                   padding: EdgeInsets.all(8.0),
                   child: SizedBox(
@@ -379,7 +380,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                           splashColor: Colors.blueAccent,
 
                           onPressed: () {
-                          if(widget.dispatchStatusName != "Cleared") {
+                          if(widget.selectedCall.dispatchStatusName != "Cleared") {
                             setState(() => selectedStatus = "Cleared");
                           }
                           else{
@@ -421,7 +422,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
                               height: 50,
                               child: FlatButton(
 //                                  color: Color(0xff6ACA25),
-                                  color:  widget.dispatchStatusName == "Arrived" && widget.userRole == "3" ? Colors.grey : Color(0xff1C3764),
+                                  color:  widget.selectedCall.dispatchStatusName == "Arrived" && widget.userRole == "3" ? Colors.grey : Color(0xff1C3764),
                                   textColor: Colors.white,
                                   shape: new RoundedRectangleBorder(
                                       borderRadius: new BorderRadius
@@ -429,11 +430,11 @@ class _UpdateStatusState extends State<UpdateStatus> {
                                   disabledTextColor: Colors.black,
                                   padding: EdgeInsets.all(8.0),
                                   splashColor: Colors.blueAccent,
-                                  onPressed: () => widget.dispatchStatusName == "Arrived" && widget.userRole == "3" ? '' : checkStatus(),
+                                  onPressed: () => widget.selectedCall.dispatchStatusName == "Arrived" && widget.userRole == "3" ? '' : checkStatus(),
                                   child: Align(
                                       alignment: Alignment
                                           .center,
-                                      child: Text( widget.dispatchStatusName == "Arrived" && widget.userRole == "3" ? 'SET TO ARRIVED' : 'SET TO \n'+ selectedStatus.toUpperCase(),
+                                      child: Text( widget.selectedCall.dispatchStatusName == "Arrived" && widget.userRole == "3" ? 'SET TO ARRIVED' : 'SET TO \n'+ selectedStatus.toUpperCase(),
                                           textAlign: TextAlign.center)
                                   )
                               )
@@ -451,7 +452,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
      );
   }
 getCurrentStatusColor(String currentStatus) {
-  if (widget.dispatchStatusName == currentStatus)
+  if (widget.selectedCall.dispatchStatusName == currentStatus)
     {
     return Colors.green;
     }

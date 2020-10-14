@@ -15,7 +15,9 @@ class CompletedCallsList extends StatefulWidget {
   int selectedTabIndex;
   final Function notifyParent;
   var refreshMainTabController;
-  CompletedCallsList({Key key, this.userRole, this.dispatchPaging, this.selectedTabIndex, this.notifyParent, this.refreshMainTabController}) : super(key: key);
+  int selectedCallsTabIndex;
+
+  CompletedCallsList({Key key, this.userRole, this.dispatchPaging, this.selectedTabIndex, this.notifyParent, this.refreshMainTabController, this.selectedCallsTabIndex}) : super(key: key);
 
   @override
   _CompletedCallsList createState() => _CompletedCallsList();
@@ -133,12 +135,9 @@ class _CompletedCallsList extends State<CompletedCallsList> {
                                   builder: (BuildContext context) {
 
                                     return UpdateStatus(
-                                        id: completedCalls.id,
-                                        dispatchStatusName: completedCalls.dispatchStatusName,
-                                        dispatchInstructionsString:completedCalls.dispatchInstructions_string,
+                                        selectedCall: completedCalls,
                                         userRole:widget.userRole,
                                         dispatchPaging: widget.dispatchPaging,
-                                        towType: completedCalls.towType,
                                         notifyParent:refresh
                                     );
                                   });

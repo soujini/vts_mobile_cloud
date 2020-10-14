@@ -15,15 +15,14 @@ class ActiveCallsList extends StatefulWidget {
   int selectedTabIndex = 0;
   final Function notifyParent;
   var refreshMainTabController;
-
-  ActiveCallsList({Key key, this.userRole, this.dispatchPaging, this.notifyParent, this.refreshMainTabController}) : super(key: key);
+  int selectedCallsTabIndex;
+  ActiveCallsList({Key key, this.userRole, this.dispatchPaging, this.notifyParent, this.refreshMainTabController, this.selectedCallsTabIndex}) : super(key: key);
 
   @override
   _ActiveCallsList createState() => _ActiveCallsList();
 }
 class _ActiveCallsList extends State<ActiveCallsList> {
   static const int PAGE_SIZE = 15;
-  String s1;
   // @override
   void initState() {
     super.initState();
@@ -143,12 +142,9 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                                   builder: (BuildContext context) {
                                     return
                                       UpdateStatus(
-                                          id: activeCalls.id,
-                                          dispatchStatusName: activeCalls.dispatchStatusName,
-                                          dispatchInstructionsString:activeCalls.dispatchInstructions_string,
+                                          selectedCall: activeCalls,
                                           userRole:widget.userRole,
                                           dispatchPaging: widget.dispatchPaging,
-                                          towType: activeCalls.towType,
                                           notifyParent:refresh
                                       );
                                   });
@@ -293,6 +289,7 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                       ):Row(),
                       Padding(
                           padding: EdgeInsets.symmetric(vertical: 10),
+
                           child: (Column(
                               children: <Widget>[
                                 activeCalls.dispatchInstructions_string != null && activeCalls.dispatchInstructions_string != '' && activeCalls.dispatchInstructions_string != 'null' && activeCalls.dispatchInstructions_string != '--'?

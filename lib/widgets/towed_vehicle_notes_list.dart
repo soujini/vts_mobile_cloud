@@ -112,8 +112,9 @@ class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
 
 
   Widget _itemBuilder(context, towedVehicleNotes, _) {
-    print(widget.userId);
     towedVehicleNotes.vehicleNotes_string = towedVehicleNotes.vehicleNotes_string.replaceAll("\\r\\n", "\n");
+    towedVehicleNotes.vehicleNotes_string = towedVehicleNotes.vehicleNotes_string.replaceAll("\\n", "\n");
+
      return Column(children: <Widget>[
       Card(
           child: Padding(

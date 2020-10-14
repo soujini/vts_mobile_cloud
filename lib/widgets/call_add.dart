@@ -628,16 +628,30 @@ class CallAddState extends State<CallAdd> {
           _showErrorMessage(context, response["errorMessage"]);
         }
         else {
-          Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (context) =>
-                  new SuccessScreen("Call Successfully Added!")));
+          await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+              .processChangeCharges(response["id"], 0);
+          var processChangeChargeResponse = Provider
+              .of<ProcessTowedVehiclesVM>(context, listen: false)
+              .processChangeChargeResponse;
+          if (processChangeChargeResponse["errorStatus"] == "false") {
+            // widget.isLoading = false;
+            _showErrorMessage(
+                context, processChangeChargeResponse["errorMessage"]);
+          }
+          else {
+            Navigator.push(
+                context,
+                new MaterialPageRoute(
+                    builder: (context) =>
+                    new SuccessScreen("Call Successfully Added!")));
 
-          Timer(Duration(milliseconds: 3000), () {
-            Navigator.pop(context);
-            refreshToMainScreen();
-          });
+            Timer(Duration(milliseconds: 3000), () {
+              Navigator.pop(context);
+              refreshToMainScreen();
+            });
+          }
+
+
         }
       }
     }

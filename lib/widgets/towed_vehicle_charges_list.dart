@@ -57,6 +57,7 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
        });
 
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+
     await Provider.of<TowedVehicleChargesVM>(context, listen: false).delete(id, selectedCall.id);
      var chargesDeleteResponse = Provider.of<TowedVehicleChargesVM>(context, listen: false).chargesDeleteResponse;
        setState(() {

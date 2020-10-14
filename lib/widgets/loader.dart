@@ -26,7 +26,7 @@ class _LoaderState extends State<Loader> with SingleTickerProviderStateMixin{
     super.initState();
 
     controller =AnimationController(vsync: this, duration: Duration(seconds: 5));
-
+    // vsync: this,
     animation_rotation = Tween<double>(
         begin: 0.0,
         end: 1.0

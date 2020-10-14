@@ -30,13 +30,19 @@ class _NotesEditState extends State<NotesEdit> {
   }
   getValues() {
     widget.isLoading = true;
+
     setState(() {
       _vehicleNotes_stringController.value = new TextEditingController.fromValue(
           new TextEditingValue(text: _note.vehicleNotes_string))
           .value;
 
-      _note.paymentNotes = _note.paymentNotes;
-      _note.ownerNotes = _note.ownerNotes;
+      if(_note.paymentNotes == true){
+        _character = SingingCharacter.Payment;
+      }
+      else{
+        _character = SingingCharacter.Owner;
+      }
+      // _note.ownerNotes = _note.ownerNotes;
       widget.isLoading = false;
     });
   }
@@ -135,7 +141,7 @@ class _NotesEditState extends State<NotesEdit> {
                         value: SingingCharacter.Owner,
                         groupValue: _character,
                         onChanged: (SingingCharacter value) {
-                          setState(() { _character = value;  _note.paymentNotes=true; });
+                          setState(() { _character = value;  _note.ownerNotes=true; _note.paymentNotes=false;});
                         },
                       )),
                   ListTile(
@@ -144,7 +150,7 @@ class _NotesEditState extends State<NotesEdit> {
                         value: SingingCharacter.Payment,
                         groupValue: _character,
                         onChanged: (SingingCharacter value) {
-                          setState(() { _character = value; _note.ownerNotes=true; });
+                          setState(() { _character = value; _note.paymentNotes=true; _note.ownerNotes=false; });
                         },
                       )),
                   FlatButton(

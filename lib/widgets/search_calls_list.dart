@@ -136,12 +136,9 @@ class _SearchCallsList extends State<SearchCallsList> {
                                   builder: (BuildContext context) {
 
                                     return UpdateStatus(
-                                        id: searchedCalls.id,
-                                        dispatchStatusName: searchedCalls.dispatchStatusName,
-                                        dispatchInstructionsString:searchedCalls.dispatchInstructions_string,
+                                        selectedCall: searchedCalls,
                                         userRole:widget.userRole,
                                         dispatchPaging: widget.dispatchPaging,
-                                        towType: searchedCalls.towType,
                                         notifyParent:refresh
                                     );
                                   });
@@ -328,6 +325,7 @@ class _SearchCallsList extends State<SearchCallsList> {
                                     ]))) : Row(),
                             Padding(
                                 padding: EdgeInsets.symmetric(vertical: 10),
+
                                 child: (Row(
                                     // crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[

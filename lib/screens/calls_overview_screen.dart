@@ -43,15 +43,13 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
       dispatchPaging = token;
     });
   }
-
   void refresh() {
-    print("refreshing");
    }
 
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
+    // super.build(context);
     return userRole != '' ?  DefaultTabController(
       length: 3,
        initialIndex:selectedTabIndex == null ? 0 : selectedTabIndex,
@@ -59,6 +57,7 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
           appBar: AppBar(
             title: Text('CALLS', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
             bottom: TabBar(
+              key:UniqueKey(),
               indicatorColor: Colors.green,
               labelColor: Colors.white,
               onTap: (index) {
@@ -103,9 +102,9 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
           ),
           body:  TabBarView(
             children: [
-              selectedTabIndex == 0 ? ActiveCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh, refreshMainTabController:refreshMainTabController) : Text(''),
-              selectedTabIndex == 1 ? CompletedCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController) : Text(''),
-              selectedTabIndex == 2 ? CancelledCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController) : Text(''),
+              ActiveCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh, refreshMainTabController:refreshMainTabController, selectedCallsTabIndex:selectedTabIndex),
+              CompletedCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController, selectedCallsTabIndex:selectedTabIndex),
+              CancelledCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController,  selectedCallsTabIndex:selectedTabIndex),
             ],
           )) ,
     ) :'';

@@ -78,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
 
         currentIndex: _currentIndex,
       ),
-      body: CustomNavigator(
+      body: new CustomNavigator(
         navigatorKey: navigatorKey,
         home: getScreen(),
         //Specify your page route [PageRoutes.materialPageRoute] or [PageRoutes.cupertinoPageRoute]
@@ -129,14 +129,14 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
   }
 
   final _itemsDriver = [
-    BottomNavigationBarItem(icon: Icon(Icons.directions_car), title: Text('CALLS')),
-    BottomNavigationBarItem(icon: Icon(Icons.search), title: Text('SEARCH')),
-    BottomNavigationBarItem(icon: Icon(Icons.info), title: Text('ABOUT')),
+    BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: 'CALLS'),
+    BottomNavigationBarItem(icon: Icon(Icons.search), label: 'SEARCH'),
+    BottomNavigationBarItem(icon: Icon(Icons.info), label: 'ABOUT'),
   ];
   final _itemsDriverManager = [
-    BottomNavigationBarItem(icon: Icon(Icons.directions_car), title: Text('CALLS')),
-    BottomNavigationBarItem(icon: Icon(Icons.search), title: Text('SEARCH')),
-    BottomNavigationBarItem(icon: Icon(Icons.add), title: Text('ADD')),
-    BottomNavigationBarItem(icon: Icon(Icons.info), title: Text('ABOUT')),
+    BottomNavigationBarItem(icon: Icon(Icons.directions_car), label: 'CALLS'),
+    BottomNavigationBarItem(icon: Icon(Icons.search), label: 'SEARCH'),
+    BottomNavigationBarItem(icon: Icon(Icons.add), label: 'ADD'),
+    BottomNavigationBarItem(icon: Icon(Icons.info), label:"ABOUT" ),
   ];
 }
