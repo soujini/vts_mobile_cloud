@@ -80,6 +80,8 @@ PODS:
     - GoogleUtilities/Logger
   - image_picker (0.0.1):
     - Flutter
+  - image_picker_for_web (0.0.1):
+    - Flutter
   - "location_permissions (3.0.0+1)":
     - Flutter
   - nanopb (0.3.9011):
@@ -101,6 +103,8 @@ PODS:
     - Flutter
   - url_launcher_web (0.0.1):
     - Flutter
+  - url_launcher_windows (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
@@ -112,6 +116,7 @@ DEPENDENCIES:
   - get_version (from `.symlinks/plugins/get_version/ios`)
   - google_api_availability (from `.symlinks/plugins/google_api_availability/ios`)
   - image_picker (from `.symlinks/plugins/image_picker/ios`)
+  - image_picker_for_web (from `.symlinks/plugins/image_picker_for_web/ios`)
   - location_permissions (from `.symlinks/plugins/location_permissions/ios`)
   - package_info (from `.symlinks/plugins/package_info/ios`)
   - phone_number (from `.symlinks/plugins/phone_number/ios`)
@@ -119,6 +124,7 @@ DEPENDENCIES:
   - url_launcher_linux (from `.symlinks/plugins/url_launcher_linux/ios`)
   - url_launcher_macos (from `.symlinks/plugins/url_launcher_macos/ios`)
   - url_launcher_web (from `.symlinks/plugins/url_launcher_web/ios`)
+  - url_launcher_windows (from `.symlinks/plugins/url_launcher_windows/ios`)
 
 SPEC REPOS:
   trunk:
@@ -156,6 +162,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_api_availability/ios"
   image_picker:
     :path: ".symlinks/plugins/image_picker/ios"
+  image_picker_for_web:
+    :path: ".symlinks/plugins/image_picker_for_web/ios"
   location_permissions:
     :path: ".symlinks/plugins/location_permissions/ios"
   package_info:
@@ -170,6 +178,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/url_launcher_macos/ios"
   url_launcher_web:
     :path: ".symlinks/plugins/url_launcher_web/ios"
+  url_launcher_windows:
+    :path: ".symlinks/plugins/url_launcher_windows/ios"
 
 SPEC CHECKSUMS:
   Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
@@ -193,6 +203,7 @@ SPEC CHECKSUMS:
   GoogleDataTransportCCTSupport: 202d7cdf9c4a7d81a2bb7f7e7e1ba6faa421b1f2
   GoogleUtilities: 29bd0d8f850efbd28cff6d99e8b7da1f8d236bcf
   image_picker: 9c3312491f862b28d21ecd8fdf0ee14e601b3f09
+  image_picker_for_web: 5f72402be509f2692e68a8b5cc231a499a239fc6
   location_permissions: 7e0f9aa0f60deb8ff93ddf0e2a164c7e8197bc94
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   package_info: 873975fc26034f0b863a300ad47e7f1ac6c7ec62
@@ -202,6 +213,7 @@ SPEC CHECKSUMS:
   url_launcher_linux: ac237cb7a8058736e4aae38bdbcc748a4b394cc0
   url_launcher_macos: fd7894421cd39320dce5f292fc99ea9270b2a313
   url_launcher_web: e5527357f037c87560776e36436bf2b0288b965c
+  url_launcher_windows: 683d7c283894db8d1914d3ab2223b20cc1ad95d5
 
 PODFILE CHECKSUM: df7c48fbf3fad1265122f42055a726b3f29fa22f
 
