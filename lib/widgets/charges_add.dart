@@ -223,7 +223,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _discountQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',
@@ -241,7 +241,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
                     labelText: 'Rate *',

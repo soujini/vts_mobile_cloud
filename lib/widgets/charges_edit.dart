@@ -369,7 +369,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                             fontSize: 14, fontWeight: FontWeight.w500),
                         controller: this._discountQuantityController,
                         keyboardType:
-                            TextInputType.numberWithOptions(signed:true, decimal: true),
+                            TextInputType.numberWithOptions(decimal: true),
                         decoration: new InputDecoration(
                           labelText: 'Discount Quantity',
                         ),
@@ -393,7 +393,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
                         keyboardType:
-                            TextInputType.numberWithOptions(signed:true, decimal: true),
+                            TextInputType.numberWithOptions(decimal: true),
                         controller: _chargesRateController,
                         decoration: new InputDecoration(
                           labelText: 'Rate *',
@@ -427,7 +427,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                             fontSize: 14, fontWeight: FontWeight.w500),
                         enabled: false,
                         keyboardType:
-                            TextInputType.numberWithOptions(signed:true, decimal: true),
+                            TextInputType.numberWithOptions(decimal: true),
                         controller: _discountRateController,
                         decoration: new InputDecoration(
                           labelText: 'Discount',
@@ -497,7 +497,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
                         keyboardType:
-                            TextInputType.numberWithOptions(signed:true, decimal: true),
+                            TextInputType.numberWithOptions(decimal: true),
                         controller: _totalChargesController,
                         decoration: new InputDecoration(
                           labelText: 'Total Charges',
