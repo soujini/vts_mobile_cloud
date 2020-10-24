@@ -9,6 +9,7 @@ import '../models/call_add.dart';
 import '../providers/secureStoreMixin_provider.dart';
 import '../providers/common_provider.dart';
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
 
 class Calls with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
@@ -317,16 +318,12 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     await  getSecureStore('timeZoneName', (token) {
       timeZoneName=token;
     });
-
-    var geoLocator = GeoLocator();
-
-    try {
-      var a  = await geoLocator.getCurrentPosition();
-      //if(a == null.... location has been turned off)
-
-    } catch (e) {
-      print('error');
-    }
+    bool isLocationServiceEnabled  = await Geolocator.isLocationServiceEnabled();
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    //var geoLocator = GeoLocator();
+     //geoLocator.getCurrentPosition();
+     var latitude = position.latitude;
+     var longitude = position.longitude;
 
     if(fieldName == "Dispatch")
     {
@@ -335,8 +332,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "dispatchDate:"+formattedDate,
         "dispatchDispatchTime:"+formattedTime2,
         "towedStatus:C",
-        "lastLatitude:"+geoLocator.latitude,
-        "lastLongitude:"+geoLocator.longitude,
+        "lastLatitude:"+latitude.toString(),
+        "lastLongitude:"+longitude.toString(),
         "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchEnrouteTime:00^00",
         // +selectedCall.dispatchEnrouteTime.toString().replaceAll(':','^'),//not in view Mandatory field
@@ -354,8 +351,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "pinNumber:"+pinNumber,
         "dispatchEnrouteTime:"+formattedTime2,
         "towedStatus:C",
-        "lastLatitude:"+geoLocator.latitude,
-        "lastLongitude:"+geoLocator.longitude,
+        "lastLatitude:"+latitude.toString(),
+        "lastLongitude:"+longitude.toString(),
         "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchDispatchTime:"+selectedCall.dispatchDispatchTime.toString().replaceAll(':','^'),//not in view Mandatory field
 
@@ -374,8 +371,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "pinNumber:"+pinNumber,
         "dispatchOnsiteTime:"+formattedTime2,
         "towedStatus:C",
-        "lastLatitude:"+geoLocator.latitude,
-        "lastLongitude:"+geoLocator.longitude,
+        "lastLatitude:"+latitude.toString(),
+        "lastLongitude:"+longitude.toString(),
         "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchDispatchTime:"+selectedCall.dispatchDispatchTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchEnrouteTime:"+selectedCall.dispatchEnrouteTime.toString().replaceAll(':','^'),//not in view Mandatory field
@@ -393,8 +390,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "pinNumber:"+pinNumber,
         "dispatchRollingTime:"+formattedTime2,
         "towedStatus:C",
-        "lastLatitude:"+geoLocator.latitude,
-        "lastLongitude:"+geoLocator.longitude,
+        "lastLatitude:"+latitude.toString(),
+        "lastLongitude:"+longitude.toString(),
         "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchDispatchTime:"+selectedCall.dispatchDispatchTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchEnrouteTime:"+selectedCall.dispatchEnrouteTime.toString().replaceAll(':','^'),//not in view Mandatory field
@@ -411,8 +408,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "pinNumber:"+pinNumber,
         "dispatchArrivedTime:"+formattedTime2,
         "towedStatus:C",
-        "lastLatitude:"+geoLocator.latitude,
-        "lastLongitude:"+geoLocator.longitude,
+        "lastLatitude:"+latitude.toString(),
+        "lastLongitude:"+longitude.toString(),
         "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchDispatchTime:"+selectedCall.dispatchDispatchTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchEnrouteTime:"+selectedCall.dispatchEnrouteTime.toString().replaceAll(':','^'),//not in view Mandatory field
@@ -441,8 +438,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "dispatchProviderResponse:",
         "dispatchProviderSelectedResponse:0",
         "towType:"+selectedCall.towType.toString(),
-        "lastLatitude:"+geoLocator.latitude,
-        "lastLongitude:"+geoLocator.longitude,
+        "lastLatitude:"+latitude.toString(),
+        "lastLongitude:"+longitude.toString(),
     "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
     "dispatchDispatchTime:"+selectedCall.dispatchDispatchTime.toString().replaceAll(':','^'),//not in view Mandatory field
     "dispatchEnrouteTime:"+selectedCall.dispatchEnrouteTime.toString().replaceAll(':','^'),//not in view Mandatory field

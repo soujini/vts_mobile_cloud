@@ -169,7 +169,7 @@ class InfoScreenState extends State<InfoScreen> with SecureStoreMixin {
                       child:Row(
                           mainAxisAlignment: MainAxisAlignment.center, //Center Row contents horizontally,,
                           children: <Widget>[
-                      Text(_projectName),
+                      Text(_projectName != null ? _projectName : ''),
                       ])
                   ),
                   Padding(
@@ -181,9 +181,9 @@ class InfoScreenState extends State<InfoScreen> with SecureStoreMixin {
                             Text(_platformVersion),
                             Text(" : "),
                             Text("Version ",  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                      Text(_projectVersion, style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                      Text(_projectVersion != null ? _projectVersion : '', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                             Text(" (Build ",  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
-                            Text(_projectCode,  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                            Text(_projectCode != null ? _projectCode : '',  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
                             Text(")",  style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
 
                       ])

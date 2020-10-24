@@ -22,7 +22,8 @@ class GeoLocator{
   String longitude;
 
   getCurrentPosition() async{
-    Position position = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+
     latitude = position.latitude.toString();
     longitude = position.longitude.toString();
   }

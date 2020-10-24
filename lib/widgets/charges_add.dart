@@ -200,7 +200,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   // inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
-                  keyboardType: TextInputType.numberWithOptions(signed:true, decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                   controller: _chargesQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Quantity *',

@@ -173,12 +173,12 @@ class _UpdateStatusState extends State<UpdateStatus> {
   }
 
   setStatus(String mode, bool moveStatus){
-    // setState(() =>widget.isLoading=true);
+     setState(() =>widget.isLoading=true);
        Provider.of<Calls>(context, listen: false)
            .update(
            widget.selectedCall, selectedStatus, mode, moveStatus)
            .then((res) {
-         // setState(() =>widget.isLoading=false);
+          setState(() =>widget.isLoading=false);
          if(selectedStatus == 'Dispatch' && widget.dispatchPaging == true) {
            showSMSDriverDialog();
          }
