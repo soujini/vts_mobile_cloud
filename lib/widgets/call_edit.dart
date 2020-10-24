@@ -3245,7 +3245,7 @@ refresh(){
                             Expanded(child: TowedVehicleChargesList(userRole:userRole, notifyParent:refresh))
                           ]),
                               Column(children: <Widget>[
-                                Expanded(child: PhotosList(userRole:userRole, notifyParent:refresh))
+                                Expanded(child: PhotosList(userRole:userRole, userId:userId, notifyParent:refresh))
                               ]),
                         ])))));
   }
