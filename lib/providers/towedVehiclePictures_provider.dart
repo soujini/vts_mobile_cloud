@@ -16,6 +16,7 @@ class TowedVehiclePicture {
   String vehicleCreatedDate;
   String vehicleCreatedTime;
   String vehicleCreatedByUserName;
+  int vehicleCreatedByUserId;
 
   TowedVehiclePicture({
     this.errorStatus,
@@ -29,6 +30,7 @@ class TowedVehiclePicture {
     this.vehicleCreatedDate,
     this.vehicleCreatedTime,
     this.vehicleCreatedByUserName,
+    this.vehicleCreatedByUserId
   });
 
   factory TowedVehiclePicture.fromJson(Map<String, dynamic> json) =>
@@ -46,6 +48,7 @@ TowedVehiclePicture _towedVehiclePictureFromJson(
       vehiclePictureTypeName: parsedJson["vehiclePictureTypeName"] != null ? parsedJson["vehiclePictureTypeName"] : '',
       vehicleNotes: parsedJson["vehicleNotes"] != null ? parsedJson["vehicleNotes"] : '',
       towedVehicle: int.parse(parsedJson["towedVehicle"]),
+      vehicleCreatedByUserId: int.parse(parsedJson["vehicleCreatedByUserId"]),
       vehicleCreatedDate: parsedJson["vehicleCreatedDate"] != null ? parsedJson["vehicleCreatedDate"] : '',
       vehicleCreatedTime: parsedJson["vehicleCreatedTime"] != null ? parsedJson["vehicleCreatedTime"] : '',
       vehicleCreatedByUserName: parsedJson["vehicleCreatedByUserName"] != null ? parsedJson["vehicleCreatedByUserName"] : '',

@@ -200,7 +200,10 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   // inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true, signed:false),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                   controller: _chargesQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Quantity *',
@@ -223,7 +226,10 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true, signed:false),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                   controller: _discountQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',
@@ -241,7 +247,10 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(decimal: true, signed:false),
+                  inputFormatters: <TextInputFormatter>[
+                    FilteringTextInputFormatter.digitsOnly
+                  ],
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
                     labelText: 'Rate *',

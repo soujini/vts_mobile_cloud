@@ -1441,7 +1441,10 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitAmountController,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true, signed:false),
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   decoration: new InputDecoration(
                                     labelText: "Limit \$",
                                   ),
@@ -1457,7 +1460,10 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitMilesController,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true, signed:false),
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   decoration: new InputDecoration(
                                     labelText: "Limit Miles",
                                   ),
@@ -1491,7 +1497,10 @@ refresh(){
                                  fontSize: 14,
                                  fontWeight: FontWeight.w500),
                              controller: _towedDiscountAmountController,
-                             keyboardType: TextInputType.numberWithOptions(decimal: true),
+                             keyboardType: TextInputType.numberWithOptions(decimal: true, signed:false),
+                             inputFormatters: <TextInputFormatter>[
+                               FilteringTextInputFormatter.digitsOnly
+                             ],
                              decoration: new InputDecoration(
                                labelText: "Discount Amount (Max : \$" +_call.towedSubTotal.toString() + ")",
                              ),
