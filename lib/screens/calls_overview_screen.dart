@@ -8,7 +8,6 @@ import '../providers/secureStoreMixin_provider.dart';
 
 class CallsScreen extends StatefulWidget {
   CallsScreen();
-
   @override
   State<StatefulWidget> createState() {
     // TODO: implement createState
@@ -34,10 +33,21 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
  void dispose(){
    super.dispose();
  }
+  Future<String> getRole() async{
+   await getSecureStore('userRole', (token) {
+     setState(() {
+       userRole = token;
+     });
+   });
+   print(userRole);
+   return userRole;
+ }
 
   void getRoleAndDispatchPagingAndSetSelectedTabIndex() async{
      await getSecureStore('userRole', (token) {
-       userRole = token;
+       setState(() {
+         userRole = token;
+       });
      });
     await  getSecureStore('dispatchPaging', (token) {
       dispatchPaging = token;
@@ -48,15 +58,16 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
 
 
   @override
-  Widget build(BuildContext context) {
-    // super.build(context);
-    return userRole != '' ?  DefaultTabController(
-      length: 3,
+  Widget build(BuildContext context){
+    return userRole != null ? DefaultTabController(
+      length: userRole != "3" ? 2 : 1,
        initialIndex:selectedTabIndex == null ? 0 : selectedTabIndex,
       child:  Scaffold(
           appBar: AppBar(
             title: Text('CALLS', style:TextStyle(fontSize:14, fontWeight: FontWeight.w600)),
-            bottom: TabBar(
+            bottom:
+            userRole != "3" && userRole != null ?
+            TabBar(
               key:UniqueKey(),
               indicatorColor: Colors.green,
               labelColor: Colors.white,
@@ -76,16 +87,16 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
                        //),
                     style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("ACTIVE",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
                 ) ,
-                Tab(
-                  icon: Icon(Icons.alarm_on),
-                    child: refreshMainTabController == "true" ? Text("COMPLETED",
-                        // ' ' +
-                        // (callsData.completedCount != 0
-                        //     ? callsData.completedCount.toString()
-                        //     : ''
-                        // ),
-                      style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("COMPLETED",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
-                ),
+                // Tab(
+                //   icon: Icon(Icons.alarm_on),
+                //     child: refreshMainTabController == "true" ? Text("COMPLETED",
+                //         // ' ' +
+                //         // (callsData.completedCount != 0
+                //         //     ? callsData.completedCount.toString()
+                //         //     : ''
+                //         // ),
+                //       style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("COMPLETED",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
+                // ),
                 Tab(
                   icon: Icon(Icons.cancel),
                     child: refreshMainTabController == "true" ? Text("CANCELLED",
@@ -97,16 +108,64 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
                       style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("CANCELLED",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
                 ),
               ],
+            )
+            :
+            TabBar(
+              key:UniqueKey(),
+              indicatorColor: Colors.green,
+              labelColor: Colors.white,
+              onTap: (index) {
+                setState(() {
+                  selectedTabIndex=index;
+                });
+              },
+              tabs: [
+                Tab(
+                    icon: Icon(Icons.av_timer),
+                    child: refreshMainTabController == "true" ? Text("ACTIVE",
+                        // ' ' +
+                        // (callsData.activeCount != 0
+                        //     ? callsData.activeCount.toString()
+                        //     : ''
+                        //),
+                        style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("ACTIVE",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
+                ) ,
+                // Tab(
+                //   icon: Icon(Icons.alarm_on),
+                //     child: refreshMainTabController == "true" ? Text("COMPLETED",
+                //         // ' ' +
+                //         // (callsData.completedCount != 0
+                //         //     ? callsData.completedCount.toString()
+                //         //     : ''
+                //         // ),
+                //       style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("COMPLETED",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
+                // ),
+                // Tab(
+                //     icon: Icon(Icons.cancel),
+                //     child: refreshMainTabController == "true" ? Text("CANCELLED",
+                //         // ' ' +
+                //         // (callsData.cancelledCount != 0
+                //         //     ? callsData.cancelledCount.toString()
+                //         //     : ''
+                //         // ),
+                //         style:TextStyle(fontSize:12, fontWeight: FontWeight.w600)) : Text ("CANCELLED",style:TextStyle(fontSize:12, fontWeight: FontWeight.w600))
+                // ),
+              ],
             ),
-
           ),
-          body:  TabBarView(
+          body:
+          userRole != null && userRole != '' && userRole != "3" ?
+          TabBarView(
             children: [
               ActiveCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh, refreshMainTabController:refreshMainTabController, selectedCallsTabIndex:selectedTabIndex),
-              CompletedCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController, selectedCallsTabIndex:selectedTabIndex),
+              // CompletedCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController, selectedCallsTabIndex:selectedTabIndex),
               CancelledCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh,refreshMainTabController:refreshMainTabController,  selectedCallsTabIndex:selectedTabIndex),
+                ],
+          ) :
+          TabBarView(
+            children: [
+              ActiveCallsList(userRole:userRole, dispatchPaging: dispatchPaging, notifyParent:refresh, refreshMainTabController:refreshMainTabController, selectedCallsTabIndex:selectedTabIndex),
             ],
-          )) ,
-    ) :'';
+    ))) : Text("Nothing");
   }
 }

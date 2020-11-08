@@ -80,6 +80,13 @@ class _ActiveCallsList extends State<ActiveCallsList> {
 
     });
   }
+  _showErrorMessage(BuildContext context, errorMessage) {
+    Scaffold.of(context).showSnackBar(new SnackBar(
+        backgroundColor: Colors.lightGreen,
+        content: Text(errorMessage,
+            style:
+            TextStyle(color: Colors.black, fontWeight: FontWeight.w500))));
+  }
 
   Widget _itemBuilder(context, activeCalls, index) {
     activeCalls.dispatchInstructions_string = activeCalls.dispatchInstructions_string.replaceAll("\\n", "\n");
@@ -137,17 +144,23 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                             label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                         FlatButton.icon(
                             onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return
-                                      UpdateStatus(
-                                          selectedCall: activeCalls,
-                                          userRole:widget.userRole,
-                                          dispatchPaging: widget.dispatchPaging,
-                                          notifyParent:refresh
-                                      );
-                                  });
+                              if(activeCalls.wreckerDriver == null || activeCalls.wreckerDriver == '' || activeCalls.wreckerDriver == 0 || activeCalls.towTruck == null || activeCalls.towTruck == '' || activeCalls.towTruck == 0) {
+                                _showErrorMessage(context, "Please select the Driver and Truck information on the Tow Tab");
+                              }
+                              else{
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return
+                                        UpdateStatus(
+                                            selectedCall: activeCalls,
+                                            userRole: widget.userRole,
+                                            dispatchPaging: widget
+                                                .dispatchPaging,
+                                            notifyParent: refresh
+                                        );
+                                    });
+                              }
                             },
                             icon: Icon(Icons.update, size:14),
                             label: Text('Update Status', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),

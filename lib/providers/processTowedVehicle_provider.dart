@@ -170,6 +170,7 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
   var defaultCharges;
   var smsResult;
   var processChangeChargeResponse;
+  var mobileDigitalDispatchResponse;
 
   Future processDriverSMSMessage(towedVehicle) async {
    await  getSecureStore('userId', (token) {
@@ -353,6 +354,52 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
       final extractedData = await data["soap:Envelope"]["soap:Body"]
       ["processChangeChargesResponse"]["processChangeChargesResult"]["totalChargesSummarys"];
       processChangeChargeResponse = Map.from(extractedData);
+  }
+  Future<List> mobileDigitalDispatch(programMode, responseId, responseName, towedVehicle) async {
+    await  getSecureStore('userId', (token) {
+      userId=token;
+    });
+    // await  getSecureStore('pinNumber', (token) {
+    //   pinNumber=token;
+    // });
+    // await  getSecureStore('timeZoneName', (token) {
+    //   timeZoneName=token;
+    // });
+
+    var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<soap:Envelope "
+        "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
+        "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
+        "xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        "<soap:Body>"
+        "<mobileDigitalDispatch xmlns=\"http://cktsystems.com/\">"
+        "<appName>${appName}</appName>"
+        "<userId>${userId}</userId>"
+        "<programMode>${programMode}</programMode>"
+        "<responseId>${responseId}</responseId>"
+        "<responseName>${responseName}</responseName>"
+        "<towedVehicle>${towedVehicle}</towedVehicle>"
+        "</mobileDigitalDispatch>"
+        "</soap:Body>"
+        "</soap:Envelope>";
+
+    final response = await http.post(
+        'https://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
+        headers: {
+          "Content-Type": "text/xml; charset=utf-8",
+          "SOAPAction": "http://cktsystems.com/mobileDigitalDispatch",
+          "Host": "cktsystems.com"
+        },
+        body: envelope);
+
+    final resBody = xml2json.parse(response.body);
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["mobileDigitalDispatchResponse"]["mobileDigitalDispatchResult"];
+    mobileDigitalDispatchResponse = Map.from(extractedData);
+    print(mobileDigitalDispatchResponse);
   }
 }
 

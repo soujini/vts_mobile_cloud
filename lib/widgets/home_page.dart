@@ -43,7 +43,6 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
 
   @override
   Widget build(BuildContext context) {
-//    getRole();
     return Scaffold(
       bottomNavigationBar:BottomNavigationBar(
 //        backgroundColor: Colors.red,
@@ -110,8 +109,8 @@ class _MyHomePageState extends State<MyHomePage> with SecureStoreMixin {
       }
     }
     else {
-
-    if(_currentIndex == 0){
+      if (userRole != null && userRole != "3") {}
+      if(_currentIndex == 0){
       return _callsScreen;
     }
     else if(_currentIndex == 1){

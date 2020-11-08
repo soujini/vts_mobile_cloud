@@ -33,6 +33,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
   List<Call> _callDetails =[];
   var createResponse;
   var updateResponse;
+  var updateStatusResponse;
 
   final dateAndTime = DateAndTime();
 
@@ -483,7 +484,27 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         body: envelope);
 
     final resBody = xml2json.parse(response.body);
-    return response.body;
+    final jsondata = xml2json.toParker();
+    final data = json.decode(jsondata);
+
+    final extractedData = await data["soap:Envelope"]["soap:Body"]
+    ["updateResponse"]["updateResult"];
+
+    updateStatusResponse = Map.from(extractedData);
+
+    // final resBody = xml2json.parse(response.body);
+    // return response.body;
+
+
+
+    // final extractedData = await data["soap:Envelope"]["soap:Body"]
+    // ["updateResponse"]["updateResult"];
+    //
+    // updateResponse = Map.from(extractedData);
+
+
+
+
   }
   Future<List> get(id) async {
    await  getSecureStore('userId', (token) {
@@ -749,9 +770,15 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         VIN: _activeCallsFiltered["VIN"] != null
             ? _activeCallsFiltered["VIN"]
             : '',
+        wreckerDriver: (_activeCallsFiltered["wreckerDriver"] != "0"
+            ? int.parse(_activeCallsFiltered["wreckerDriver"])
+            : 0),
         wreckerDriverName: _activeCallsFiltered["wreckerDriverName"] != null
             ? _activeCallsFiltered["wreckerDriverName"]
             : '',
+        towTruck: (_activeCallsFiltered["towTruck"] != "0"
+            ? int.parse(_activeCallsFiltered["towTruck"])
+            : 0),
         towTruckName: _activeCallsFiltered["towTruckName"] != null
             ? _activeCallsFiltered["towTruckName"]
             : '',
@@ -864,9 +891,15 @@ class Calls with ChangeNotifier, SecureStoreMixin {
           VIN: _activeCallsFiltered[i]["VIN"] != null
               ? _activeCallsFiltered[i]["VIN"]
               : '',
+          wreckerDriver: (_activeCallsFiltered[i]["wreckerDriver"] != "0"
+              ? int.parse(_activeCallsFiltered[i]["wreckerDriver"])
+              : 0),
           wreckerDriverName: _activeCallsFiltered[i]["wreckerDriverName"] != null
               ? _activeCallsFiltered[i]["wreckerDriverName"]
               : '',
+          towTruck: (_activeCallsFiltered[i]["towTruck"] != "0"
+              ? int.parse(_activeCallsFiltered[i]["towTruck"])
+              : 0),
           towTruckName: _activeCallsFiltered[i]["towTruckName"] != null
               ? _activeCallsFiltered[i]["towTruckName"]
               : '',
