@@ -95,7 +95,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //  var _towedTrailerController = new TextEditingController();
 //  var _towedTruckController = new TextEditingController();
 //  var _vehicleTitleController = new TextEditingController();
-  var _vehicleOdomoeterController = new TextEditingController();
+  var _vehicleOdometerController = new TextEditingController();
   var _towTypeController = new TextEditingController();
   var _towReasonController = new TextEditingController();
   var _authorizationController = new TextEditingController();
@@ -652,7 +652,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
       //Vehicle Odometer
       _call.vehicleOdometer = x[0].vehicleOdometer;
-      _vehicleOdomoeterController.value = new TextEditingController.fromValue(
+      _vehicleOdometerController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: x[0].vehicleOdometer))
           .value;
       isLoading = false;
@@ -1441,8 +1441,8 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitAmountController,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-
+                                  keyboardType:TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                                   decoration: new InputDecoration(
                                     labelText: "Limit \$",
                                   ),
@@ -1458,8 +1458,8 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitMilesController,
-                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-
+                                  keyboardType:TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                                   decoration: new InputDecoration(
                                     labelText: "Limit Miles",
                                   ),
@@ -1475,12 +1475,18 @@ refresh(){
                                  fontSize: 14,
                                  fontWeight: FontWeight.w500),
                              controller: _towedDiscountRateController,
-                             keyboardType: TextInputType.phone ,
+                             keyboardType:TextInputType.number,
+                             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                              decoration: new InputDecoration(
                                labelText: "Discount Rate % (Range 0 - 100)",
                              ),
                              validator: validateDiscountRate,
-                             onChanged: (val) => {_towedDiscountAmountController.clear()},
+                             onChanged: (val) => {
+                               // _towedDiscountAmountController.clear(),
+                             _towedDiscountAmountController.value = new TextEditingController.fromValue(
+                             new TextEditingValue(text: "0.00"))
+                                 .value
+                             },
                              onTap: () => {_towedDiscountRateController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountRateController.value.text.length)},
                              onSaved: (val) =>
                                  setState(() => _call.towedDiscountRate = val),
@@ -1493,13 +1499,18 @@ refresh(){
                                  fontSize: 14,
                                  fontWeight: FontWeight.w500),
                              controller: _towedDiscountAmountController,
-                             keyboardType: TextInputType.numberWithOptions(decimal: true),
-
+                             keyboardType:TextInputType.numberWithOptions(decimal: true),
+                             inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                              decoration: new InputDecoration(
-                               labelText: "Discount Amount (Max : \$" +_call.towedSubTotal.toString() + ")",
+                               labelText: "Discount Amount (Max : \$" +_call.towedSubTotal.toStringAsFixed(2) + ")",
                              ),
                              validator: validateDiscountAmount,
-                             onChanged: (val) => {_towedDiscountRateController.clear()},
+                             onChanged: (val) => {
+                               // _towedDiscountRateController.clear()
+                               _towedDiscountRateController.value = new TextEditingController.fromValue(
+                                   new TextEditingValue(text: "0.00"))
+                                   .value
+                             },
                              onTap: () => {_towedDiscountAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountAmountController.value.text.length)},
                              onSaved: (val) =>
                                  setState(() => _call.towedDiscountAmount = val),
@@ -1847,12 +1858,13 @@ refresh(){
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
-                                  keyboardType: TextInputType.number,
-                                  controller: _vehicleOdomoeterController,
+                                  controller: this._vehicleOdometerController,
+                                  keyboardType:TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   decoration: new InputDecoration(
                                     labelText: "Odometer",
                                   ),
-                                  onTap: () => {_vehicleOdomoeterController.selection = TextSelection(baseOffset: 0, extentOffset: _vehicleOdomoeterController.value.text.length)},
+                                  onTap: () => {_vehicleOdometerController.selection = TextSelection(baseOffset: 0, extentOffset: _vehicleOdometerController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.vehicleOdometer = val),
                                 ),

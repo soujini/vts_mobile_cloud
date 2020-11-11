@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vts_mobile_cloud/providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import '../providers/towedVehicleCharges_provider.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
+import "package:flutter/services.dart";
 
 class ChargesEdit extends StatefulWidget {
   final Function notifyParent;
@@ -31,25 +34,33 @@ class _ChargesEditState extends State<ChargesEdit> {
   var _discountRateController = new TextEditingController();
   var _totalChargesController = new TextEditingController();
 
+  // new MoneyMaskedTextController(precision: 2, decimalSeparator: '.', thousandSeparator: '');
   void initState() {
     _chargesQuantityController.addListener(() {
       final text = _chargesQuantityController.text;
-      _chargesQuantityController.value =
-          _chargesQuantityController.value.copyWith(
-        text: text,
-        // selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
-        // composing: TextRange.empty,
-      );
+      if(text.isNotEmpty) {
+        _chargesQuantityController.value =
+            _chargesQuantityController.value.copyWith(
+              text: text,
+              // selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+              // composing: TextRange.empty,
+            );
+      }
+      else{
+        _chargesQuantityController.value =
+            _chargesQuantityController.value.copyWith(
+            text: "0.00");
+      }
     });
-
-    _chargesRateController.addListener(() {
-      final text = _chargesRateController.text;
-      _chargesRateController.value = _chargesRateController.value.copyWith(
-        text: text,
-        // selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
-        // composing: TextRange.empty,
-      );
-    });
+    //
+    // _chargesRateController.addListener(() {
+    //   var text = _chargesRateController.text;
+    //   _chargesRateController.value = _chargesRateController.value.copyWith(
+    //     text: text,
+    //     // selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
+    //     // composing: TextRange.empty,
+    //   );
+    // });
 
     _charge = Provider.of<TowedVehicleChargesVM>(context, listen: false)
         .selectedCharge;
@@ -142,103 +153,144 @@ class _ChargesEditState extends State<ChargesEdit> {
       print("Invalid fields");
     }
   }
-
   calculateTotalChargesOnQuantityChange(_chargesQuantity) async{
-    var _selectedCall = await Provider.of<Calls>(context, listen: false).callDetails;
-    await Provider.of<Calls>(context, listen: false).get(_selectedCall[0].id);
-    var x = await Provider.of<Calls>(context, listen: false).callDetails;
+    if(_chargesQuantity != '') {
+      var _selectedCall = await Provider
+          .of<Calls>(context, listen: false)
+          .callDetails;
+      await Provider.of<Calls>(context, listen: false).get(_selectedCall[0].id);
+      var x = await Provider
+          .of<Calls>(context, listen: false)
+          .callDetails;
 
-    _charge.chargesQuantity = _chargesQuantity;
+      _charge.chargesQuantity = _chargesQuantity;
 
-    if(_charge.discountApply == true){
-      double _towedDiscountRate = double.parse(x[0].towedDiscountRate);
-      double _chargesQuantity = double.parse(_charge.chargesQuantity);
-      double _chargesRate = double.parse(_charge.chargesRate);
+      if (_charge.discountApply == true) {
+        double _towedDiscountRate = double.parse(x[0].towedDiscountRate);
+        double _chargesQuantity = double.parse(_charge.chargesQuantity);
 
-      //Calculate Discount Rate
-      double _discountRate = _towedDiscountRate / 100 * ((_chargesQuantity - double.parse(_charge.discountQuantity)) * _chargesRate);
+        double _chargesRate = double.parse(_charge.chargesRate);
 
-      //Calculate Total Charges
-      double total = ((_chargesQuantity - double.parse(_charge.discountQuantity)) * _chargesRate) - _discountRate;
+        //Calculate Discount Rate
+        double _discountRate = _towedDiscountRate / 100 *
+            ((_chargesQuantity - double.parse(_charge.discountQuantity)) *
+                _chargesRate);
 
-      _charge.discountRate = _discountRate.toStringAsFixed(2);
-      _charge.totalCharges = total.toStringAsFixed(2);
-      _discountRateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _discountRate.toStringAsFixed(2))).value;
-      _totalChargesController.value = new TextEditingController.fromValue(new TextEditingValue(text: _charge.totalCharges,)).value;
-    }
-    else{
-      double total = (double.parse(_chargesQuantity) -double.parse(_charge.discountQuantity)) * double.parse(_charge.chargesRate);
-      String totalCharges = total.toStringAsFixed(2);
+        //Calculate Total Charges
+        double total = ((_chargesQuantity -
+            double.parse(_charge.discountQuantity)) * _chargesRate) -
+            _discountRate;
 
-      _charge.totalCharges = totalCharges;
-      _totalChargesController.value = new TextEditingController.fromValue(new TextEditingValue(text: totalCharges,)).value;
+        _charge.discountRate = _discountRate.toStringAsFixed(2);
+        _charge.totalCharges = total.toStringAsFixed(2);
+        _discountRateController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _discountRate.toStringAsFixed(2))).value;
+        _totalChargesController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _charge.totalCharges)).value;
+      }
+      else {
+        double total = (double.parse(_chargesQuantity) -
+            double.parse(_charge.discountQuantity)) *
+            double.parse(_charge.chargesRate);
+        String totalCharges = total.toStringAsFixed(2);
+
+        _charge.totalCharges = totalCharges;
+        _totalChargesController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: totalCharges,)).value;
+      }
     }
   }
 
   calculateTotalChargesOnDiscountQuantityChange(_discountQuantity) async{
-    var _selectedCall = await Provider.of<Calls>(context, listen: false).callDetails;
-    await Provider.of<Calls>(context, listen: false).get(_selectedCall[0].id);
-    var x = await Provider.of<Calls>(context, listen: false).callDetails;
-    _charge.discountQuantity = _discountQuantity;
+    if(_discountQuantity != '') {
+      var _selectedCall = await Provider
+          .of<Calls>(context, listen: false)
+          .callDetails;
+      await Provider.of<Calls>(context, listen: false).get(_selectedCall[0].id);
+      var x = await Provider
+          .of<Calls>(context, listen: false)
+          .callDetails;
+      _charge.discountQuantity = _discountQuantity;
 
-    if(_charge.discountApply == true){
-      double _towedDiscountRate = double.parse(x[0].towedDiscountRate);
-      double _chargesQuantity = double.parse(_charge.chargesQuantity);
-      double _chargesRate = double.parse(_charge.chargesRate);
+      if (_charge.discountApply == true) {
+        double _towedDiscountRate = double.parse(x[0].towedDiscountRate);
+        double _chargesQuantity = double.parse(_charge.chargesQuantity);
+        double _chargesRate = double.parse(_charge.chargesRate);
 
-      //Calculate Discount Rate
-      double _discountRate = _towedDiscountRate / 100 * ((_chargesQuantity - double.parse(_charge.discountQuantity)) * _chargesRate);
+        //Calculate Discount Rate
+        double _discountRate = _towedDiscountRate / 100 *
+            ((_chargesQuantity - double.parse(_charge.discountQuantity)) *
+                _chargesRate);
 
-      //Calculate Total Charges
-      double total = ((_chargesQuantity - double.parse(_charge.discountQuantity)) * _chargesRate) - _discountRate;
+        //Calculate Total Charges
+        double total = ((_chargesQuantity -
+            double.parse(_charge.discountQuantity)) * _chargesRate) -
+            _discountRate;
 
-      _charge.discountRate = _discountRate.toStringAsFixed(2);
-      _charge.totalCharges = total.toStringAsFixed(2);
-      _discountRateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _discountRate.toStringAsFixed(2))).value;
-      _totalChargesController.value = new TextEditingController.fromValue(new TextEditingValue(text: _charge.totalCharges,)).value;
-    }
-    else {
-      double total = (double.parse(_charge.chargesQuantity) -
-          double.parse(_discountQuantity)) * double.parse(_charge.chargesRate);
-      String totalCharges = total.toStringAsFixed(2);
+        _charge.discountRate = _discountRate.toStringAsFixed(2);
+        _charge.totalCharges = total.toStringAsFixed(2);
+        _discountRateController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _discountRate.toStringAsFixed(2))).value;
+        _totalChargesController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _charge.totalCharges,)).value;
+      }
+      else {
+        double a = double.parse(_charge.chargesQuantity) - 2;
+        double total = (double.parse(_charge.chargesQuantity) -
+            double.parse(_discountQuantity)) *
+            double.parse(_charge.chargesRate);
+        String totalCharges = total.toStringAsFixed(2);
 
-      _charge.totalCharges = totalCharges;
-      _totalChargesController.value = new TextEditingController.fromValue(
-          new TextEditingValue(text: totalCharges,)).value;
+        _charge.totalCharges = totalCharges;
+        _totalChargesController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: totalCharges,)).value;
+      }
     }
   }
 
   calculateTotalChargesOnRateChange(_chargesRate) async{
-    var _selectedCall = await Provider.of<Calls>(context, listen: false).callDetails;
-    await Provider.of<Calls>(context, listen: false).get(_selectedCall[0].id);
-    var x = await Provider.of<Calls>(context, listen: false).callDetails;
+    if(_chargesRate != '') {
+      var _selectedCall = await Provider
+          .of<Calls>(context, listen: false)
+          .callDetails;
+      await Provider.of<Calls>(context, listen: false).get(_selectedCall[0].id);
+      var x = await Provider
+          .of<Calls>(context, listen: false)
+          .callDetails;
 
-    _charge.chargesRate = _chargesRate;
-    if(_charge.discountApply == true){
-      double _towedDiscountRate = double.parse(x[0].towedDiscountRate);
-      double _chargesQuantity = double.parse(_charge.chargesQuantity);
-      double _chargesRate = double.parse(_charge.chargesRate);
+      _charge.chargesRate = _chargesRate;
+      if (_charge.discountApply == true) {
+        double _towedDiscountRate = double.parse(x[0].towedDiscountRate);
+        double _chargesQuantity = double.parse(_charge.chargesQuantity);
+        double _chargesRate = double.parse(_charge.chargesRate);
 
-      //Calculate Discount Rate
-      double _discountRate = _towedDiscountRate / 100 * ((_chargesQuantity - double.parse(_charge.discountQuantity)) * _chargesRate);
+        //Calculate Discount Rate
+        double _discountRate = _towedDiscountRate / 100 *
+            ((_chargesQuantity - double.parse(_charge.discountQuantity)) *
+                _chargesRate);
 
-      //Calculate Total Charges
-      double total = ((_chargesQuantity - double.parse(_charge.discountQuantity)) * _chargesRate) - _discountRate;
+        //Calculate Total Charges
+        double total = ((_chargesQuantity -
+            double.parse(_charge.discountQuantity)) * _chargesRate) -
+            _discountRate;
 
-      _charge.discountRate = _discountRate.toStringAsFixed(2);
-      _charge.totalCharges = total.toStringAsFixed(2);
-      _discountRateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _discountRate.toStringAsFixed(2))).value;
-      _totalChargesController.value = new TextEditingController.fromValue(new TextEditingValue(text: _charge.totalCharges,)).value;
-    }
-    else {
-      double total = (double.parse(_charge.chargesQuantity) -
-          double.parse(_charge.discountQuantity)) *
-          double.parse(_charge.chargesRate);
-      String totalCharges = total.toStringAsFixed(2);
+        _charge.discountRate = _discountRate.toStringAsFixed(2);
+        _charge.totalCharges = total.toStringAsFixed(2);
+        _discountRateController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _discountRate.toStringAsFixed(2))).value;
+        _totalChargesController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _charge.totalCharges,)).value;
+      }
+      else {
+        double total = (double.parse(_charge.chargesQuantity) -
+            double.parse(_charge.discountQuantity)) *
+            double.parse( _charge.chargesRate);
+        String totalCharges = total.toStringAsFixed(2);
 
-      _charge.totalCharges = totalCharges;
-      _totalChargesController.value = new TextEditingController.fromValue(
-          new TextEditingValue(text: totalCharges)).value;
+        _charge.totalCharges = totalCharges;
+        _totalChargesController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: totalCharges)).value;
+      }
     }
   }
 
@@ -336,7 +388,8 @@ class _ChargesEditState extends State<ChargesEdit> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
                         controller: this._chargesQuantityController,
-                        keyboardType:TextInputType.numberWithOptions(signed: true,decimal: true),
+                        keyboardType:TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: new InputDecoration(
                           labelText: 'Quantity',
                         ),
@@ -353,8 +406,8 @@ class _ChargesEditState extends State<ChargesEdit> {
                               extentOffset:
                                   _chargesQuantityController.value.text.length)
                         },
-                        onChanged: (val) =>
-                            calculateTotalChargesOnQuantityChange(val),
+                        onChanged: (val) =>{
+                            calculateTotalChargesOnQuantityChange(val)},
                         onSaved: (val) =>
                             setState(() => _charge.chargesQuantity = val),
                       ),
@@ -368,11 +421,25 @@ class _ChargesEditState extends State<ChargesEdit> {
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
                         controller: this._discountQuantityController,
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
+                        keyboardType:TextInputType.number,
+                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: new InputDecoration(
                           labelText: 'Discount Quantity',
                         ),
+                        validator: (value) {
+                          if (value.isNotEmpty && _chargesQuantityController.text.isNotEmpty) {
+                            if (double.parse(value) > double.parse(
+                                _chargesQuantityController.text)) {
+                              return "The discount quantity should be less than the quantity " +
+                                  _chargesQuantityController.text;
+                            } else {
+                              return null;
+                            }
+                          }
+                          else{
+                            return null;
+                          }
+                        },
                         onTap: () => {
                           _discountQuantityController.selection = TextSelection(
                               baseOffset: 0,
@@ -392,8 +459,10 @@ class _ChargesEditState extends State<ChargesEdit> {
                         },
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
-                        keyboardType:
-                            TextInputType.numberWithOptions(decimal: true),
+                         // keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        //     TextInputType.numberWithOptions(decimal: true),
+                        keyboardType:TextInputType.numberWithOptions(decimal: true),
+                         inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                         controller: _chargesRateController,
                         decoration: new InputDecoration(
                           labelText: 'Rate *',
@@ -411,8 +480,9 @@ class _ChargesEditState extends State<ChargesEdit> {
                               extentOffset:
                                   _chargesRateController.value.text.length)
                         },
-                        onChanged: (val) =>
-                            calculateTotalChargesOnRateChange(val),
+                        onChanged: (val) =>{
+                            calculateTotalChargesOnRateChange(val)
+                        },
                         onSaved: (val) =>
                             setState(() => _charge.chargesRate = val),
                       ),

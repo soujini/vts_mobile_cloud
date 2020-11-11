@@ -123,10 +123,10 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
     fieldList = [
       "pinNumber:"+pinNumber,
       "towCharges:"+chargesObj.towCharges.toString(),
-      "chargesRate:"+chargesObj.chargesRate.toString(),
-      'chargesQuantity:'+chargesObj.chargesQuantity.toString(),
-      'discountQuantity:'+chargesObj.discountQuantity.toString(),
-      'discountRate:'+chargesObj.discountRate.toString(),
+      "chargesRate:"+ double.parse(chargesObj.chargesRate).toStringAsFixed(2),
+      'chargesQuantity:'+double.parse(chargesObj.chargesQuantity).toStringAsFixed(2),
+      'discountQuantity:'+double.parse(chargesObj.discountQuantity).toStringAsFixed(2),
+      'discountRate:'+double.parse(chargesObj.discountRate).toStringAsFixed(2),
       'towedVehicle:'+chargesObj.towedVehicle.toString(),
       'discountApply:'+chargesObj.discountApply.toString(),
       'totalCharges:'+chargesObj.totalCharges.toString(),
@@ -183,10 +183,10 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
     fieldList = [
       "pinNumber:"+pinNumber,
       "towCharges:"+chargesObj.towCharges.toString(),
-      "chargesRate:"+chargesObj.chargesRate.toString(),
-      'chargesQuantity:'+chargesObj.chargesQuantity.toString(),
-      'discountQuantity:'+chargesObj.discountQuantity.toString(),
-      'discountRate:'+chargesObj.discountRate.toString(),
+      "chargesRate:"+ double.parse(chargesObj.chargesRate).toStringAsFixed(2),
+      'chargesQuantity:'+double.parse(chargesObj.chargesQuantity).toStringAsFixed(2),
+      'discountQuantity:'+ double.parse(chargesObj.discountQuantity).toStringAsFixed(2),
+      'discountRate:'+double.parse(chargesObj.discountRate).toStringAsFixed(2),
       'towedVehicle:'+chargesObj.towedVehicle.toString(),
       'discountApply:'+chargesObj.discountApply.toString(),
       'totalCharges:'+chargesObj.totalCharges.toString(),
@@ -207,6 +207,8 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
         "</update>"
         "</soap:Body>"
         "</soap:Envelope>";
+
+
 
     final response = await http.post(
         'https://cktsystems.com/vtscloud/WebServices/towedVehicleChargesTable.asmx',

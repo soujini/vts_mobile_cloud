@@ -200,8 +200,8 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   // inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-
+                  keyboardType:TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   controller: _chargesQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Quantity *',
@@ -224,12 +224,27 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
 
                   controller: _discountQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',
                   ),
+                  validator: (value) {
+                    if (value.isNotEmpty && _chargesQuantityController.text.isNotEmpty) {
+                      if (double.parse(value) > double.parse(
+                          _chargesQuantityController.text)) {
+                        return "The discount quantity should be less than the quantity " +
+                            _chargesQuantityController.text;
+                      } else {
+                        return null;
+                      }
+                    }
+                    else{
+                      return null;
+                    }
+                  },
                   onTap: () => {_discountQuantityController.selection = TextSelection(baseOffset: 0, extentOffset: _discountQuantityController.value.text.length)},
                   onSaved: (val) =>
                       setState(() => _charge.discountQuantity = val),
@@ -243,8 +258,8 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-
+                  keyboardType:TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                   controller: _chargesRateController,
                   decoration: new InputDecoration(
                     labelText: 'Rate *',
@@ -252,6 +267,9 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please select Rate';
+                    }
+                    else{
+                      return null;
                     }
                   },
                   onTap: () => {_chargesRateController.selection = TextSelection(baseOffset: 0, extentOffset: _chargesRateController.value.text.length)},

@@ -100,7 +100,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       'towedInvoice:'+_call.towedInvoice.toString(),
       "towedPONumber:"+_call.towedPONumber.toString(),
       "dispatchMemberNumber:"+_call.dispatchMemberNumber.toString(),
-      "dispatchLimitAmount:"+_call.dispatchLimitAmount.toString(),
+      "dispatchLimitAmount:"+double.parse(_call.dispatchLimitAmount).toStringAsFixed(2),
       "dispatchLimitMiles:"+_call.dispatchLimitMiles.toString(),
       "VIN:"+_call.VIN.toString(),
       "vehicleYearMakeModel:"+_call.vehicleYearMakeModel.toString(),
@@ -141,8 +141,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "pinNumber:"+pinNumber,
       "systemRuntimeType:2",
       "dispatchETAMinutes:" +_call.dispatchETAMinutes.toString(),
-      "towedDiscountRate:" + _call.towedDiscountRate, //fails
-      "towedDiscountAmount:" + _call.towedDiscountAmount,//fails
+      "towedDiscountRate:" + double.parse(_call.towedDiscountRate).toStringAsFixed(2), //fails
+      "towedDiscountAmount:" + double.parse(_call.towedDiscountAmount).toStringAsFixed(2),//fails
       "dispatchReceivedTime:"+_call.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
       "dispatchDispatchTime:"+_call.dispatchDispatchTime.toString().replaceAll(':','^'),//not in view  Mandatory field
       "dispatchEnrouteTime:"+_call.dispatchEnrouteTime.toString().replaceAll(':','^'),//not in view  Mandatory field
@@ -157,7 +157,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       // "dispatchInstructions:" +dispatchInstructionsBytes.toString(),
     ];
     // filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != null).toList();
-    print(fieldList);
+    // print(fieldList);
 
     xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
@@ -326,6 +326,27 @@ class Calls with ChangeNotifier, SecureStoreMixin {
      var latitude = position.latitude;
      var longitude = position.longitude;
 
+    if(fieldName == "Received")
+    {
+      fieldList = [
+        "pinNumber:"+pinNumber,
+        // "dispatchDate:"+formattedDate,
+        // "dispatchDispatchTime:"+formattedTime2,
+        "towedStatus:C",
+        "lastLatitude:"+latitude.toString(),
+        "lastLongitude:"+longitude.toString(),
+         "dispatchReceivedTime:"+formattedTime2,//not in view Mandatory field
+        "dispatchDispatchTime:00^00",
+        "dispatchEnrouteTime:00^00",
+        "dispatchOnsiteTime:00^00",
+        "dispatchRollingTime:00^00",
+        "dispatchArrivedTime:00^00",
+        "dispatchClearedTime:00^00"
+      ];
+      fieldName = "Received - "+formattedTime2;
+      xmlValues = fieldList.map((v) => '<string>$v</string>').join();
+    }
+
     if(fieldName == "Dispatch")
     {
       fieldList = [
@@ -356,7 +377,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "lastLongitude:"+longitude.toString(),
         "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
         "dispatchDispatchTime:"+selectedCall.dispatchDispatchTime.toString().replaceAll(':','^'),//not in view Mandatory field
-
         "dispatchOnsiteTime:00^00",
         "dispatchRollingTime:00^00",
         "dispatchArrivedTime:00^00",

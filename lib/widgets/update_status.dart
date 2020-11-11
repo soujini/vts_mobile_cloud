@@ -172,6 +172,9 @@ class _UpdateStatusState extends State<UpdateStatus> {
 
     //DispatchAccepted
     //Reversal from Dispatch to Received (figure out)
+    if (selectedStatus == "Received") {
+      _programMode = "DispatchAccepted";
+    }
 
     //DriverAssigned
     if (selectedStatus == "Dispatch") {
@@ -279,6 +282,39 @@ class _UpdateStatusState extends State<UpdateStatus> {
 //                          },
 //                          child: Text('ACCEPT')))
 //              ),
+              Visibility(
+                  visible: widget.userRole !="3" && (widget.selectedCall.dispatchStatusName ==
+                      "Received" ||
+                      widget.selectedCall.dispatchStatusName == "Dispatch")
+                      ? true
+                      : false,
+                  child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: SizedBox(
+                          width: 125,
+                          height: 40,
+                          child: FlatButton(
+                              color: selectedStatus == "Received" ? Color(
+                                  0xff12406F) : Colors.white,
+                              textColor: getCurrentStatusColor("Received"),
+                              shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(
+                                      10.0),
+                                  side: BorderSide(color: Color(0xff333333))),
+                              disabledTextColor: Colors.black,
+                              padding: EdgeInsets.all(8.0),
+                              splashColor: Colors.blueAccent,
+                              onPressed: () {
+                                if (widget.selectedCall.dispatchStatusName !=
+                                    "Received") {
+                                  setState(() => selectedStatus = "Received");
+                                }
+                                else {
+                                  return null;
+                                }
+                              },
+                              child: Text('RECEIVED')))
+                  )),
               Visibility(
                   visible: widget.selectedCall.dispatchStatusName ==
                       "Dispatch" ||
