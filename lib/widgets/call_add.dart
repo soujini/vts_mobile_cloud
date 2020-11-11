@@ -158,8 +158,11 @@ class CallAddState extends State<CallAdd> {
       _call.towedToZipCode = dd[0].towedToZipCode != null ? dd[0].towedToZipCode: '';
       _towedToCityController.value = new TextEditingController.fromValue( new TextEditingValue(text: _call.towedToCityName)).value;
       _towedToStateController.value = new TextEditingController.fromValue(new TextEditingValue(text: _call.towedToStateName)).value;
-      _call.storageCompany = dd[0].storageCompany != 0 ? dd[0].storageCompany : 0;
-      _call.storageCompanyName = dd[0].storageCompanyName != null ? dd[0].storageCompanyName : '';
+      // _call.storageCompany = dd[0].storageCompany != 0 ? dd[0].storageCompany : 0;
+      // _call.storageCompanyName = dd[0].storageCompanyName != null ? dd[0].storageCompanyName : '';
+      _call.storageCompany = ud[0].storageCompany != 0 ? ud[0].storageCompany : 0;
+      // _call.storageCompanyName = ud[0].storageCompanyName != null ? ud[0].storageCompanyName : '';
+      // ud[0].storageCompany
       // _call.towedDiscountRate = dd[0].discountPercent != null ? dd[0].discountPercent : '';
       // _call.towedDiscountAmount = dd[0].discountRate != null ? dd[0].discountRate : '';
       _call.vehicleMake = dd[0].vehicleMake != 0 ? dd[0].vehicleMake : 0;

@@ -852,7 +852,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //            .value;
 
     //Enroute
-    _call.dispatchEnrouteTime = x[0].dispatchEnrouteTime != null ? x[0].dispatchReceivedTime : '';
+    _call.dispatchEnrouteTime = x[0].dispatchEnrouteTime != null ? x[0].dispatchEnrouteTime : '';
 //    _dispatchEnrouteTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchEnrouteTime))
 //            .value;

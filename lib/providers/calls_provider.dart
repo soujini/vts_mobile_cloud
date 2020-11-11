@@ -157,7 +157,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       // "dispatchInstructions:" +dispatchInstructionsBytes.toString(),
     ];
     // filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != null).toList();
-    // print(fieldList);
+    //  print(fieldList);
 
     xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
@@ -259,9 +259,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "pinNumber:"+pinNumber,
       "systemRuntimeType:2",
       "dispatchPriorityLevel:1", // not in view
-      "vehicleLicenseType:1" //not in view
+      "vehicleLicenseType:1", //not in view
+      "storageCompany:"+call.storageCompany.toString()
     ];
-    print(fieldList);
     xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "

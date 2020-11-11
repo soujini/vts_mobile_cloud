@@ -441,6 +441,7 @@ class Call {
   }
 
 Call _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
+
   return Call(
       errorStatus:_convertTobool(parsedJson["errorStatus"]),
       errorMessage:parsedJson["errorMessage"],
@@ -599,6 +600,7 @@ Call _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
 }
 
 Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
+  print(parsedJson["dispatchDispatchTime"]);
   return Call(
       errorStatus:_convertTobool(parsedJson["errorStatus"]),
       errorMessage:parsedJson["errorMessage"],
@@ -761,12 +763,12 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
 //    PORequired: parsedJson["PORequired"],
 //    wreckerDriverName: parsedJson["wreckerDriverName"],
 //    towTruckName: parsedJson["towTruckName"],
-//    dispatchReceivedTime: parsedJson["dispatchReceivedTime"],
-//    dispatchEnrouteTime: parsedJson["dispatchEnrouteTime"],
-//    dispatchOnsiteTime: parsedJson["dispatchOnsiteTime"],
-//    dispatchRollingTime: parsedJson["dispatchRollingTime"],
-//    dispatchClearedTime: parsedJson["dispatchClearedTime"],
-//    dispatchArrivedTime: parsedJson["dispatchArrivedTime"],
+   dispatchReceivedTime: parsedJson["dispatchReceivedTime"],
+   dispatchEnrouteTime: parsedJson["dispatchEnrouteTime"],
+   dispatchOnsiteTime: parsedJson["dispatchOnsiteTime"],
+   dispatchRollingTime: parsedJson["dispatchRollingTime"],
+   dispatchClearedTime: parsedJson["dispatchClearedTime"],
+   dispatchArrivedTime: parsedJson["dispatchArrivedTime"],
       progressStyleColor: parsedJson["progressStyleColor"],
       progressPercentage: parsedJson["progressPercentage"],
 //    towedPONumber: parsedJson["towedPONumber"],
