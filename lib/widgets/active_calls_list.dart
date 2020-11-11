@@ -143,9 +143,9 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                             icon: Icon(Icons.edit, size:14),
                             label: Text('Edit Call', style:TextStyle(fontSize:12, fontWeight: FontWeight.w500, color:Color(0xff303030)))),
                         FlatButton.icon(
-                            onPressed: () {
+                            onPressed: () => {
                               if(activeCalls.wreckerDriver == null || activeCalls.wreckerDriver == '' || activeCalls.wreckerDriver == 0 || activeCalls.towTruck == null || activeCalls.towTruck == '' || activeCalls.towTruck == 0) {
-                                _showErrorMessage(context, "Please select the Driver and Truck information on the Tow Tab");
+                                _showErrorMessage(context, "Please select the Driver and Truck information on the Tow Tab")
                               }
                               else{
                                 showDialog(
@@ -159,7 +159,7 @@ class _ActiveCallsList extends State<ActiveCallsList> {
                                                 .dispatchPaging,
                                             notifyParent: refresh
                                         );
-                                    });
+                                    })
                               }
                             },
                             icon: Icon(Icons.update, size:14),

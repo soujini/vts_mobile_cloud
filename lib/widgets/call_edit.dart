@@ -195,23 +195,23 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   }
 
   setBillTo(id, name) {
-    setState(() {
+    // setState(() {
       _call.towBillTo = id != null ? id : 0;
       _call.towBillToName = name != null ? name : '';
       _billToController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towBillToName))
           .value;
-    });
+    // });
   }
 
   setTowCustomer(id, name) {
-    setState(() {
+    // setState(() {
       _call.towCustomer = id != null ? id : 0;
       _call.towCustomerName = name != null ? name : '';
       _towCustomerController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towCustomerName))
           .value;
-    });
+    // });
   }
 
 //  setBodyShop(id, name) {
@@ -225,42 +225,42 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //  }
 
   setModel(id, name) {
-    setState(() {
+    // setState(() {
       _call.vehicleYearMakeModel = id != null ? id : 0;
       _call.vehicleYearMakeModelName = name != null ? name : '';
       _modelController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.vehicleYearMakeModelName))
           .value;
-    });
+    // });
   }
 
   setVehicleYear(year) {
-    setState(() {
+    // setState(() {
       _call.vehicleYear = year != null ? year : '';
       _yearController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.vehicleYear.toString()))
           .value;
-    });
+    // });
   }
 
   setMake(id, name) {
-    setState(() {
+    // setState(() {
       _call.vehicleMake = id != null ? id : 0;
       _call.vehicleMakeName = name != null ? name : '';
       _makeController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.vehicleMakeName))
           .value;
-    });
+    // });
   }
 
   setTowReason(id, name) {
-    setState(() {
+    // setState(() {
       _call.towReason = id != null ? id : 0;
       _call.towReasonName = name != null ? name : '';
       _towReasonController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towReasonName))
           .value;
-    });
+    // });
   }
 
 //  setStyle(id, name) {
@@ -274,29 +274,29 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //  }
 
   setTopColor(id, name) {
-    setState(() {
+    // setState(() {
       _call.topColor = id != null ? id : 0;
       _call.topColorName = name != null ? name : '';
       _topColorController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.topColorName))
           .value;
-    });
+    // });
 
     setSecondColor(id, name);
   }
 
   setSecondColor(id, name) {
-    setState(() {
+    // setState(() {
       _call.secondColor = id != null ? id : 0;
       _call.secondColorName = name != null ? name : '';
       _secondColorController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.secondColorName))
           .value;
-    });
+    // });
   }
 
   setLicenseState(suggestion) {
-    setState(() {
+    // setState(() {
       _call.vehicleLicenseState = suggestion.vehicleLicenseState != null
           ? suggestion.vehicleLicenseState
           : 0;
@@ -306,7 +306,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       _licenseStateController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.vehicleLicenseStateName))
           .value;
-    });
+    // });
   }
 
   setYearMakeModelName(yearMakeModelObj) {
@@ -327,7 +327,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //  }
 
   setTowType(suggestion) {
-    setState(() {
+    // setState(() {
       _call.towType = suggestion.towType != null && suggestion.towType != 'null'
           ? suggestion.towType
           : 0;
@@ -373,7 +373,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       _towReasonController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towReasonName))
           .value;
-    });
+    // });
   }
 
 //  setTowReason(id, name) {
@@ -387,37 +387,37 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //  }
 
   setAuthorization(id, name) {
-    setState(() {
+    // setState(() {
       _call.towAuthorization = id != null ? id : 0;
       _call.towAuthorizationName = name != null ? name : '';
       _authorizationController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towAuthorizationName))
           .value;
-    });
+    // });
   }
 
   setJurisdiction(id, name) {
-    setState(() {
+    // setState(() {
       _call.towJurisdiction = id != null ? id : 0;
       _call.towJurisdictionName = name != null ? name : '';
       _jurisdictionController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towJurisdictionName))
           .value;
-    });
+    // });
   }
 
   setCity(id, name) {
-    setState(() {
+    // setState(() {
       _call.towedCity = id != null ? id : 0;
       _call.towedCityName = name != null ? name : '';
       _towedCityController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towedCityName))
           .value;
-    });
+    // });
   }
 
   setTowedState(id, name, shortName) {
-    setState(() {
+    // setState(() {
       _call.towedState = id != null ? id : 0;
       _call.towedStateName = name != null ? name : '';
       _towedStateController.value = new TextEditingController.fromValue(
@@ -430,21 +430,21 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       _towedCityController.value = new TextEditingController.fromValue(
           new TextEditingValue(text: ''))
           .value;
-    });
+    // });
   }
 
   setTowedToCity(id, name) {
-    setState(() {
+    // setState(() {
       _call.towedToCity = id != null ? id : 0;
       _call.towedToCityName = name != null ? name : '';
       _towedToCityController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towedToCityName))
           .value;
-    });
+    // });
   }
 
   setTowedToState(id, name, shortName) {
-    setState(() {
+    // setState(() {
       _call.towedToState = id != null ? id : 0;
       _call.towedToStateName = name != null ? name : '';
       _towedToStateController.value = new TextEditingController.fromValue(
@@ -457,30 +457,30 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       _towedToCityController.value = new TextEditingController.fromValue(
           new TextEditingValue(text: ''))
           .value;
-    });
+    // });
   }
 
   setCompany(id, name) {
-    setState(() {
+    // setState(() {
       _call.wreckerCompany = id != null ? id : 0;
       _call.wreckerCompanyName = name != null ? name : '';
       _companyController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.wreckerCompanyName))
           .value;
-    });
+    // });
   }
 
   setDriver(driverObj) {
-    setState(() {
+    // setState(() {
       _call.wreckerDriver = driverObj.wreckerDriver != null ? driverObj.wreckerDriver : 0;
       _call.wreckerDriverName = driverObj.wreckerDriverName != null ? driverObj.wreckerDriverName : '';
       _driverController.value = new TextEditingController.fromValue(
           new TextEditingValue(text: _call.wreckerDriverName))
           .value;
-    });
+    // });
   }
   setDriverOnEdit(suggestion) {
-    setState(() {
+    // setState(() {
       _call.wreckerDriver = suggestion.wreckerDriver;
       _call.wreckerDriverName = suggestion.wreckerDriverName;
       _driverController.value =
@@ -489,29 +489,29 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       if(suggestion.towTruck != 0) {
         setTruck(suggestion.towTruck, suggestion.towTruckName);
       }
-    });
+    // });
     //_formKey.currentState.validate();
   }
 
   setTruck(id, name) {
-    setState(() {
+    // setState(() {
       _call.towTruck = id != null ? id : 0;
       _call.towTruckName = name != null ? name : '';
       _truckController.value = new TextEditingController.fromValue(
               new TextEditingValue(text: _call.towTruckName))
           .value;
-    });
+    // });
   }
 
   setVehiclePriority(id, name) {
-    setState(() {
+    // setState(() {
       _call.dispatchPriorityLevel = id != null ? id : 0;
       _call.dispatchPriorityLevelName = name != null ? name : '';
       _vehiclePriorityTypeController.value =
           new TextEditingController.fromValue(
                   new TextEditingValue(text: _call.dispatchPriorityLevelName))
               .value;
-    });
+    // });
   }
 
   @override

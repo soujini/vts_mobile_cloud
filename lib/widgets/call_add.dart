@@ -609,9 +609,7 @@ class CallAddState extends State<CallAdd> {
       await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
           .checkForDuplicateTickets(_call);
 
-      if (Provider
-          .of<ProcessTowedVehiclesVM>(context, listen: false)
-          .duplicateData["errorStatus"] == "true") {
+      if (Provider.of<ProcessTowedVehiclesVM>(context, listen: false).duplicateData["errorStatus"] == "true") {
         showDialog(
             context: context,
             builder: (BuildContext context) {
