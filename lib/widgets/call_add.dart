@@ -557,7 +557,7 @@ class CallAddState extends State<CallAdd> {
 //    Navigator.push(context, TestWidget());
    Navigator.of(context).push(MaterialPageRoute(builder:(context) =>CallAdd() ));
   }
-  _showDialog(BuildContext context) {
+  _showDialog() {
     Scaffold.of(context).showSnackBar(
     new SnackBar(
         backgroundColor: Colors.lightGreen,
@@ -605,7 +605,7 @@ class CallAddState extends State<CallAdd> {
   }
 
   save() async {
-      _showDialog(context);
+      _showDialog();
       await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
           .checkForDuplicateTickets(_call);
 
