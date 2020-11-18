@@ -33,6 +33,7 @@ import 'package:vts_mobile_cloud/widgets/wrecker_driver_modal.dart';
 import 'package:vts_mobile_cloud/widgets/towed_vehicle_notes_list.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_masked_text/flutter_masked_text.dart';
 
 class CallEdit extends StatefulWidget {
   var initialIndex;
@@ -125,7 +126,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   var _towCustomerController = new TextEditingController();
   var _dispatchInstructions_stringController = new TextEditingController();
   var _dispatchContactController = new TextEditingController();
-  var _dispatchContactPhoneController = new TextEditingController();
+  var _dispatchContactPhoneController = new MaskedTextController(mask: '(000)000-0000');
   var _dispatchDateController = new TextEditingController();
 
 //  var _dispatchReceivedTimeController = new TextEditingController();
