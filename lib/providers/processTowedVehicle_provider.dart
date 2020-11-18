@@ -359,13 +359,6 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
     await  getSecureStore('userId', (token) {
       userId=token;
     });
-    // await  getSecureStore('pinNumber', (token) {
-    //   pinNumber=token;
-    // });
-    // await  getSecureStore('timeZoneName', (token) {
-    //   timeZoneName=token;
-    // });
-
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
         "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -382,7 +375,6 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
         "</mobileDigitalDispatch>"
         "</soap:Body>"
         "</soap:Envelope>";
-
     final response = await http.post(
         'https://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
         headers: {
@@ -399,7 +391,6 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
     final extractedData = await data["soap:Envelope"]["soap:Body"]
     ["mobileDigitalDispatchResponse"]["mobileDigitalDispatchResult"];
     mobileDigitalDispatchResponse = Map.from(extractedData);
-    print(mobileDigitalDispatchResponse);
   }
 }
 

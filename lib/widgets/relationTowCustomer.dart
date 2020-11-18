@@ -23,14 +23,14 @@ class _RelationTowCustomerState extends State<RelationTowCustomer> {
     // await PlayersViewModel.loadPlayers();
     // await TCViewModel.loadPlayers();
     await Provider.of<TowCustomersVM>(context, listen:false).list();
-//    print(PlayersViewModel.players);
-//     print(Provider.of<Playerss>(context).towC);
-//    print("blah "+Provider.of<Playerss>(context).towC[0].name.toString());
+//    //print(PlayersViewModel.players);
+//     //print(Provider.of<Playerss>(context).towC);
+//    //print("blah "+Provider.of<Playerss>(context).towC[0].name.toString());
   }
 
 //  @override
 //  void initState() {
-//    print("in init state");
+//    //print("in init state");
 //
 //    super.initState();
 //

@@ -188,8 +188,8 @@ class TowChargesVM with ChangeNotifier, SecureStoreMixin{
           for(int j=0; j<x.length;j++){
 
              if(extractedData[i]['towCharges'].toString() == x[j].towCharges.toString()){
-               print(extractedData[i]['towCharges']);
-               print(x[j].towCharges);
+               //print(extractedData[i]['towCharges']);
+               //print(x[j].towCharges);
                bla=true;
              }
           }

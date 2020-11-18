@@ -600,7 +600,7 @@ Call _towedVehicleCallsFromJsonForAdd(Map<String, dynamic> parsedJson) {
 }
 
 Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
-  print(parsedJson["dispatchDispatchTime"]);
+  //print(parsedJson["dispatchDispatchTime"]);
   return Call(
       errorStatus:_convertTobool(parsedJson["errorStatus"]),
       errorMessage:parsedJson["errorMessage"],

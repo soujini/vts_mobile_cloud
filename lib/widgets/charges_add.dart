@@ -136,7 +136,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
            }
          }
          else{
-           print("invalid fields");
+           //print("invalid fields");
          }
   }
   void initState(){

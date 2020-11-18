@@ -514,11 +514,11 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
     // });
   }
 
-  @override
-  void didChangeDependencies() {
-    bla();
-    super.didChangeDependencies();
-  }
+// @override
+//   void didChangeDependencies() {
+//     bla();
+//     super.didChangeDependencies();
+//   }
 
   bla() async {
       isLoading = true;
@@ -1148,11 +1148,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   var selectedCall;
   bool shouldListenTowedDiscountRateController = false;
   bool shouldListenTowedDiscountAmountController = false;
+
   @override
   void initState() {
     super.initState();
     getRole();
     getUserId();
+    bla();
     selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
 
     // Start listening to changes.
@@ -1178,7 +1180,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
     //         (route) => false);
     // Navigator.pop(context);
     // setState(() {
-    //   print("again");
+    //   //print("again");
     // });
     // Navigator.pop(context).then((value) {
     //   setState(() {
@@ -1234,9 +1236,10 @@ refresh(){
                 // key:UniqueKey(),
                 // controller:_tabController,
                 onTap: (index){
-    // setState(() {
-    //   tabIndex = index;
-    // });
+                   FocusScope.of(context).requestFocus(new FocusNode());
+    setState(() {
+      tabIndex = index;
+    });
                 },
                 isScrollable: true,
                 indicatorColor: Colors.green,
@@ -1991,7 +1994,7 @@ refresh(){
                                             showTitleActions: true,
                                             //  minTime: DateTime(2018, 3, 5),
                                             //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                            //   print('change $date');
+                                            //   //print('change $date');
                                             // },
                                             onConfirm: (date) {
                                           String formattedDate =
@@ -2029,7 +2032,7 @@ refresh(){
                                             showTitleActions: true,
                                             //  minTime: DateTime(2018, 3, 5),
                                             //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                            //   print('change $date');
+                                            //   //print('change $date');
                                             // },
                                             onConfirm: (time) {
                                           String formattedTime =
@@ -2324,7 +2327,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (date) {
 //                                      String formattedDate =
@@ -2509,9 +2512,12 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchETAMinutesController,
+                                  keyboardType:TextInputType.numberWithOptions(decimal: true),
+                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                                   decoration: new InputDecoration(
                                     labelText: "ETA",
                                   ),
+
                                   onTap: () => {_dispatchETAMinutesController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchETAMinutesController.value.text.length)},
                                   onSaved: (val) => setState(
                                       () => _call.dispatchETAMinutes = val),
@@ -2533,7 +2539,7 @@ refresh(){
                                             showTitleActions: true,
                                             //  minTime: DateTime(2018, 3, 5),
                                             //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                            //   print('change $date');
+                                            //   //print('change $date');
                                             // },
                                             onConfirm: (date) {
                                           String formattedDate =
@@ -2566,7 +2572,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (time) {
 //                                      String formattedTime =
@@ -2598,7 +2604,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (time) {
 //                                      String formattedTime =
@@ -2630,7 +2636,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (time) {
 //                                      String formattedTime =
@@ -2662,7 +2668,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (time) {
 //                                      String formattedTime =
@@ -2694,7 +2700,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (time) {
 //                                      String formattedTime =
@@ -2726,7 +2732,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (time) {
 //                                      String formattedTime =
@@ -2758,7 +2764,7 @@ refresh(){
 //                                        showTitleActions: true,
 //                                        //  minTime: DateTime(2018, 3, 5),
 //                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//                                        //   print('change $date');
+//                                        //   //print('change $date');
 //                                        // },
 //                                        onConfirm: (time) {
 //                                      String formattedTime =
@@ -2948,7 +2954,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =
@@ -2979,7 +2985,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =
@@ -3010,7 +3016,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =
@@ -3041,7 +3047,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =
@@ -3072,7 +3078,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =
@@ -3103,7 +3109,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =
@@ -3146,7 +3152,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =
@@ -3188,7 +3194,7 @@ refresh(){
 ////                                        showTitleActions: true,
 ////                                        //  minTime: DateTime(2018, 3, 5),
 ////                                        //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-////                                        //   print('change $date');
+////                                        //   //print('change $date');
 ////                                        // },
 ////                                        onConfirm: (date) {
 ////                                      String formattedDate =

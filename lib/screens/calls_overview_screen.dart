@@ -39,7 +39,6 @@ class _CallsScreenState extends State<CallsScreen> with SecureStoreMixin, Automa
        userRole = token;
      });
    });
-   print(userRole);
    return userRole;
  }
 

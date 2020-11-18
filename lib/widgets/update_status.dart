@@ -201,7 +201,7 @@ class _UpdateStatusState extends State<UpdateStatus> {
      await Provider.of<ProcessTowedVehiclesVM>(context, listen: false).mobileDigitalDispatch(_programMode, _responseId, _responseName, _towedVehicle);
     var mobileDigitalDispatchResponse = await Provider.of<ProcessTowedVehiclesVM>(context, listen: false).mobileDigitalDispatchResponse;
     if (mobileDigitalDispatchResponse['errorStatus'] == "true") {
-      print("Mobile Dispatch Success");
+      //print("Mobile Dispatch Success");
       if (selectedStatus == 'Dispatch' && widget.dispatchPaging == true) {
         showSMSDriverDialog();
       }
@@ -211,8 +211,10 @@ class _UpdateStatusState extends State<UpdateStatus> {
       }
       setState(() => widget.isLoading = false);
     }
-    else{
-      setState(() => widget.isLoading = false);
+    else{//driver not setup for messaging
+       setState(() => widget.isLoading = false);
+      Navigator.pop(context);
+      widget.notifyParent();
     }
   }
 
@@ -232,14 +234,13 @@ class _UpdateStatusState extends State<UpdateStatus> {
       var _towedVehicle = widget.selectedCall.id;
       var _responseId = 0;
       var _responseName = "";
-      var _programMode = "OnServiceComplete";
+      var _programMode = "ServiceComplete";
       await Provider.of<ProcessTowedVehiclesVM>(context, listen: false).mobileDigitalDispatch(_programMode, _responseId, _responseName, _towedVehicle);
     }
       await Provider.of<Calls>(context, listen: false).update(
           widget.selectedCall, selectedStatus, mode, moveStatus);
       var updateStatusResponse = await Provider.of<Calls>(context, listen: false).updateStatusResponse;
       if (updateStatusResponse['errorStatus'] == "true") {
-
         this.mobileDigitalDispatch(selectedStatus, mode);
       }
       else {

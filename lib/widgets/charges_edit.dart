@@ -150,7 +150,7 @@ class _ChargesEditState extends State<ChargesEdit> {
         }
       }
     } else {
-      print("Invalid fields");
+      //print("Invalid fields");
     }
   }
   calculateTotalChargesOnQuantityChange(_chargesQuantity) async{

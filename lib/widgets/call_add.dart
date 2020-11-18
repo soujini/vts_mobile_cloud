@@ -260,26 +260,26 @@ class CallAddState extends State<CallAdd> {
 //    Nigel’s 2013 Porsche Boxster S Vin# WP0CB2A84DS132907 Plate# NJP01
     var vin = VIN(number: 'JS1VX51L7X2175460');
 
-    print('WMI: ${vin.wmi}');
-    print('VDS: ${vin.vds}');
-    print('VIS: ${vin.vis}');
+    //print('WMI: ${vin.wmi}');
+    //print('VDS: ${vin.vds}');
+    //print('VIS: ${vin.vis}');
 
-    print("Model year is " + vin.modelYear());
-    print("Serial number is " + vin.serialNumber());
-    print("Assembly plant is " + vin.assemblyPlant());
-    //   print("Manufacturer is " + vin.getManufacturer());
-    print("Year is " + vin.getYear().toString());
-    print("Region is " + vin.getRegion());
-    print("VIN string is " + vin.toString());
+    //print("Model year is " + vin.modelYear());
+    //print("Serial number is " + vin.serialNumber());
+    //print("Assembly plant is " + vin.assemblyPlant());
+    //   //print("Manufacturer is " + vin.getManufacturer());
+    //print("Year is " + vin.getYear().toString());
+    //print("Region is " + vin.getRegion());
+    //print("VIN string is " + vin.toString());
 
     var make = await vin.getMakeAsync();
-    print("Make is ${make}");
+    //print("Make is ${make}");
 
     var model = await vin.getModelAsync();
-    print("Model is ${model}");
+    //print("Model is ${model}");
 
     var type = await vin.getVehicleTypeAsync();
-    print("Type is ${type}");
+    //print("Type is ${type}");
   }
   setDispatchDateAndTime(date, time){
 
@@ -444,7 +444,7 @@ class CallAddState extends State<CallAdd> {
 
   enableCity(){
     var a = _call.towedState.toString();
-    print(a);
+    //print(a);
     if(_call.towedState.toString() == 'null' || _call.towedState.toString() == '')
       return false;
           else
@@ -554,12 +554,10 @@ class CallAddState extends State<CallAdd> {
       var newTowedInvoice = int.parse(towedInvoice) + 1;
       _towedInvoiceController.value = new TextEditingController.fromValue( new TextEditingValue(text: newTowedInvoice.toString())).value;
     });
-   //_formKey.currentState.validate();
   }
-  _navigate(context){
-//    Navigator.push(context, TestWidget());
-   Navigator.of(context).push(MaterialPageRoute(builder:(context) =>CallAdd() ));
-  }
+  // _navigate(context){
+  //  Navigator.of(context).push(MaterialPageRoute(builder:(context) =>CallAdd() ));
+  // }
   _showDialog() {
     Scaffold.of(context).showSnackBar(
     new SnackBar(
@@ -587,7 +585,6 @@ class CallAddState extends State<CallAdd> {
       _showErrorMessage(context, response["errorMessage"]);
     }
     else {
-//      Navigator.pop(context);
       Navigator.push(
           context,
           new MaterialPageRoute(
@@ -606,8 +603,59 @@ class CallAddState extends State<CallAdd> {
       });
     }
   }
+  mobileDigitalDispatch(selectedStatus, mode, towedVehicleId) async {
+    var _towedVehicle = towedVehicleId;
+    var _responseId = 0;
+    var _responseName = "";
+    var _programMode;
+
+    //DispatchAccepted
+    //Reversal from Dispatch to Received (figure out)
+    if (selectedStatus == "Received") {
+      _programMode = "DispatchAccepted";
+    }
+
+    //DriverAssigned
+    if (selectedStatus == "Dispatch") {
+      _programMode = "DriverAssigned";
+    }
+    else if (selectedStatus == "Enroute") {
+      _programMode = "Enroute";
+    }
+    else if (selectedStatus == "Onsite") {
+      _programMode = "OnScene";
+    }
+    else if (selectedStatus == "Rolling") {
+      _programMode = "EnrouteToDestination";
+    }
+    else if (selectedStatus == "Arrived") {
+      _programMode = "OnSceneDestination";
+    }
+    if(mode == "tow"){
+      _programMode = "VehicleAtDestination";
+    }
+    else if(mode == "impound"){
+      _programMode = "VehicleInStorage";
+    }
+    await Provider.of<ProcessTowedVehiclesVM>(context, listen: false).mobileDigitalDispatch(_programMode, _responseId, _responseName, _towedVehicle);
+    var mobileDigitalDispatchResponse = await Provider.of<ProcessTowedVehiclesVM>(context, listen: false).mobileDigitalDispatchResponse;
+    // if (mobileDigitalDispatchResponse['errorStatus'] == "true") {
+    //   // if (selectedStatus == 'Dispatch' && widget.dispatchPaging == true) {
+    //   //   showSMSDriverDialog();
+    //   // }
+    //   // else {
+    //   //   Navigator.pop(context);
+    //   //   widget.notifyParent();
+    //   // }
+    //   // setState(() => widget.isLoading = false);
+    // }
+    // else{
+    //   // setState(() => widget.isLoading = false);
+    // }
+  }
 
   save() async {
+    var _newCallId;
       _showDialog();
       await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
           .checkForDuplicateTickets(_call);
@@ -618,7 +666,6 @@ class CallAddState extends State<CallAdd> {
             builder: (BuildContext context) {
               return DuplicateCall(save2: save2);
             });
-        //Add Yes or No Button and Rock it
       }
       else {
         await Provider.of<Calls>(context, listen: false).create(_call);
@@ -629,6 +676,7 @@ class CallAddState extends State<CallAdd> {
           _showErrorMessage(context, response["errorMessage"]);
         }
         else {
+          _newCallId = response["id"];
           await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
               .processChangeCharges(response["id"], 0);
           var processChangeChargeResponse = Provider
@@ -640,6 +688,10 @@ class CallAddState extends State<CallAdd> {
                 context, processChangeChargeResponse["errorMessage"]);
           }
           else {
+            //Check If wrecker driver exists and send an SMS
+            if(_call.wreckerDriver != 0){
+              await mobileDigitalDispatch("Dispatch", "", _newCallId);
+            }
             Navigator.push(
                 context,
                 new MaterialPageRoute(
@@ -654,62 +706,7 @@ class CallAddState extends State<CallAdd> {
         }
       }
     }
-    // else{
-    //   //print("invalid input fields");
-    // }
-  // }
 
-//  save() async {
-//    _formKey[0].currentState.save();
-//    _formKey[1].currentState.save();
-//    _formKey[2].currentState.save();
-////    final form_Step1 = _formKey[0].currentState;
-////    final form_Step2 = _formKey[1].currentState;
-////    final form_Step3 = _formKey[2].currentState;
-//    if (_formKey[2].currentState.validate()) {
-////      form_Step1.save();
-////      form_Step2.save();
-////      form_Step3.save();
-//      _showDialog(context);
-//      await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
-//          .checkForDuplicateTickets(_call);
-//      if (Provider
-//          .of<ProcessTowedVehiclesVM>(context, listen: false)
-//          .duplicateData["errorStatus"] == "true") {
-//        showDialog(
-//            context: context,
-//            builder: (BuildContext context) {
-//              return DuplicateCall();
-//            });
-//        //Add Yes or No Button and Rock it
-//      }
-//      else {
-//        await Provider.of<Calls>(context, listen: false).create(_call);
-//        var response = Provider
-//            .of<Calls>(context, listen: false)
-//            .createResponse;
-//        if (response["errorStatus"] == "false") {
-//          _showErrorMessage(context, response["errorMessage"]);
-//        }
-//        else {
-//          Navigator.push(
-//              context,
-//              new MaterialPageRoute(
-//                  builder: (context) =>
-//                  new SuccessScreen()));
-//
-//         Timer(Duration(milliseconds: 3000), () {
-//            Navigator.pop(context);
-//            Navigator.push(
-//                context,
-//                new MaterialPageRoute(
-//                    builder: (context) =>
-//                    new CallsScreen()));
-//          });
-//        }
-//      }
-//    }
-//  }
 
   String validateVIN(String value){
     Pattern pattern = "^[^iIoOqQ'-]{10,17}\$";
@@ -1160,7 +1157,7 @@ class CallAddState extends State<CallAdd> {
                               showTitleActions: true,
                               //  minTime: DateTime(2018, 3, 5),
                               //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                              //   print('change $date');
+                              //   //print('change $date');
                               // },
                               onConfirm: (date) {
                                 String formattedDate =DateFormat('MM-dd-yyyy').format(date);

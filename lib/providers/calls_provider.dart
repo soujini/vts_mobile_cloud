@@ -157,7 +157,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       // "dispatchInstructions:" +dispatchInstructionsBytes.toString(),
     ];
     // filteredFieldList = fieldList.where((v) => v.split(':')[1] != "null" && v.split(':')[1] != null).toList();
-    //  print(fieldList);
+     //print(fieldList);
 
     xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
@@ -202,6 +202,8 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     List<String> fieldList;
     String xmlValues="";
     String dispatchInstructions_string="";
+    DateTime now = DateTime.now();
+    String formattedTime2 = DateFormat('kk^mm').format(now);
 
    await  getSecureStore('userId', (token) {
       userId=token;
@@ -262,6 +264,10 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       "vehicleLicenseType:1", //not in view
       "storageCompany:"+call.storageCompany.toString()
     ];
+
+    if(call.wreckerDriver != 0){
+      fieldList.add("dispatchDispatchTime:" +formattedTime2);
+    }
     xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
@@ -458,7 +464,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "towedStatus:"+towedStatus,
         "dispatchProviderResponse:",
         "dispatchProviderSelectedResponse:0",
-        "towType:"+selectedCall.towType.toString(),
+        // "towType:"+selectedCall.towType.toString(),
         "lastLatitude:"+latitude.toString(),
         "lastLongitude:"+longitude.toString(),
     "dispatchReceivedTime:"+selectedCall.dispatchReceivedTime.toString().replaceAll(':','^'),//not in view Mandatory field
@@ -472,8 +478,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       fieldName = "Cleared - "+formattedTime2;
       xmlValues = fieldList.map((v) => '<string>$v</string>').join();
     }
-    print(fieldList);
-
+    //print(fieldList);
     var envelope = "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<soap:Envelope "
         "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
@@ -511,20 +516,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     ["updateResponse"]["updateResult"];
 
     updateStatusResponse = Map.from(extractedData);
-
-    // final resBody = xml2json.parse(response.body);
-    // return response.body;
-
-
-
-    // final extractedData = await data["soap:Envelope"]["soap:Body"]
-    // ["updateResponse"]["updateResult"];
-    //
-    // updateResponse = Map.from(extractedData);
-
-
-
-
   }
   Future<List> get(id) async {
    await  getSecureStore('userId', (token) {
@@ -602,16 +593,18 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       }
       towedStatus = "C";
       activeDispatch = true;
-    } else if (mode == 'completed') {
-      if(restrictWreckerDriver != '0'){
-        filterFields = "pinNumber:"+pinNumber+"|towedStatus:C|wreckerDriver:"+restrictWreckerDriver;
-      }
-      else{
-        filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
-      }
-      towedStatus = "C";
-      activeDispatch = false;
-    } else if (mode == 'cancelled') {
+    }
+    // else if (mode == 'completed') {
+    //   if(restrictWreckerDriver != '0'){
+    //     filterFields = "pinNumber:"+pinNumber+"|towedStatus:C|wreckerDriver:"+restrictWreckerDriver;
+    //   }
+    //   else{
+    //     filterFields = "pinNumber:"+pinNumber+"|towedStatus:C";
+    //   }
+    //   towedStatus = "C";
+    //   activeDispatch = false;
+    // }
+    else if (mode == 'cancelled') {
       if(restrictWreckerDriver != '0') {
         filterFields = "pinNumber:" + pinNumber + "|towedStatus:X|wreckerDriver:"+restrictWreckerDriver;
       }
@@ -677,12 +670,12 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       notifyListeners();
       return activeCalls;
     }
-    else if (mode == 'completed') {
-      getCompletedCalls(extractedData, count, iStart);
-      _completedCount = count;
-     // notifyListeners();
-      return completedCalls;
-    }
+    // else if (mode == 'completed') {
+    //   getCompletedCalls(extractedData, count, iStart);
+    //   _completedCount = count;
+    //  // notifyListeners();
+    //   return completedCalls;
+    // }
     else if (mode == "cancelled") {
       getCancelledCalls(extractedData,count, iStart);
      _cancelledCount=count;
@@ -796,6 +789,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         wreckerDriverName: _activeCallsFiltered["wreckerDriverName"] != null
             ? _activeCallsFiltered["wreckerDriverName"]
             : '',
+        towType: (_activeCallsFiltered["towType"] != "0"
+            ? int.parse(_activeCallsFiltered["towType"])
+            : 0),
         towTruck: (_activeCallsFiltered["towTruck"] != "0"
             ? int.parse(_activeCallsFiltered["towTruck"])
             : 0),
@@ -917,6 +913,9 @@ class Calls with ChangeNotifier, SecureStoreMixin {
           wreckerDriverName: _activeCallsFiltered[i]["wreckerDriverName"] != null
               ? _activeCallsFiltered[i]["wreckerDriverName"]
               : '',
+          towType: (_activeCallsFiltered[i]["towType"] != "0"
+              ? int.parse(_activeCallsFiltered[i]["towType"])
+              : 0),
           towTruck: (_activeCallsFiltered[i]["towTruck"] != "0"
               ? int.parse(_activeCallsFiltered[i]["towTruck"])
               : 0),
@@ -945,242 +944,259 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       }
     }
       _activeCalls = activeCalls;
-//      notifyListeners();
+     // notifyListeners();
   }
-  getCompletedCalls(_completedCallsFiltered, count, iStart) {
-    final List<Call> completedCalls = [];
-    if (count == 1 || count == iStart) {
-      completedCalls.add(Call(
-        count:count,
-        id: (_completedCallsFiltered["id"] != "0"
-            ? int.parse(_completedCallsFiltered["id"])
-            : 0),
-        dispatchStatusName:
-        _completedCallsFiltered["dispatchStatusName"] != null
-            ? _completedCallsFiltered["dispatchStatusName"]
-            : '--',
-        dispatchInstructions_string:
-        _completedCallsFiltered["dispatchInstructions_string"] != null
-            ? _completedCallsFiltered["dispatchInstructions_string"]
-            : '--',
-        progressStyleColor:
-        getProgressStyleColor(_completedCallsFiltered["dispatchStatus"]),
-        progressPercentage: getProgressStylePercentage(
-            _completedCallsFiltered["dispatchStatus"]),
-        towedTotalAmount: _completedCallsFiltered["towedTotalAmount"] != null
-            ? double.parse(_completedCallsFiltered["towedTotalAmount"])
-            : double.parse('0.00'),
-        towReasonName: _completedCallsFiltered["towReasonName"] != null
-            ? _completedCallsFiltered["towReasonName"]
-            : '',
-        vehicleMakeName:
-        _completedCallsFiltered["vehicleMakeName"] != null
-            ? _completedCallsFiltered["vehicleMakeName"]
-            : '',
-        vehicleYearMakeModelName:
-        _completedCallsFiltered["vehicleYearMakeModelName"] != null
-            ? _completedCallsFiltered["vehicleYearMakeModelName"]
-            : '',
-        vehicleYear: (_completedCallsFiltered["vehicleYear"] != "0"
-            ? int.parse(_completedCallsFiltered["vehicleYear"])
-            : 0),
-        color: _completedCallsFiltered["topColorName"],
-        towedInvoice: _completedCallsFiltered["towedInvoice"] != null
-            ? _completedCallsFiltered["towedInvoice"]
-            : '',
-        towCustomerName: _completedCallsFiltered["towCustomerName"] != null
-            ? _completedCallsFiltered["towCustomerName"]
-            : '',
-        dispatchContact: _completedCallsFiltered["dispatchContact"] != null
-            ? (_completedCallsFiltered["dispatchContact"])
-            : 'Contact',
-        dispatchContactPhone:
-        _completedCallsFiltered["dispatchContactPhone"] != null
-            ? _completedCallsFiltered["dispatchContactPhone"]
-            : '',
-        dispatchDate: _completedCallsFiltered["dispatchDate"],
-        dispatchDispatchTime: _completedCallsFiltered["dispatchDispatchTime"],
-        towedStreet: _completedCallsFiltered["towedStreet"] != null
-            ? _completedCallsFiltered["towedStreet"]
-            : 'Location',
-        towedStreetTwo: _completedCallsFiltered["towedStreetTwo"] != null
-            ? _completedCallsFiltered["towedStreetTwo"]
-            : '',
-        towedCityName: _completedCallsFiltered["towedCityName"] != null
-            ? _completedCallsFiltered["towedCityName"]
-            : '',
-        towedStateName: _completedCallsFiltered["towedStateName"] != null
-            ? _completedCallsFiltered["towedStateName"]
-            : '',
-        towedZipCode: _completedCallsFiltered["towedZipCode"] != null
-            ? _completedCallsFiltered["towedZipCode"]
-            : '',
-        towedToStreet: _completedCallsFiltered["towedToStreet"] != null
-            ? _completedCallsFiltered["towedToStreet"]
-            : '',
-        towedToStreetTwo: _completedCallsFiltered["towedToStreetTwo"] != null
-            ? _completedCallsFiltered["towedToStreetTwo"]
-            : '',
-        towedToCityName: _completedCallsFiltered["towedToCityName"] != null
-            ? _completedCallsFiltered["towedToCityName"]
-            : '',
-        towedToStateName: _completedCallsFiltered["towedToStateName"] != null
-            ? _completedCallsFiltered["towedToStateName"]
-            : '',
-        towedToZipCode: _completedCallsFiltered["towedToZipCode"] != null
-            ? _completedCallsFiltered["towedToZipCode"]
-            : '',
-        licensePlate: _completedCallsFiltered["licensePlate"] != null
-            ? _completedCallsFiltered["licensePlate"]
-            : '',
-        VIN: _completedCallsFiltered["VIN"] != null
-            ? _completedCallsFiltered["VIN"]
-            : '',
-        wreckerDriverName: _completedCallsFiltered["wreckerDriverName"] != null
-            ? _completedCallsFiltered["wreckerDriverName"]
-            : '',
-        towTruckName: _completedCallsFiltered["towTruckName"] != null
-            ? _completedCallsFiltered["towTruckName"]
-            : '',
-        dispatchReceivedTime: _completedCallsFiltered["dispatchReceivedTime"] != null
-            ? _completedCallsFiltered["dispatchReceivedTime"]
-            : '',
-        dispatchEnrouteTime: _completedCallsFiltered["dispatchEnrouteTime"] != null
-            ? _completedCallsFiltered["dispatchEnrouteTime"]
-            : '',
-        dispatchOnsiteTime: _completedCallsFiltered["dispatchOnsiteTime"] != null
-            ? _completedCallsFiltered["dispatchOnsiteTime"]
-            : '',
-        dispatchRollingTime: _completedCallsFiltered["dispatchRollingTime"] != null
-            ? _completedCallsFiltered["dispatchRollingTime"]
-            : '',
-        dispatchClearedTime: _completedCallsFiltered["dispatchClearedTime"] != null
-            ? _completedCallsFiltered["dispatchClearedTime"]
-            : '',
-        dispatchArrivedTime: _completedCallsFiltered["dispatchArrivedTime"] != null
-            ? _completedCallsFiltered["dispatchArrivedTime"]
-            : '',
-      ));
-    }
-    else if(count > 1) {
-      for (var i = 0; i < _completedCallsFiltered.length; i++) {
-//      var a = _activeCallsFiltered.id;
-        completedCalls.add(Call(
-          count:count,
-          id: (_completedCallsFiltered[i]["id"] != "0"
-              ? int.parse(_completedCallsFiltered[i]["id"])
-              : 0),
-          dispatchStatusName:
-          _completedCallsFiltered[i]["dispatchStatusName"] != null
-              ? _completedCallsFiltered[i]["dispatchStatusName"]
-              : '--',
-          dispatchInstructions_string:
-          _completedCallsFiltered[i]["dispatchInstructions_string"] != null
-              ? _completedCallsFiltered[i]["dispatchInstructions_string"]
-              : '--',
-          progressStyleColor:
-          getProgressStyleColor(_completedCallsFiltered[i]["dispatchStatus"]),
-          progressPercentage: getProgressStylePercentage(
-              _completedCallsFiltered[i]["dispatchStatus"]),
-          towedTotalAmount: _completedCallsFiltered[i]["towedTotalAmount"] != null
-              ? double.parse(_completedCallsFiltered[i]["towedTotalAmount"])
-              : double.parse('0.00'),
-          towReasonName: _completedCallsFiltered[i]["towReasonName"] != null
-              ? _completedCallsFiltered[i]["towReasonName"]
-              : '',
-          vehicleMakeName:
-          _completedCallsFiltered[i]["vehicleMakeName"] != null
-              ? _completedCallsFiltered[i]["vehicleMakeName"]
-              : '',
-          vehicleYearMakeModelName:
-          _completedCallsFiltered[i]["vehicleYearMakeModelName"] != null
-              ? _completedCallsFiltered[i]["vehicleYearMakeModelName"]
-              : '',
-          vehicleYear: (_completedCallsFiltered[i]["vehicleYear"] != "0"
-              ? int.parse(_completedCallsFiltered[i]["vehicleYear"])
-              : 0),
-          color: _completedCallsFiltered[i]["topColorName"],
-          towedInvoice: _completedCallsFiltered[i]["towedInvoice"] != null
-              ? _completedCallsFiltered[i]["towedInvoice"]
-              : '',
-          towCustomerName: _completedCallsFiltered[i]["towCustomerName"] != null
-              ? _completedCallsFiltered[i]["towCustomerName"]
-              : '',
-          dispatchContact: _completedCallsFiltered[i]["dispatchContact"] != null
-              ? _completedCallsFiltered[i]["dispatchContact"]
-              : 'Contact',
-          dispatchContactPhone:
-          _completedCallsFiltered[i]["dispatchContactPhone"] != null
-              ? _completedCallsFiltered[i]["dispatchContactPhone"]
-              : '',
-          dispatchDate: _completedCallsFiltered[i]["dispatchDate"],
-          dispatchDispatchTime: _completedCallsFiltered[i]["dispatchDispatchTime"],
-          towedStreet: _completedCallsFiltered[i]["towedStreet"] != null
-              ? _completedCallsFiltered[i]["towedStreet"]
-              : 'Location',
-          towedStreetTwo: _completedCallsFiltered[i]["towedStreetTwo"] != null
-              ? _completedCallsFiltered[i]["towedStreetTwo"]
-              : '',
-          towedCityName: _completedCallsFiltered[i]["towedCityName"] != null
-              ? _completedCallsFiltered[i]["towedCityName"]
-              : '',
-          towedStateName: _completedCallsFiltered[i]["towedStateName"] != null
-              ? _completedCallsFiltered[i]["towedStateName"]
-              : '',
-          towedZipCode: _completedCallsFiltered[i]["towedZipCode"] != null
-              ? _completedCallsFiltered[i]["towedZipCode"]
-              : '',
-          towedToStreet: _completedCallsFiltered[i]["towedToStreet"] != null
-              ? _completedCallsFiltered[i]["towedToStreet"]
-              : '',
-          towedToStreetTwo: _completedCallsFiltered[i]["towedToStreetTwo"] != null
-              ? _completedCallsFiltered[i]["towedToStreetTwo"]
-              : '',
-          towedToCityName: _completedCallsFiltered[i]["towedToCityName"] != null
-              ? _completedCallsFiltered[i]["towedToCityName"]
-              : '',
-          towedToStateName: _completedCallsFiltered[i]["towedToStateName"] != null
-              ? _completedCallsFiltered[i]["towedToStateName"]
-              : '',
-          towedToZipCode: _completedCallsFiltered[i]["towedToZipCode"] != null
-              ? _completedCallsFiltered[i]["towedToZipCode"]
-              : '',
-          licensePlate: _completedCallsFiltered[i]["licensePlate"] != null
-              ? _completedCallsFiltered[i]["licensePlate"]
-              : ' ',
-          VIN: _completedCallsFiltered[i]["VIN"] != null
-              ? _completedCallsFiltered[i]["VIN"]
-              : '',
-          wreckerDriverName: _completedCallsFiltered[i]["wreckerDriverName"] != null
-              ? _completedCallsFiltered[i]["wreckerDriverName"]
-              : '',
-          towTruckName: _completedCallsFiltered[i]["towTruckName"] != null
-              ? _completedCallsFiltered[i]["towTruckName"]
-              : '',
-          dispatchReceivedTime: _completedCallsFiltered[i]["dispatchReceivedTime"] != null
-              ? _completedCallsFiltered[i]["dispatchReceivedTime"]
-              : '',
-          dispatchEnrouteTime: _completedCallsFiltered[i]["dispatchEnrouteTime"] != null
-              ? _completedCallsFiltered[i]["dispatchEnrouteTime"]
-              : '',
-          dispatchOnsiteTime: _completedCallsFiltered[i]["dispatchOnsiteTime"] != null
-              ? _completedCallsFiltered[i]["dispatchOnsiteTime"]
-              : '',
-          dispatchRollingTime: _completedCallsFiltered[i]["dispatchRollingTime"] != null
-              ? _completedCallsFiltered[i]["dispatchRollingTime"]
-              : '',
-          dispatchClearedTime: _completedCallsFiltered[i]["dispatchClearedTime"] != null
-              ? _completedCallsFiltered[i]["dispatchClearedTime"]
-              : '',
-          dispatchArrivedTime: _completedCallsFiltered[i]["dispatchArrivedTime"] != null
-              ? _completedCallsFiltered[i]["dispatchArrivedTime"]
-              : '',
-        ));
-      }
-    }
-      _completedCalls = completedCalls;
-      notifyListeners();
-  }
+  // getCompletedCalls(_completedCallsFiltered, count, iStart) {
+  //   final List<Call> completedCalls = [];
+  //   if (count == 1 || count == iStart) {
+  //     completedCalls.add(Call(
+  //       count:count,
+  //       id: (_completedCallsFiltered["id"] != "0"
+  //           ? int.parse(_completedCallsFiltered["id"])
+  //           : 0),
+  //       dispatchStatusName:
+  //       _completedCallsFiltered["dispatchStatusName"] != null
+  //           ? _completedCallsFiltered["dispatchStatusName"]
+  //           : '--',
+  //       dispatchInstructions_string:
+  //       _completedCallsFiltered["dispatchInstructions_string"] != null
+  //           ? _completedCallsFiltered["dispatchInstructions_string"]
+  //           : '--',
+  //       progressStyleColor:
+  //       getProgressStyleColor(_completedCallsFiltered["dispatchStatus"]),
+  //       progressPercentage: getProgressStylePercentage(
+  //           _completedCallsFiltered["dispatchStatus"]),
+  //       towedTotalAmount: _completedCallsFiltered["towedTotalAmount"] != null
+  //           ? double.parse(_completedCallsFiltered["towedTotalAmount"])
+  //           : double.parse('0.00'),
+  //       towReasonName: _completedCallsFiltered["towReasonName"] != null
+  //           ? _completedCallsFiltered["towReasonName"]
+  //           : '',
+  //       vehicleMakeName:
+  //       _completedCallsFiltered["vehicleMakeName"] != null
+  //           ? _completedCallsFiltered["vehicleMakeName"]
+  //           : '',
+  //       vehicleYearMakeModelName:
+  //       _completedCallsFiltered["vehicleYearMakeModelName"] != null
+  //           ? _completedCallsFiltered["vehicleYearMakeModelName"]
+  //           : '',
+  //       vehicleYear: (_completedCallsFiltered["vehicleYear"] != "0"
+  //           ? int.parse(_completedCallsFiltered["vehicleYear"])
+  //           : 0),
+  //       color: _completedCallsFiltered["topColorName"],
+  //       towedInvoice: _completedCallsFiltered["towedInvoice"] != null
+  //           ? _completedCallsFiltered["towedInvoice"]
+  //           : '',
+  //       towCustomerName: _completedCallsFiltered["towCustomerName"] != null
+  //           ? _completedCallsFiltered["towCustomerName"]
+  //           : '',
+  //       dispatchContact: _completedCallsFiltered["dispatchContact"] != null
+  //           ? (_completedCallsFiltered["dispatchContact"])
+  //           : 'Contact',
+  //       dispatchContactPhone:
+  //       _completedCallsFiltered["dispatchContactPhone"] != null
+  //           ? _completedCallsFiltered["dispatchContactPhone"]
+  //           : '',
+  //       dispatchDate: _completedCallsFiltered["dispatchDate"],
+  //       dispatchDispatchTime: _completedCallsFiltered["dispatchDispatchTime"],
+  //       towedStreet: _completedCallsFiltered["towedStreet"] != null
+  //           ? _completedCallsFiltered["towedStreet"]
+  //           : 'Location',
+  //       towedStreetTwo: _completedCallsFiltered["towedStreetTwo"] != null
+  //           ? _completedCallsFiltered["towedStreetTwo"]
+  //           : '',
+  //       towedCityName: _completedCallsFiltered["towedCityName"] != null
+  //           ? _completedCallsFiltered["towedCityName"]
+  //           : '',
+  //       towedStateName: _completedCallsFiltered["towedStateName"] != null
+  //           ? _completedCallsFiltered["towedStateName"]
+  //           : '',
+  //       towedZipCode: _completedCallsFiltered["towedZipCode"] != null
+  //           ? _completedCallsFiltered["towedZipCode"]
+  //           : '',
+  //       towedToStreet: _completedCallsFiltered["towedToStreet"] != null
+  //           ? _completedCallsFiltered["towedToStreet"]
+  //           : '',
+  //       towedToStreetTwo: _completedCallsFiltered["towedToStreetTwo"] != null
+  //           ? _completedCallsFiltered["towedToStreetTwo"]
+  //           : '',
+  //       towedToCityName: _completedCallsFiltered["towedToCityName"] != null
+  //           ? _completedCallsFiltered["towedToCityName"]
+  //           : '',
+  //       towedToStateName: _completedCallsFiltered["towedToStateName"] != null
+  //           ? _completedCallsFiltered["towedToStateName"]
+  //           : '',
+  //       towedToZipCode: _completedCallsFiltered["towedToZipCode"] != null
+  //           ? _completedCallsFiltered["towedToZipCode"]
+  //           : '',
+  //       licensePlate: _completedCallsFiltered["licensePlate"] != null
+  //           ? _completedCallsFiltered["licensePlate"]
+  //           : '',
+  //       VIN: _completedCallsFiltered["VIN"] != null
+  //           ? _completedCallsFiltered["VIN"]
+  //           : '',
+  //       wreckerDriver: (_completedCallsFiltered["wreckerDriver"] != "0"
+  //           ? int.parse(_completedCallsFiltered["wreckerDriver"])
+  //           : 0),
+  //       wreckerDriverName: _completedCallsFiltered["wreckerDriverName"] != null
+  //           ? _completedCallsFiltered["wreckerDriverName"]
+  //           : '',
+  //       towType: (_completedCallsFiltered["towType"] != "0"
+  //           ? int.parse(_completedCallsFiltered["towType"])
+  //           : 0),
+  //       towTruck: (_completedCallsFiltered["towTruck"] != "0"
+  //           ? int.parse(_completedCallsFiltered["towTruck"])
+  //           : 0),
+  //       towTruckName: _completedCallsFiltered["towTruckName"] != null
+  //           ? _completedCallsFiltered["towTruckName"]
+  //           : '',
+  //       dispatchReceivedTime: _completedCallsFiltered["dispatchReceivedTime"] != null
+  //           ? _completedCallsFiltered["dispatchReceivedTime"]
+  //           : '',
+  //       dispatchEnrouteTime: _completedCallsFiltered["dispatchEnrouteTime"] != null
+  //           ? _completedCallsFiltered["dispatchEnrouteTime"]
+  //           : '',
+  //       dispatchOnsiteTime: _completedCallsFiltered["dispatchOnsiteTime"] != null
+  //           ? _completedCallsFiltered["dispatchOnsiteTime"]
+  //           : '',
+  //       dispatchRollingTime: _completedCallsFiltered["dispatchRollingTime"] != null
+  //           ? _completedCallsFiltered["dispatchRollingTime"]
+  //           : '',
+  //       dispatchClearedTime: _completedCallsFiltered["dispatchClearedTime"] != null
+  //           ? _completedCallsFiltered["dispatchClearedTime"]
+  //           : '',
+  //       dispatchArrivedTime: _completedCallsFiltered["dispatchArrivedTime"] != null
+  //           ? _completedCallsFiltered["dispatchArrivedTime"]
+  //           : '',
+  //     ));
+  //   }
+  //   else if(count > 1) {
+  //     for (var i = 0; i < _completedCallsFiltered.length; i++) {
+  //       completedCalls.add(Call(
+  //         count:count,
+  //         id: (_completedCallsFiltered[i]["id"] != "0"
+  //             ? int.parse(_completedCallsFiltered[i]["id"])
+  //             : 0),
+  //         dispatchStatusName:
+  //         _completedCallsFiltered[i]["dispatchStatusName"] != null
+  //             ? _completedCallsFiltered[i]["dispatchStatusName"]
+  //             : '--',
+  //         dispatchInstructions_string:
+  //         _completedCallsFiltered[i]["dispatchInstructions_string"] != null
+  //             ? _completedCallsFiltered[i]["dispatchInstructions_string"]
+  //             : '--',
+  //         progressStyleColor:
+  //         getProgressStyleColor(_completedCallsFiltered[i]["dispatchStatus"]),
+  //         progressPercentage: getProgressStylePercentage(
+  //             _completedCallsFiltered[i]["dispatchStatus"]),
+  //         towedTotalAmount: _completedCallsFiltered[i]["towedTotalAmount"] != null
+  //             ? double.parse(_completedCallsFiltered[i]["towedTotalAmount"])
+  //             : double.parse('0.00'),
+  //         towReasonName: _completedCallsFiltered[i]["towReasonName"] != null
+  //             ? _completedCallsFiltered[i]["towReasonName"]
+  //             : '',
+  //         vehicleMakeName:
+  //         _completedCallsFiltered[i]["vehicleMakeName"] != null
+  //             ? _completedCallsFiltered[i]["vehicleMakeName"]
+  //             : '',
+  //         vehicleYearMakeModelName:
+  //         _completedCallsFiltered[i]["vehicleYearMakeModelName"] != null
+  //             ? _completedCallsFiltered[i]["vehicleYearMakeModelName"]
+  //             : '',
+  //         vehicleYear: (_completedCallsFiltered[i]["vehicleYear"] != "0"
+  //             ? int.parse(_completedCallsFiltered[i]["vehicleYear"])
+  //             : 0),
+  //         color: _completedCallsFiltered[i]["topColorName"],
+  //         towedInvoice: _completedCallsFiltered[i]["towedInvoice"] != null
+  //             ? _completedCallsFiltered[i]["towedInvoice"]
+  //             : '',
+  //         towCustomerName: _completedCallsFiltered[i]["towCustomerName"] != null
+  //             ? _completedCallsFiltered[i]["towCustomerName"]
+  //             : '',
+  //         dispatchContact: _completedCallsFiltered[i]["dispatchContact"] != null
+  //             ? _completedCallsFiltered[i]["dispatchContact"]
+  //             : 'Contact',
+  //         dispatchContactPhone:
+  //         _completedCallsFiltered[i]["dispatchContactPhone"] != null
+  //             ? _completedCallsFiltered[i]["dispatchContactPhone"]
+  //             : '',
+  //         dispatchDate: _completedCallsFiltered[i]["dispatchDate"],
+  //         dispatchDispatchTime: _completedCallsFiltered[i]["dispatchDispatchTime"],
+  //         towedStreet: _completedCallsFiltered[i]["towedStreet"] != null
+  //             ? _completedCallsFiltered[i]["towedStreet"]
+  //             : 'Location',
+  //         towedStreetTwo: _completedCallsFiltered[i]["towedStreetTwo"] != null
+  //             ? _completedCallsFiltered[i]["towedStreetTwo"]
+  //             : '',
+  //         towedCityName: _completedCallsFiltered[i]["towedCityName"] != null
+  //             ? _completedCallsFiltered[i]["towedCityName"]
+  //             : '',
+  //         towedStateName: _completedCallsFiltered[i]["towedStateName"] != null
+  //             ? _completedCallsFiltered[i]["towedStateName"]
+  //             : '',
+  //         towedZipCode: _completedCallsFiltered[i]["towedZipCode"] != null
+  //             ? _completedCallsFiltered[i]["towedZipCode"]
+  //             : '',
+  //         towedToStreet: _completedCallsFiltered[i]["towedToStreet"] != null
+  //             ? _completedCallsFiltered[i]["towedToStreet"]
+  //             : '',
+  //         towedToStreetTwo: _completedCallsFiltered[i]["towedToStreetTwo"] != null
+  //             ? _completedCallsFiltered[i]["towedToStreetTwo"]
+  //             : '',
+  //         towedToCityName: _completedCallsFiltered[i]["towedToCityName"] != null
+  //             ? _completedCallsFiltered[i]["towedToCityName"]
+  //             : '',
+  //         towedToStateName: _completedCallsFiltered[i]["towedToStateName"] != null
+  //             ? _completedCallsFiltered[i]["towedToStateName"]
+  //             : '',
+  //         towedToZipCode: _completedCallsFiltered[i]["towedToZipCode"] != null
+  //             ? _completedCallsFiltered[i]["towedToZipCode"]
+  //             : '',
+  //         licensePlate: _completedCallsFiltered[i]["licensePlate"] != null
+  //             ? _completedCallsFiltered[i]["licensePlate"]
+  //             : ' ',
+  //         VIN: _completedCallsFiltered[i]["VIN"] != null
+  //             ? _completedCallsFiltered[i]["VIN"]
+  //             : '',
+  //         wreckerDriver: (_completedCallsFiltered[i]["wreckerDriver"] != "0"
+  //             ? int.parse(_completedCallsFiltered[i]["wreckerDriver"])
+  //             : 0),
+  //         wreckerDriverName: _completedCallsFiltered[i]["wreckerDriverName"] != null
+  //             ? _completedCallsFiltered[i]["wreckerDriverName"]
+  //             : '',
+  //         towType: (_completedCallsFiltered[i]["towType"] != "0"
+  //             ? int.parse(_completedCallsFiltered[i]["towType"])
+  //             : 0),
+  //         towTruck: (_completedCallsFiltered[i]["towTruck"] != "0"
+  //             ? int.parse(_completedCallsFiltered[i]["towTruck"])
+  //             : 0),
+  //         towTruckName: _completedCallsFiltered[i]["towTruckName"] != null
+  //             ? _completedCallsFiltered[i]["towTruckName"]
+  //             : '',
+  //         dispatchReceivedTime: _completedCallsFiltered[i]["dispatchReceivedTime"] != null
+  //             ? _completedCallsFiltered[i]["dispatchReceivedTime"]
+  //             : '',
+  //         dispatchEnrouteTime: _completedCallsFiltered[i]["dispatchEnrouteTime"] != null
+  //             ? _completedCallsFiltered[i]["dispatchEnrouteTime"]
+  //             : '',
+  //         dispatchOnsiteTime: _completedCallsFiltered[i]["dispatchOnsiteTime"] != null
+  //             ? _completedCallsFiltered[i]["dispatchOnsiteTime"]
+  //             : '',
+  //         dispatchRollingTime: _completedCallsFiltered[i]["dispatchRollingTime"] != null
+  //             ? _completedCallsFiltered[i]["dispatchRollingTime"]
+  //             : '',
+  //         dispatchClearedTime: _completedCallsFiltered[i]["dispatchClearedTime"] != null
+  //             ? _completedCallsFiltered[i]["dispatchClearedTime"]
+  //             : '',
+  //         dispatchArrivedTime: _completedCallsFiltered[i]["dispatchArrivedTime"] != null
+  //             ? _completedCallsFiltered[i]["dispatchArrivedTime"]
+  //             : '',
+  //       ));
+  //     }
+  //   }
+  //     _completedCalls = completedCalls;
+  //     notifyListeners();
+  // }
   getCancelledCalls(_cancelledCallsFiltered, count, iStart) {
     final List<Call> cancelledCalls = [];
     if (count == 1 || count == iStart) {
@@ -1270,9 +1286,18 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         VIN: _cancelledCallsFiltered["VIN"] != null
             ? _cancelledCallsFiltered["VIN"]
             : '',
+        wreckerDriver: (_cancelledCallsFiltered["wreckerDriver"] != "0"
+            ? int.parse(_cancelledCallsFiltered["wreckerDriver"])
+            : 0),
         wreckerDriverName: _cancelledCallsFiltered["wreckerDriverName"] != null
             ? _cancelledCallsFiltered["wreckerDriverName"]
             : '',
+        towType: (_cancelledCallsFiltered["towType"] != "0"
+            ? int.parse(_cancelledCallsFiltered["towType"])
+            : 0),
+        towTruck: (_cancelledCallsFiltered["towTruck"] != "0"
+            ? int.parse(_cancelledCallsFiltered["towTruck"])
+            : 0),
         towTruckName: _cancelledCallsFiltered["towTruckName"] != null
             ? _cancelledCallsFiltered["towTruckName"]
             : '',
@@ -1298,7 +1323,6 @@ class Calls with ChangeNotifier, SecureStoreMixin {
     }
     else if(count > 1) {
       for (var i = 0; i < _cancelledCallsFiltered.length; i++) {
-//      var a = _activeCallsFiltered.id;
         cancelledCalls.add(Call(
           count:count,
           id: (_cancelledCallsFiltered[i]["id"] != "0"
@@ -1385,9 +1409,18 @@ class Calls with ChangeNotifier, SecureStoreMixin {
           VIN: _cancelledCallsFiltered[i]["VIN"] != null
               ? _cancelledCallsFiltered[i]["VIN"]
               : '',
+          wreckerDriver: (_cancelledCallsFiltered[i]["wreckerDriver"] != "0"
+              ? int.parse(_cancelledCallsFiltered[i]["wreckerDriver"])
+              : 0),
           wreckerDriverName: _cancelledCallsFiltered[i]["wreckerDriverName"] != null
               ? _cancelledCallsFiltered[i]["wreckerDriverName"]
               : '',
+          towType: (_cancelledCallsFiltered[i]["towType"] != "0"
+              ? int.parse(_cancelledCallsFiltered[i]["towType"])
+              : 0),
+          towTruck: (_cancelledCallsFiltered[i]["towTruck"] != "0"
+              ? int.parse(_cancelledCallsFiltered[i]["towTruck"])
+              : 0),
           towTruckName: _cancelledCallsFiltered[i]["towTruckName"] != null
               ? _cancelledCallsFiltered[i]["towTruckName"]
               : '',
@@ -1413,7 +1446,7 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       }
     }
     _cancelledCalls = cancelledCalls;
-    notifyListeners();
+    // notifyListeners();
   }
   getSearchedCalls(_cancelledCallsFiltered, count, iStart) {
     final List<Call> cancelledCalls = [];
