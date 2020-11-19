@@ -27,6 +27,7 @@ class _NotesEditState extends State<NotesEdit> {
   void initState(){
     _note = Provider.of<TowedVehicleNotesVM>(context, listen: false).selectedNote;
     getValues();
+    super.initState();
   }
   getValues() {
     widget.isLoading = true;

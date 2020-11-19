@@ -5,9 +5,7 @@ import 'package:vts_mobile_cloud/providers/towedVehicleCharges_provider.dart';
 import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import 'package:vts_mobile_cloud/widgets/tow_charges_modal.dart';
 import '../providers/calls_provider.dart';
-import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
-import 'dart:math' as math;
 import 'package:flutter/services.dart';
 
 class ChargesAdd extends StatefulWidget {
@@ -145,7 +143,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
   }
 
   String validateFields(String value){
-    if (!value.isEmpty)
+    if (value.isNotEmpty)
       return null;
     else
         return 'Please enter the value';
@@ -176,11 +174,14 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     controller: this._towChargesController,
                     decoration: new InputDecoration(
                       labelText: 'Charge *',
-                      suffixIcon: Icon(Icons.arrow_forward_ios),
+                      suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                     ),
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'Please select Vehicle Charge';
+                      }
+                      else{
+                        return null;
                       }
                     },
                     onTap: () {
@@ -209,6 +210,9 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                   validator: (value) {
                     if (value.isEmpty) {
                       return 'Please select Quantity';
+                    }
+                    else{
+                      return null;
                     }
                   },
                   onTap: () => {_chargesQuantityController.selection = TextSelection(baseOffset: 0, extentOffset: _chargesQuantityController.value.text.length)},

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/widgets/active_calls_list.dart';
-import 'package:vts_mobile_cloud/widgets/completed_calls_list.dart';
 import 'package:vts_mobile_cloud/widgets/cancelled_calls_list.dart';
 import '../providers/secureStoreMixin_provider.dart';
 

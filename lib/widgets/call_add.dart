@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:vin_decoder/vin_decoder.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:vts_mobile_cloud/screens/calls_overview_screen.dart';
 import 'package:vts_mobile_cloud/screens/success_screen.dart';
 import 'package:vts_mobile_cloud/widgets/tow_customers_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_trucks_modal.dart';
@@ -27,23 +26,21 @@ import 'package:vts_mobile_cloud/providers/storage_company_provider.dart';
 import 'package:vts_mobile_cloud/widgets/duplicate_call.dart';
 import 'dart:async';
 import '../models/call.dart';
+import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 class CallAdd extends StatefulWidget {
   final Function notifyParent;
-  // final Function refresh;
   CallAdd({Key key, this.notifyParent}) : super(key: key);
-//  method()=>createState().save2();
 
   @override
   CallAddState createState() => CallAddState();
 }
 
 class CallAddState extends State<CallAdd> {
-//  final _formKey = GlobalKey<FormState>();
   List<GlobalKey<FormState>> _formKey = [GlobalKey<FormState>(), GlobalKey<FormState>(), GlobalKey<FormState>()];
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _autoValidate = true;
   bool enableCity1 = false;
+  bool isLoading = false;
 
   DateTime _date = DateTime.now();
   final _call = Call();
@@ -80,12 +77,6 @@ class CallAddState extends State<CallAdd> {
   var _towedDateController = new TextEditingController();
   var _towedTimeController = new TextEditingController();
   var _towedInvoiceController = new TextEditingController();
-
-//  void _reset() {
-//    setState(() {
-//      _formKey.currentState.reset();
-//    });
-//  }
 
   _getTowCustomerDefaults(id) async {
     DateTime now = DateTime.now();
@@ -577,32 +568,75 @@ class CallAddState extends State<CallAdd> {
   }
 
   save2() async{
+    isLoading = true;
+    var _newCallId;
     await Provider.of<Calls>(context, listen: false).create(_call);
     var response = Provider
         .of<Calls>(context, listen: false)
         .createResponse;
     if (response["errorStatus"] == "false") {
-      _showErrorMessage(context, response["errorMessage"]);
+    _showErrorMessage(context, response["errorMessage"]);
+
     }
     else {
-      Navigator.push(
-          context,
-          new MaterialPageRoute(
-              builder: (context) =>
-              new SuccessScreen("Call Successfully Added!")
-          ));
-
-      Timer(Duration(milliseconds: 3000), () {
-        Navigator.pop(context);
-        Navigator.pop(context);
-        Navigator.push(
-            context,
-            new MaterialPageRoute(
-                builder: (context) =>
-                new CallsScreen()));
-      });
+    _newCallId = response["id"];
+    await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+        .processChangeCharges(response["id"], 0);
+    var processChangeChargeResponse = Provider
+        .of<ProcessTowedVehiclesVM>(context, listen: false)
+        .processChangeChargeResponse;
+    if (processChangeChargeResponse["errorStatus"] == "false") {
+    // widget.isLoading = false;
+    _showErrorMessage(
+    context, processChangeChargeResponse["errorMessage"]);
     }
+    else {
+    //Check If wrecker driver exists and send an SMS
+    if(_call.wreckerDriver != 0){
+    await mobileDigitalDispatch("Dispatch", "", _newCallId);
+    }
+    Navigator.push(
+    context,
+    new MaterialPageRoute(
+    builder: (context) =>
+    new SuccessScreen("Call Successfully Added!")));
+
+    Timer(Duration(milliseconds: 3000), () {
+    Navigator.pop(context);
+    refreshToMainScreen();
+    });
+    }
+    }
+    isLoading = false;
   }
+
+  // save2() async{
+  //   await Provider.of<Calls>(context, listen: false).create(_call);
+  //   var response = Provider
+  //       .of<Calls>(context, listen: false)
+  //       .createResponse;
+  //   if (response["errorStatus"] == "false") {
+  //     _showErrorMessage(context, response["errorMessage"]);
+  //   }
+  //   else {
+  //     Navigator.push(
+  //         context,
+  //         new MaterialPageRoute(
+  //             builder: (context) =>
+  //             new SuccessScreen("Call Successfully Added!")
+  //         ));
+  //
+  //     Timer(Duration(milliseconds: 3000), () {
+  //       Navigator.pop(context);
+  //       Navigator.pop(context);
+  //       Navigator.push(
+  //           context,
+  //           new MaterialPageRoute(
+  //               builder: (context) =>
+  //               new CallsScreen()));
+  //     });
+  //   }
+  // }
   mobileDigitalDispatch(selectedStatus, mode, towedVehicleId) async {
     var _towedVehicle = towedVehicleId;
     var _responseId = 0;
@@ -754,7 +788,9 @@ class CallAddState extends State<CallAdd> {
           // ),
         ],
       ),
-      body: Container(
+      body: isLoading == true
+          ? Center(child: Loader())
+          : Container(
       child:SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -813,6 +849,9 @@ class CallAddState extends State<CallAdd> {
                         if (value.isEmpty) {
                           return 'Please select Customer';
                         }
+                        else{
+                          return null;
+                        }
                       },
                       onSaved: (val) {
                         setState(() {
@@ -862,6 +901,9 @@ class CallAddState extends State<CallAdd> {
                         if (value.isEmpty) {
                           return 'Please select Model';
                         }
+                        else{
+                          return null;
+                        }
                       },
                       onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
@@ -910,6 +952,9 @@ class CallAddState extends State<CallAdd> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please select Make';
+                        }
+                        else{
+                          return null;
                         }
                       },
                       onTap: () {
@@ -961,6 +1006,9 @@ class CallAddState extends State<CallAdd> {
                         if (value.isEmpty) {
                           return 'Please select Top Color';
                         }
+                        else{
+                          return null;
+                        }
                       },
                       onTap: () {
 
@@ -985,6 +1033,9 @@ class CallAddState extends State<CallAdd> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please select Bottom Color';
+                        }
+                        else{
+                          return null;
                         }
                       },
                       onTap: () {
@@ -1012,6 +1063,9 @@ class CallAddState extends State<CallAdd> {
                       if (value.isEmpty) {
                         return 'Please enter License Plate';
                       }
+                      else{
+                        return null;
+                      }
                     },
                     onSaved: (val) => {
                       setState(() => _call.licensePlate = val),
@@ -1032,6 +1086,9 @@ class CallAddState extends State<CallAdd> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please select License State';
+                        }
+                        else{
+                          return null;
                         }
                       },
                       onTap: () {
@@ -1067,6 +1124,9 @@ class CallAddState extends State<CallAdd> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please select Tow Type';
+                        }
+                        else{
+                          return null;
                         }
                       },
                       onTap: () {
@@ -1132,6 +1192,9 @@ class CallAddState extends State<CallAdd> {
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'Please select Jurisdiction';
+                        }
+                        else{
+                          return null;
                         }
                       },
                       onTap: () {
@@ -1388,6 +1451,9 @@ class CallAddState extends State<CallAdd> {
                         if (value.isEmpty) {
                           return 'Please select Company';
                         }
+                        else{
+                          return null;
+                        }
                       },
                       onTap: () {
                         Navigator.push(
@@ -1471,6 +1537,9 @@ class CallAddState extends State<CallAdd> {
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please select Bill To Customer';
+                          }
+                          else{
+                            return null;
                           }
                         },
                         onTap: () {

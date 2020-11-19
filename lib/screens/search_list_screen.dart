@@ -1,7 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/calls_provider.dart';
 
 import '../widgets/search_calls_list.dart';
 class SearchListScreen extends StatelessWidget {

@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:xml2json/xml2json.dart';
-import 'dart:convert';
 import 'package:intl/intl.dart';
-import '../providers/secureStoreMixin_provider.dart';
 import 'package:geolocator/geolocator.dart';
 
 class DateAndTime{

@@ -9,8 +9,6 @@ import 'package:vts_mobile_cloud/widgets/wrecker_company_modal.dart';
 import 'package:vts_mobile_cloud/widgets/wrecker_driver_modal.dart';
 import '../providers/secureStoreMixin_provider.dart';
 
-import '../widgets/search_calls_list.dart';
-
 class SearchCallScreen extends StatefulWidget {
   @override
   createState() {
@@ -257,7 +255,7 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         decoration: new InputDecoration(
                           labelText: "Driver",
                             labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
-                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                         ),
                         onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
@@ -280,11 +278,14 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         decoration: new InputDecoration(
                           labelText: "Company *",
                             labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
-                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                         ),
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please select Company';
+                          }
+                          else{
+                            return null;
                           }
                         },
                         onTap: () {
@@ -308,7 +309,7 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         decoration: new InputDecoration(
                           labelText: "Authorization",
                             labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
-                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                         ),
                         onTap: () {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
@@ -331,11 +332,14 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                         decoration: new InputDecoration(
                           hintText: "Tow Type *",
                             labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
-                          suffixIcon: Icon(Icons.arrow_forward_ios, size:20),
+                          suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                         ),
                         validator: (value) {
                           if (value.isEmpty) {
                             return 'Please select Tow Type';
+                          }
+                          else{
+                            return null;
                           }
                         },
                         onTap: () {

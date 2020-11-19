@@ -25,7 +25,6 @@ import 'package:vts_mobile_cloud/widgets/tow_customers_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_trucks_modal.dart';
 import 'package:vts_mobile_cloud/widgets/tow_type_modal.dart';
 import 'package:vts_mobile_cloud/widgets/towed_vehicle_charges_list.dart';
-import 'package:vts_mobile_cloud/widgets/update_status.dart';
 import 'package:vts_mobile_cloud/widgets/vehicleYearMakeModel_modal.dart';
 import 'package:vts_mobile_cloud/widgets/vehicle_make_modal.dart';
 import 'package:vts_mobile_cloud/widgets/wrecker_company_modal.dart';
@@ -45,7 +44,8 @@ class CallEdit extends StatefulWidget {
   _CallEditState createState() => _CallEditState();
 }
 
-class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKeepAliveClientMixin  {
+class _CallEditState extends State<CallEdit>
+    with SecureStoreMixin, AutomaticKeepAliveClientMixin {
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = true;
   bool _isFormReadOnly = false;
@@ -57,27 +57,6 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   var dispatchPaging;
   bool isLoading = false;
   int tabIndex = 0;
-//  Future<List> _refreshCallsList(BuildContext context) async {
-//    return await Provider.of<TowedVehicleNotesVM>(context)
-//        .listMini(0, PAGE_SIZE, "")
-//        .catchError((onError) {
-//      showDialog(
-//          context: context,
-//          builder: ((context) => AlertDialog(
-//                title: Text("An error occured!"),
-//                content:
-//                    Text("Oops something went wrong " + onError.toString()),
-//                actions: <Widget>[
-//                  FlatButton(
-//                    child: Text("OK"),
-//                    onPressed: () {
-//                      Navigator.of(context).pop();
-//                    },
-//                  )
-//                ],
-//              )));
-//    });
-//  }
   var _billToController = new TextEditingController();
   var _towedInvoiceController = new TextEditingController();
   var _dispatchMemberController = new TextEditingController();
@@ -126,7 +105,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   var _towCustomerController = new TextEditingController();
   var _dispatchInstructions_stringController = new TextEditingController();
   var _dispatchContactController = new TextEditingController();
-  var _dispatchContactPhoneController = new MaskedTextController(mask: '(000)000-0000');
+  var _dispatchContactPhoneController =
+      new MaskedTextController(mask: '(000)000-0000');
   var _dispatchDateController = new TextEditingController();
 
 //  var _dispatchReceivedTimeController = new TextEditingController();
@@ -164,54 +144,56 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   var _dispatchLimitAmountController = new TextEditingController();
   var _dispatchLimitMilesController = new TextEditingController();
 
- var _towedDiscountRateController=new TextEditingController();
- var _towedDiscountAmountController=new TextEditingController();
+  var _towedDiscountRateController = new TextEditingController();
+  var _towedDiscountAmountController = new TextEditingController();
+
 //  var _vehicleLicenseYearController = new TextEditingController();
   var _dispatchETAMinutesController = new TextEditingController();
 
   getRole() async {
     await getSecureStore('userRole', (token) {
-      setState(() {
+      // setState(() {
         userRole = token;
-      });
+      // });
     });
-    if(userRole == "3"){
+    if (userRole == "3") {
       _isFormReadOnly = true;
     }
   }
+
   getUserId() async {
     await getSecureStore('userId', (token) {
-      setState(() {
+      // setState(() {
         userId = token;
-      });
+      // });
     });
   }
 
   getDispatchPaging() async {
     await getSecureStore('dispatchPaging', (token) {
-      setState(() {
+      // setState(() {
         dispatchPaging = token;
-      });
+      // });
     });
   }
 
   setBillTo(id, name) {
     // setState(() {
-      _call.towBillTo = id != null ? id : 0;
-      _call.towBillToName = name != null ? name : '';
-      _billToController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towBillToName))
-          .value;
+    _call.towBillTo = id != null ? id : 0;
+    _call.towBillToName = name != null ? name : '';
+    _billToController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towBillToName))
+        .value;
     // });
   }
 
   setTowCustomer(id, name) {
     // setState(() {
-      _call.towCustomer = id != null ? id : 0;
-      _call.towCustomerName = name != null ? name : '';
-      _towCustomerController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towCustomerName))
-          .value;
+    _call.towCustomer = id != null ? id : 0;
+    _call.towCustomerName = name != null ? name : '';
+    _towCustomerController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towCustomerName))
+        .value;
     // });
   }
 
@@ -227,40 +209,40 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
   setModel(id, name) {
     // setState(() {
-      _call.vehicleYearMakeModel = id != null ? id : 0;
-      _call.vehicleYearMakeModelName = name != null ? name : '';
-      _modelController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.vehicleYearMakeModelName))
-          .value;
+    _call.vehicleYearMakeModel = id != null ? id : 0;
+    _call.vehicleYearMakeModelName = name != null ? name : '';
+    _modelController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.vehicleYearMakeModelName))
+        .value;
     // });
   }
 
   setVehicleYear(year) {
     // setState(() {
-      _call.vehicleYear = year != null ? year : '';
-      _yearController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.vehicleYear.toString()))
-          .value;
+    _call.vehicleYear = year != null ? year : '';
+    _yearController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.vehicleYear.toString()))
+        .value;
     // });
   }
 
   setMake(id, name) {
     // setState(() {
-      _call.vehicleMake = id != null ? id : 0;
-      _call.vehicleMakeName = name != null ? name : '';
-      _makeController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.vehicleMakeName))
-          .value;
+    _call.vehicleMake = id != null ? id : 0;
+    _call.vehicleMakeName = name != null ? name : '';
+    _makeController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.vehicleMakeName))
+        .value;
     // });
   }
 
   setTowReason(id, name) {
     // setState(() {
-      _call.towReason = id != null ? id : 0;
-      _call.towReasonName = name != null ? name : '';
-      _towReasonController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towReasonName))
-          .value;
+    _call.towReason = id != null ? id : 0;
+    _call.towReasonName = name != null ? name : '';
+    _towReasonController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towReasonName))
+        .value;
     // });
   }
 
@@ -276,11 +258,11 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
   setTopColor(id, name) {
     // setState(() {
-      _call.topColor = id != null ? id : 0;
-      _call.topColorName = name != null ? name : '';
-      _topColorController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.topColorName))
-          .value;
+    _call.topColor = id != null ? id : 0;
+    _call.topColorName = name != null ? name : '';
+    _topColorController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.topColorName))
+        .value;
     // });
 
     setSecondColor(id, name);
@@ -288,25 +270,25 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
   setSecondColor(id, name) {
     // setState(() {
-      _call.secondColor = id != null ? id : 0;
-      _call.secondColorName = name != null ? name : '';
-      _secondColorController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.secondColorName))
-          .value;
+    _call.secondColor = id != null ? id : 0;
+    _call.secondColorName = name != null ? name : '';
+    _secondColorController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.secondColorName))
+        .value;
     // });
   }
 
   setLicenseState(suggestion) {
     // setState(() {
-      _call.vehicleLicenseState = suggestion.vehicleLicenseState != null
-          ? suggestion.vehicleLicenseState
-          : 0;
-      _call.vehicleLicenseStateName = suggestion.vehicleLicenseStateName != null
-          ? suggestion.vehicleLicenseStateName
-          : '';
-      _licenseStateController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.vehicleLicenseStateName))
-          .value;
+    _call.vehicleLicenseState = suggestion.vehicleLicenseState != null
+        ? suggestion.vehicleLicenseState
+        : 0;
+    _call.vehicleLicenseStateName = suggestion.vehicleLicenseStateName != null
+        ? suggestion.vehicleLicenseStateName
+        : '';
+    _licenseStateController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.vehicleLicenseStateName))
+        .value;
     // });
   }
 
@@ -329,51 +311,51 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
   setTowType(suggestion) {
     // setState(() {
-      _call.towType = suggestion.towType != null && suggestion.towType != 'null'
-          ? suggestion.towType
-          : 0;
-      _call.towTypeName =
-          suggestion.towTypeName != null && suggestion.towTypeName != 'null'
-              ? suggestion.towTypeName
-              : '';
-      _call.towAuthorization = suggestion.towAuthorization != null &&
-              suggestion.towAuthorization != 'null'
-          ? suggestion.towAuthorization
-          : 0;
-      _call.towAuthorizationName = suggestion.towAuthorizationName != null &&
-              suggestion.towAuthorizationName != 'null'
-          ? suggestion.towAuthorizationName
-          : '';
-      _call.towJurisdiction = suggestion.towJurisdiction != null &&
-              suggestion.towJurisdiction.toString() != 'null'
-          ? suggestion.towJurisdiction
-          : 0;
-      _call.towJurisdictionName = suggestion.towJurisdictionName != null &&
-              suggestion.towJurisdictionName.toString() != 'null'
-          ? suggestion.towJurisdictionName
-          : '';
-      _call.towReason = suggestion.towReason != null &&
-              suggestion.towReason.toString() != 'null'
-          ? suggestion.towReason
-          : 0;
-      _call.towReasonName = suggestion.towReasonName != null &&
-              suggestion.towReasonName.toString() != 'null'
-          ? suggestion.towReasonName
-          : '';
-      _towTypeController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towTypeName))
-          .value;
+    _call.towType = suggestion.towType != null && suggestion.towType != 'null'
+        ? suggestion.towType
+        : 0;
+    _call.towTypeName =
+        suggestion.towTypeName != null && suggestion.towTypeName != 'null'
+            ? suggestion.towTypeName
+            : '';
+    _call.towAuthorization = suggestion.towAuthorization != null &&
+            suggestion.towAuthorization != 'null'
+        ? suggestion.towAuthorization
+        : 0;
+    _call.towAuthorizationName = suggestion.towAuthorizationName != null &&
+            suggestion.towAuthorizationName != 'null'
+        ? suggestion.towAuthorizationName
+        : '';
+    _call.towJurisdiction = suggestion.towJurisdiction != null &&
+            suggestion.towJurisdiction.toString() != 'null'
+        ? suggestion.towJurisdiction
+        : 0;
+    _call.towJurisdictionName = suggestion.towJurisdictionName != null &&
+            suggestion.towJurisdictionName.toString() != 'null'
+        ? suggestion.towJurisdictionName
+        : '';
+    _call.towReason = suggestion.towReason != null &&
+            suggestion.towReason.toString() != 'null'
+        ? suggestion.towReason
+        : 0;
+    _call.towReasonName = suggestion.towReasonName != null &&
+            suggestion.towReasonName.toString() != 'null'
+        ? suggestion.towReasonName
+        : '';
+    _towTypeController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towTypeName))
+        .value;
 
-      _authorizationController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: suggestion.towAuthorizationName))
-          .value;
+    _authorizationController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: suggestion.towAuthorizationName))
+        .value;
 
-      _jurisdictionController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towJurisdictionName))
-          .value;
-      _towReasonController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towReasonName))
-          .value;
+    _jurisdictionController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towJurisdictionName))
+        .value;
+    _towReasonController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towReasonName))
+        .value;
     // });
   }
 
@@ -389,129 +371,131 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
   setAuthorization(id, name) {
     // setState(() {
-      _call.towAuthorization = id != null ? id : 0;
-      _call.towAuthorizationName = name != null ? name : '';
-      _authorizationController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towAuthorizationName))
-          .value;
+    _call.towAuthorization = id != null ? id : 0;
+    _call.towAuthorizationName = name != null ? name : '';
+    _authorizationController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towAuthorizationName))
+        .value;
     // });
   }
 
   setJurisdiction(id, name) {
     // setState(() {
-      _call.towJurisdiction = id != null ? id : 0;
-      _call.towJurisdictionName = name != null ? name : '';
-      _jurisdictionController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towJurisdictionName))
-          .value;
+    _call.towJurisdiction = id != null ? id : 0;
+    _call.towJurisdictionName = name != null ? name : '';
+    _jurisdictionController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towJurisdictionName))
+        .value;
     // });
   }
 
   setCity(id, name) {
     // setState(() {
-      _call.towedCity = id != null ? id : 0;
-      _call.towedCityName = name != null ? name : '';
-      _towedCityController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towedCityName))
-          .value;
+    _call.towedCity = id != null ? id : 0;
+    _call.towedCityName = name != null ? name : '';
+    _towedCityController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towedCityName))
+        .value;
     // });
   }
 
   setTowedState(id, name, shortName) {
     // setState(() {
-      _call.towedState = id != null ? id : 0;
-      _call.towedStateName = name != null ? name : '';
-      _towedStateController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: shortName != null ? shortName : ''))
-          .value;
+    _call.towedState = id != null ? id : 0;
+    _call.towedStateName = name != null ? name : '';
+    _towedStateController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: shortName != null ? shortName : ''))
+        .value;
 
-      //Empty City
-      _call.towedCity=0;
-      _call.towedCityName="";
-      _towedCityController.value = new TextEditingController.fromValue(
-          new TextEditingValue(text: ''))
-          .value;
+    //Empty City
+    _call.towedCity = 0;
+    _call.towedCityName = "";
+    _towedCityController.value =
+        new TextEditingController.fromValue(new TextEditingValue(text: ''))
+            .value;
     // });
   }
 
   setTowedToCity(id, name) {
     // setState(() {
-      _call.towedToCity = id != null ? id : 0;
-      _call.towedToCityName = name != null ? name : '';
-      _towedToCityController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towedToCityName))
-          .value;
+    _call.towedToCity = id != null ? id : 0;
+    _call.towedToCityName = name != null ? name : '';
+    _towedToCityController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towedToCityName))
+        .value;
     // });
   }
 
   setTowedToState(id, name, shortName) {
     // setState(() {
-      _call.towedToState = id != null ? id : 0;
-      _call.towedToStateName = name != null ? name : '';
-      _towedToStateController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: shortName != null ? shortName : ''))
-          .value;
+    _call.towedToState = id != null ? id : 0;
+    _call.towedToStateName = name != null ? name : '';
+    _towedToStateController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: shortName != null ? shortName : ''))
+        .value;
 
-      //Empty City
-      _call.towedToCity=0;
-      _call.towedToCityName="";
-      _towedToCityController.value = new TextEditingController.fromValue(
-          new TextEditingValue(text: ''))
-          .value;
+    //Empty City
+    _call.towedToCity = 0;
+    _call.towedToCityName = "";
+    _towedToCityController.value =
+        new TextEditingController.fromValue(new TextEditingValue(text: ''))
+            .value;
     // });
   }
 
   setCompany(id, name) {
     // setState(() {
-      _call.wreckerCompany = id != null ? id : 0;
-      _call.wreckerCompanyName = name != null ? name : '';
-      _companyController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.wreckerCompanyName))
-          .value;
+    _call.wreckerCompany = id != null ? id : 0;
+    _call.wreckerCompanyName = name != null ? name : '';
+    _companyController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.wreckerCompanyName))
+        .value;
     // });
   }
 
   setDriver(driverObj) {
     // setState(() {
-      _call.wreckerDriver = driverObj.wreckerDriver != null ? driverObj.wreckerDriver : 0;
-      _call.wreckerDriverName = driverObj.wreckerDriverName != null ? driverObj.wreckerDriverName : '';
-      _driverController.value = new TextEditingController.fromValue(
-          new TextEditingValue(text: _call.wreckerDriverName))
-          .value;
+    _call.wreckerDriver =
+        driverObj.wreckerDriver != null ? driverObj.wreckerDriver : 0;
+    _call.wreckerDriverName =
+        driverObj.wreckerDriverName != null ? driverObj.wreckerDriverName : '';
+    _driverController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.wreckerDriverName))
+        .value;
     // });
   }
+
   setDriverOnEdit(suggestion) {
     // setState(() {
-      _call.wreckerDriver = suggestion.wreckerDriver;
-      _call.wreckerDriverName = suggestion.wreckerDriverName;
-      _driverController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: suggestion.wreckerDriverName))
-              .value;
-      if(suggestion.towTruck != 0) {
-        setTruck(suggestion.towTruck, suggestion.towTruckName);
-      }
+    _call.wreckerDriver = suggestion.wreckerDriver;
+    _call.wreckerDriverName = suggestion.wreckerDriverName;
+    _driverController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: suggestion.wreckerDriverName))
+        .value;
+    if (suggestion.towTruck != 0) {
+      setTruck(suggestion.towTruck, suggestion.towTruckName);
+    }
     // });
     //_formKey.currentState.validate();
   }
 
   setTruck(id, name) {
     // setState(() {
-      _call.towTruck = id != null ? id : 0;
-      _call.towTruckName = name != null ? name : '';
-      _truckController.value = new TextEditingController.fromValue(
-              new TextEditingValue(text: _call.towTruckName))
-          .value;
+    _call.towTruck = id != null ? id : 0;
+    _call.towTruckName = name != null ? name : '';
+    _truckController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.towTruckName))
+        .value;
     // });
   }
 
   setVehiclePriority(id, name) {
     // setState(() {
-      _call.dispatchPriorityLevel = id != null ? id : 0;
-      _call.dispatchPriorityLevelName = name != null ? name : '';
-      _vehiclePriorityTypeController.value =
-          new TextEditingController.fromValue(
-                  new TextEditingValue(text: _call.dispatchPriorityLevelName))
-              .value;
+    _call.dispatchPriorityLevel = id != null ? id : 0;
+    _call.dispatchPriorityLevelName = name != null ? name : '';
+    _vehiclePriorityTypeController.value = new TextEditingController.fromValue(
+            new TextEditingValue(text: _call.dispatchPriorityLevelName))
+        .value;
     // });
   }
 
@@ -522,7 +506,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //   }
 
   bla() async {
-      isLoading = true;
+    isLoading = true;
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     await Provider.of<Calls>(context, listen: false).get(selectedCall.id);
     var x = await Provider.of<Calls>(context, listen: false).callDetails;
@@ -577,16 +561,17 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       //Towed Sub Total
       _call.towedSubTotal = x[0].towedSubTotal;
       //Discount Rate
-     _call.towedDiscountRate = x[0].towedDiscountRate;
-     _towedDiscountRateController.value =
-         new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedDiscountRate.toString()))
-             .value;
+      _call.towedDiscountRate = x[0].towedDiscountRate;
+      _towedDiscountRateController.value = new TextEditingController.fromValue(
+              new TextEditingValue(text: x[0].towedDiscountRate.toString()))
+          .value;
 
       //Discount Amount
-     _call.towedDiscountAmount = x[0].towedDiscountAmount;
-     _towedDiscountAmountController.value =
-         new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedDiscountAmount.toString()))
-             .value;
+      _call.towedDiscountAmount = x[0].towedDiscountAmount;
+      _towedDiscountAmountController
+          .value = new TextEditingController.fromValue(
+              new TextEditingValue(text: x[0].towedDiscountAmount.toString()))
+          .value;
 
       //VIN
       _call.VIN = x[0].VIN != null ? x[0].VIN : '';
@@ -684,25 +669,21 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
         .value;
 
     //Towed Street
-      if( x[0].towedStreet != null && x[0].towedStreet != 'null')
-        {
-          _call.towedStreet =  x[0].towedStreet.replaceAll("\\", "");
-        }
-      else{
-        _call.towedStreet = "";
-              }
+    if (x[0].towedStreet != null && x[0].towedStreet != 'null') {
+      _call.towedStreet = x[0].towedStreet.replaceAll("\\", "");
+    } else {
+      _call.towedStreet = "";
+    }
     _towedStreetController.value = new TextEditingController.fromValue(
             new TextEditingValue(text: _call.towedStreet))
         .value;
 
     //Towed Street2
-      if( x[0].towedStreetTwo != null && x[0].towedStreetTwo != 'null')
-      {
-        _call.towedStreetTwo =  x[0].towedStreetTwo.replaceAll("\\", "");
-      }
-      else{
-        _call.towedStreetTwo = "";
-      }
+    if (x[0].towedStreetTwo != null && x[0].towedStreetTwo != 'null') {
+      _call.towedStreetTwo = x[0].towedStreetTwo.replaceAll("\\", "");
+    } else {
+      _call.towedStreetTwo = "";
+    }
     _towedStreetTwoController.value = new TextEditingController.fromValue(
             new TextEditingValue(text: _call.towedStreetTwo))
         .value;
@@ -728,11 +709,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //            .value;
 
     //TowedToStreet
-    if( x[0].towedToStreet != null && x[0].towedToStreet != 'null')
-    {
-      _call.towedToStreet =  x[0].towedToStreet.replaceAll("\\", "");
-    }
-    else{
+    if (x[0].towedToStreet != null && x[0].towedToStreet != 'null') {
+      _call.towedToStreet = x[0].towedToStreet.replaceAll("\\", "");
+    } else {
       _call.towedToStreet = "";
     }
     _towedToStreetController.value = new TextEditingController.fromValue(
@@ -740,11 +719,9 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
         .value;
 
     //Towed Street2
-    if( x[0].towedToStreetTwo != null && x[0].towedToStreetTwo != 'null')
-    {
-      _call.towedToStreetTwo =  x[0].towedToStreetTwo.replaceAll("\\", "");
-    }
-    else{
+    if (x[0].towedToStreetTwo != null && x[0].towedToStreetTwo != 'null') {
+      _call.towedToStreetTwo = x[0].towedToStreetTwo.replaceAll("\\", "");
+    } else {
       _call.towedToStreetTwo = "";
     }
     _towedToStreetTwoController.value = new TextEditingController.fromValue(
@@ -775,8 +752,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
     setCompany(x[0].wreckerCompany, x[0].wreckerCompanyName);
 
     //TowedStatus
-   _call.towedStatus = x[0].towedStatus;
-   _call.towedStatusName = x[0].towedStatusName;
+    _call.towedStatus = x[0].towedStatus;
+    _call.towedStatusName = x[0].towedStatusName;
 //    _towedStatusController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].towedStatusName))
 //            .value;
@@ -803,11 +780,13 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
     setTowCustomer(x[0].towCustomer, x[0].towCustomerName);
 
     //Instructions
-    _call.dispatchInstructions_string = x[0].dispatchInstructions_string != null ? x[0].dispatchInstructions_string.replaceAll("\\n", "\n"): '';
+    _call.dispatchInstructions_string = x[0].dispatchInstructions_string != null
+        ? x[0].dispatchInstructions_string.replaceAll("\\n", "\n")
+        : '';
     _dispatchInstructions_stringController.value =
         new TextEditingController.fromValue(new TextEditingValue(
                 text: _call.dispatchInstructions_string != null &&
-                    _call.dispatchInstructions_string != 'null'
+                        _call.dispatchInstructions_string != 'null'
                     ? _call.dispatchInstructions_string
                     : ''))
             .value;
@@ -841,43 +820,50 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
         .value;
 
     //ReceivedTime
-     _call.dispatchReceivedTime = x[0].dispatchReceivedTime != null ? x[0].dispatchReceivedTime : '';
+    _call.dispatchReceivedTime =
+        x[0].dispatchReceivedTime != null ? x[0].dispatchReceivedTime : '';
 //    _dispatchReceivedTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchReceivedTime))
 //            .value;
 
     //Dispatch
-    _call.dispatchDispatchTime = x[0].dispatchDispatchTime != null ? x[0].dispatchDispatchTime : '';
+    _call.dispatchDispatchTime =
+        x[0].dispatchDispatchTime != null ? x[0].dispatchDispatchTime : '';
 //    _dispatchDispatchTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchDispatchTime))
 //            .value;
 
     //Enroute
-    _call.dispatchEnrouteTime = x[0].dispatchEnrouteTime != null ? x[0].dispatchEnrouteTime : '';
+    _call.dispatchEnrouteTime =
+        x[0].dispatchEnrouteTime != null ? x[0].dispatchEnrouteTime : '';
 //    _dispatchEnrouteTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchEnrouteTime))
 //            .value;
 
     //Onsite
-    _call.dispatchOnsiteTime = x[0].dispatchOnsiteTime != null ? x[0].dispatchOnsiteTime : '';
+    _call.dispatchOnsiteTime =
+        x[0].dispatchOnsiteTime != null ? x[0].dispatchOnsiteTime : '';
 //    _dispatchOnsiteTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchOnsiteTime))
 //            .value;
 
     //Rolling
-    _call.dispatchRollingTime = x[0].dispatchRollingTime != null ? x[0].dispatchRollingTime : '';
+    _call.dispatchRollingTime =
+        x[0].dispatchRollingTime != null ? x[0].dispatchRollingTime : '';
 //    _dispatchRollingTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchRollingTime))
 //            .value;
 
     //Arrived
-    _call.dispatchArrivedTime = x[0].dispatchArrivedTime != null ? x[0].dispatchArrivedTime : '';
+    _call.dispatchArrivedTime =
+        x[0].dispatchArrivedTime != null ? x[0].dispatchArrivedTime : '';
 //    _dispatchArrivedTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchArrivedTime))
 //            .value;
 
     //Cleared
-    _call.dispatchClearedTime = x[0].dispatchClearedTime != null ? x[0].dispatchClearedTime : '';
+    _call.dispatchClearedTime =
+        x[0].dispatchClearedTime != null ? x[0].dispatchClearedTime : '';
 //    _dispatchClearedTimeController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchClearedTime))
 //            .value;
@@ -929,7 +915,8 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 //            .value;
 
     //dispatchETAMaximum
-   _call.dispatchETAMaximum = x[0].dispatchETAMaximum != null ? x[0].dispatchETAMaximum : '0';
+    _call.dispatchETAMaximum =
+        x[0].dispatchETAMaximum != null ? x[0].dispatchETAMaximum : '0';
 //    _dispatchETAMaximumController.value =
 //        new TextEditingController.fromValue(new TextEditingValue(text: x[0].dispatchETAMaximum))
 //            .value;
@@ -1026,7 +1013,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   }
 
   String validateVIN(String value) {
-    Pattern pattern =  "^[^iIoOqQ'-]{10,17}\$";
+    Pattern pattern = "^[^iIoOqQ'-]{10,17}\$";
     RegExp regex = new RegExp(pattern);
     if (!regex.hasMatch(value) && value != "NOVIN")
       return 'Please enter a valid VIN';
@@ -1051,24 +1038,26 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   // }
 
   String validateDiscountRate(String value) {
-    if(value != ''){
-      if(double.tryParse(value) != null){ //valid num
-        if(double.parse(value) >= 0 && double.parse(value) <= 100){
+    if (value != '') {
+      if (double.tryParse(value) != null) {
+        //valid num
+        if (double.parse(value) >= 0 && double.parse(value) <= 100) {
           return null;
-        }
-        else{
+        } else {
           return 'Please enter a valid Discount Rate %';
         }
       }
     }
   }
+
   String validateDiscountAmount(String value) {
-    if(value != ''){
-      if(double.tryParse(value) != null){ //valid num
-        if(double.parse(value) >= 0 && double.parse(value) <= _call.towedSubTotal){
+    if (value != '') {
+      if (double.tryParse(value) != null) {
+        //valid num
+        if (double.parse(value) >= 0 &&
+            double.parse(value) <= _call.towedSubTotal) {
           return null;
-        }
-        else{
+        } else {
           return 'Please enter a valid Discount Amount';
         }
       }
@@ -1105,7 +1094,10 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   }
 
   update() async {
+    setState(() {
       isLoading = true;
+    });
+
     if (this._formKey.currentState.validate() == true) {
       this._formKey.currentState.save();
       await Provider.of<Calls>(context, listen: false).updateCall(_call);
@@ -1113,18 +1105,17 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
       if (response['errorStatus'] == "true") {
         await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
             .processChangeCharges(_call.id, 0);
-        var processChangeChargeResponse = Provider
-            .of<ProcessTowedVehiclesVM>(context, listen: false)
-            .processChangeChargeResponse;
+        var processChangeChargeResponse =
+            Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
+                .processChangeChargeResponse;
         if (processChangeChargeResponse["errorStatus"] == "false") {
           isLoading = false;
           _showErrorMessage(
               context, processChangeChargeResponse["errorMessage"]);
-        }
-        else{
-          setState(() {
+        } else {
+          // setState(() {
             isLoading = false;
-          });
+          // });
           Navigator.push(
               context,
               new MaterialPageRoute(
@@ -1133,17 +1124,19 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
           Timer(Duration(milliseconds: 3000), () {
             Navigator.pop(context);
-
           });
         }
       } else {
-          isLoading = false;
+        isLoading = false;
         _showErrorMessage(context, response['errorMessage']);
       }
     } else {
-        isLoading = false;
+      isLoading = false;
       _showErrorMessage(context, "Please check your required fields");
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   var selectedCall;
@@ -1152,12 +1145,11 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
 
   @override
   void initState() {
-    super.initState();
     getRole();
     getUserId();
     bla();
     selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
-
+    super.initState();
     // Start listening to changes.
     // _towedDiscountRateController.addListener(resetDiscountAmount);
     // _towedDiscountAmountController.addListener(resetDiscountRate);
@@ -1167,66 +1159,43 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
   void dispose() {
     super.dispose();
   }
-  back(BuildContext context){
-    // Navigator.pop(context);
-    // Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //         builder: (context) =>
-    //             CallsScreen(selectedTabIndex:widget.selectedTabIndex)),
-    //         (Route<dynamic> route) =>
-    //     false);
-    // Navigator.of(context).pushRe(
-    //     MaterialPageRoute(builder: (c) => CallsScreen(selectedTabIndex:widget.selectedTabIndex)),
-    //         (route) => false);
-    // Navigator.pop(context);
-    // setState(() {
-    //   //print("again");
-    // });
-    // Navigator.pop(context).then((value) {
-    //   setState(() {
-    //     // refresh state
-    //   });
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => CallsScreen(selectedTabIndex:widget.selectedTabIndex),
-    //   ),
-    // );
-  }
-refresh(){
-   bla();
+
+  refresh() {
+    // bla();
     setState(() {
-       tabIndex=5;
-    });
-}
-  refreshNotes(){
-    setState(() {
-      tabIndex=4;
-    });
-  }
-  refreshPictures(){
-    setState(() {
-      tabIndex=6;
-    });
-  }
-  refreshPage(){
-    bla();
-    setState(() {
-      tabIndex=0;
+      tabIndex = 5;
     });
   }
 
+  refreshNotes() {
+    setState(() {
+      tabIndex = 4;
+    });
+  }
+
+  refreshPictures() {
+    setState(() {
+      tabIndex = 6;
+    });
+  }
+
+  // refreshPage(){
+  //   bla();
+  //   setState(() {
+  //     tabIndex=0;
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
-    shouldListenTowedDiscountRateController=true;
-    shouldListenTowedDiscountAmountController=true;
+    shouldListenTowedDiscountRateController = true;
+    shouldListenTowedDiscountAmountController = true;
     super.build(context);
     // TODO: implement build
     return DefaultTabController(
-        key:UniqueKey(),
-      length:7,
-         initialIndex: tabIndex,
+        key: UniqueKey(),
+        length: 7,
+        initialIndex: tabIndex,
         child: Scaffold(
             appBar: AppBar(
               // leading: IconButton(
@@ -1236,11 +1205,11 @@ refresh(){
               bottom: TabBar(
                 // key:UniqueKey(),
                 // controller:_tabController,
-                onTap: (index){
-                   FocusScope.of(context).requestFocus(new FocusNode());
-    setState(() {
-      tabIndex = index;
-    });
+                onTap: (index) => {
+                  FocusScope.of(context).requestFocus(new FocusNode()),
+                  // setState(() {
+                  tabIndex = index,
+                  // });
                 },
                 isScrollable: true,
                 indicatorColor: Colors.green,
@@ -1308,40 +1277,64 @@ refresh(){
                   icon: new Icon(Icons.attach_money, size: 20.0),
                   tooltip: 'Add Charges',
                   onPressed: () {
-                    setState(() {
-                      widget.initialIndex = 5;
-                    });
+                    // setState(() {
+                    //   widget.initialIndex = 5;
+                    // });
                     // Navigator.pop(context);
                     Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => new ChargesAdd(selectedCall: selectedCall.id, notifyParent:refresh))).then((value) => setState(() {tabIndex=5;}));
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => new ChargesAdd(
+                                    selectedCall: selectedCall.id,
+                                    notifyParent: refresh)))
+                        .then((value) =>
+                        print("bb")
+                        // setState(() {
+                        //       tabIndex = 5;
+                        //     })
+                    );
                   },
                 ),
                 new IconButton(
-
                   icon: new Icon(Icons.note_add, size: 20.0),
                   tooltip: 'Add Notes',
                   onPressed: () {
                     Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => new NotesAdd(notifyParent:refreshNotes))).then((value) => setState(() {tabIndex=4;}));
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) =>
+                                    new NotesAdd(notifyParent: refreshNotes)))
+                        .then((value) =>
+                        print("cc")
+                        // setState(() {
+                        //       tabIndex = 4;
+                        //     })
+                    );
                   },
                   //onPressed: () => save(),
                 ),
                 new IconButton(
                   icon: new Icon(Icons.add_a_photo, size: 20.0),
                   tooltip: 'Add Photo',
-                  onPressed: () {
+                  onPressed: () => {
                     Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (context) => new PhotosAdd(notifyParent:refreshPictures))).then((value) => setState(() {tabIndex=6;}));
+                            context,
+                            new MaterialPageRoute(
+                                builder: (context) => new PhotosAdd(
+                                    notifyParent: refreshPictures)))
+                        .then((value) =>
+                        print("aa")
+                        // setState(() {
+                        //       tabIndex = 6;
+                        //     })
+                    )
                   },
                 ),
                 new IconButton(
-                  icon: new Icon(Icons.check, size: 20.0, color: _isFormReadOnly == true ? Colors.grey : Colors.white),
+                  icon: new Icon(Icons.check,
+                      size: 20.0,
+                      color:
+                          _isFormReadOnly == true ? Colors.grey : Colors.white),
                   tooltip: 'Save',
                   onPressed: () => _isFormReadOnly == false ? update() : null,
                 ),
@@ -1358,10 +1351,8 @@ refresh(){
                     padding: EdgeInsets.all(10.0),
                     child: Form(
                         key: this._formKey,
-                        autovalidate:_autoValidate,
-                        child: TabBarView(
-                            key:UniqueKey(),
-                            children: [
+                        autovalidate: _autoValidate,
+                        child: TabBarView(key: UniqueKey(), children: [
                           SingleChildScrollView(
                               child: Column(
                             children: <Widget>[
@@ -1372,7 +1363,6 @@ refresh(){
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),
-
                                     controller: this._billToController,
                                     decoration: new InputDecoration(
                                       labelText: "Bill To *",
@@ -1384,12 +1374,12 @@ refresh(){
 //                                    return 'Please select Bill To Customer';
 //                                  }
 //                                },
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (_) => TowCustomersModal(
-                                                  setTowCustomer: setBillTo)));
+                                                  setTowCustomer: setBillTo)))
                                     }),
                               ),
                               new ListTile(
@@ -1403,9 +1393,16 @@ refresh(){
                                     labelText: "Invoice # *",
                                   ),
                                   validator: validateInvoice,
-                                  onTap: () => {_towedInvoiceController.selection = TextSelection(baseOffset: 0, extentOffset: _towedInvoiceController.value.text.length)},
-                                  onSaved: (val) =>
-                                      setState(() => _call.towedInvoice = val),
+                                  onTap: () => {
+                                    _towedInvoiceController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _towedInvoiceController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) =>_call.towedInvoice = val,
+                                      // setState(() => _call.towedInvoice = val),
                                 ),
                               ),
                               new ListTile(
@@ -1418,9 +1415,16 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "PO #",
                                   ),
-                                  onTap: () => {_towedPONumberController.selection = TextSelection(baseOffset: 0, extentOffset: _towedPONumberController.value.text.length)},
-                                  onSaved: (val) =>
-                                      setState(() => _call.towedPONumber = val),
+                                  onTap: () => {
+                                    _towedPONumberController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _towedPONumberController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) =>_call.towedPONumber = val,
+                                      // setState(() => _call.towedPONumber = val),
                                 ),
                               ),
                               new ListTile(
@@ -1433,9 +1437,17 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Member #",
                                   ),
-                                  onTap: () => {_dispatchMemberController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchMemberController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.dispatchMemberNumber = val),
+                                  onTap: () => {
+                                    _dispatchMemberController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _dispatchMemberController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.dispatchMemberNumber = val,
+                                      // setState(
+                                      // () => _call.dispatchMemberNumber = val),
                                 ),
                               ),
                               new ListTile(
@@ -1445,14 +1457,26 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitAmountController,
-                                  keyboardType:TextInputType.numberWithOptions(decimal: true),
-                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp("[0-9.]"))
+                                  ],
                                   decoration: new InputDecoration(
                                     labelText: "Limit \$",
                                   ),
-                                  onTap: () => {_dispatchLimitAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchLimitAmountController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.dispatchLimitAmount = val),
+                                  onTap: () => {
+                                    _dispatchLimitAmountController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _dispatchLimitAmountController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.dispatchLimitAmount = val,
+                                      // setState(
+                                      // () => _call.dispatchLimitAmount = val),
                                 ),
                               ),
                               new ListTile(
@@ -1462,64 +1486,105 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchLimitMilesController,
-                                  keyboardType:TextInputType.numberWithOptions(decimal: true),
-                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp("[0-9.]"))
+                                  ],
                                   decoration: new InputDecoration(
                                     labelText: "Limit Miles",
                                   ),
-                                  onTap: () => {_dispatchLimitMilesController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchLimitMilesController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.dispatchLimitMiles = val),
+                                  onTap: () => {
+                                    _dispatchLimitMilesController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _dispatchLimitMilesController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.dispatchLimitMiles = val
+                                      // setState(
+                                      // () => _call.dispatchLimitMiles = val),
                                 ),
                               ),
-                         new ListTile(
-                           title: new TextFormField(
-                             readOnly: _isFormReadOnly,
-                             style: TextStyle(
-                                 fontSize: 14,
-                                 fontWeight: FontWeight.w500),
-                             controller: _towedDiscountRateController,
-                             keyboardType:TextInputType.number,
-                             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                             decoration: new InputDecoration(
-                               labelText: "Discount Rate % (Range 0 - 100)",
-                             ),
-                             validator: validateDiscountRate,
-                             onChanged: (val) => {
-                               // _towedDiscountAmountController.clear(),
-                             _towedDiscountAmountController.value = new TextEditingController.fromValue(
-                             new TextEditingValue(text: "0.00"))
-                                 .value
-                             },
-                             onTap: () => {_towedDiscountRateController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountRateController.value.text.length)},
-                             onSaved: (val) =>
-                                 setState(() => _call.towedDiscountRate = val),
-                           ),
-                         ),
-                         new ListTile(
-                           title: new TextFormField(
-                             readOnly: _isFormReadOnly,
-                             style: TextStyle(
-                                 fontSize: 14,
-                                 fontWeight: FontWeight.w500),
-                             controller: _towedDiscountAmountController,
-                             keyboardType:TextInputType.numberWithOptions(decimal: true),
-                             inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
-                             decoration: new InputDecoration(
-                               labelText: "Discount Amount (Max : \$" +_call.towedSubTotal.toStringAsFixed(2) + ")",
-                             ),
-                             validator: validateDiscountAmount,
-                             onChanged: (val) => {
-                               // _towedDiscountRateController.clear()
-                               _towedDiscountRateController.value = new TextEditingController.fromValue(
-                                   new TextEditingValue(text: "0.00"))
-                                   .value
-                             },
-                             onTap: () => {_towedDiscountAmountController.selection = TextSelection(baseOffset: 0, extentOffset: _towedDiscountAmountController.value.text.length)},
-                             onSaved: (val) =>
-                                 setState(() => _call.towedDiscountAmount = val),
-                           ),
-                         ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedDiscountRateController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
+                                  decoration: new InputDecoration(
+                                    labelText:
+                                        "Discount Rate % (Range 0 - 100)",
+                                  ),
+                                  validator: validateDiscountRate,
+                                  onChanged: (val) => {
+                                    // _towedDiscountAmountController.clear(),
+                                    _towedDiscountAmountController.value =
+                                        new TextEditingController.fromValue(
+                                                new TextEditingValue(
+                                                    text: "0.00"))
+                                            .value
+                                  },
+                                  onTap: () => {
+                                    _towedDiscountRateController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _towedDiscountRateController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.towedDiscountRate = val,
+                                      // setState(
+                                      // () => _call.towedDiscountRate = val),
+                                ),
+                              ),
+                              new ListTile(
+                                title: new TextFormField(
+                                  readOnly: _isFormReadOnly,
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500),
+                                  controller: _towedDiscountAmountController,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp("[0-9.]"))
+                                  ],
+                                  decoration: new InputDecoration(
+                                    labelText: "Discount Amount (Max : \$" +
+                                        _call.towedSubTotal.toStringAsFixed(2) +
+                                        ")",
+                                  ),
+                                  validator: validateDiscountAmount,
+                                  onChanged: (val) => {
+                                    // _towedDiscountRateController.clear()
+                                    _towedDiscountRateController.value =
+                                        new TextEditingController.fromValue(
+                                                new TextEditingValue(
+                                                    text: "0.00"))
+                                            .value
+                                  },
+                                  onTap: () => {
+                                    _towedDiscountAmountController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _towedDiscountAmountController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.towedDiscountAmount = val,
+                                      // setState(
+                                      // () => _call.towedDiscountAmount = val),
+                                ),
+                              ),
 //                          ListTile(
 //                            leading: Container(
 //                              width: 100,
@@ -1545,7 +1610,8 @@ refresh(){
                               new ListTile(
                                 title: new TextFormField(
                                   readOnly: _isFormReadOnly,
-                                  textCapitalization: TextCapitalization.characters,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
@@ -1558,9 +1624,14 @@ refresh(){
                                     ),
                                   ),
                                   validator: validateVIN,
-                                  onTap: () => {_vinController.selection = TextSelection(baseOffset: 0, extentOffset: _vinController.value.text.length)},
-                                  onSaved: (val) =>
-                                      setState(() => _call.VIN = val),
+                                  onTap: () => {
+                                    _vinController.selection = TextSelection(
+                                        baseOffset: 0,
+                                        extentOffset:
+                                            _vinController.value.text.length)
+                                  },
+                                  onSaved: (val) =>_call.VIN = val,
+                                      // setState(() => _call.VIN = val),
                                 ),
                               ),
                               new ListTile(
@@ -1579,9 +1650,11 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Model';
+                                      } else {
+                                        return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                       Navigator.push(
                                           context,
@@ -1589,7 +1662,7 @@ refresh(){
                                               builder: (context) =>
                                                   new VehicleYearMakeModelModal(
                                                       setYearMakeModelName:
-                                                          setYearMakeModelName)));
+                                                          setYearMakeModelName)))
                                     }),
                               ),
                               new ListTile(
@@ -1605,9 +1678,15 @@ refresh(){
                                     // suffixIcon: Icon(Icons.arrow_forward_ios,size:14),
                                   ),
                                   validator: validateYear,
-                                  onTap: () => {_yearController.selection = TextSelection(baseOffset: 0, extentOffset: _yearController.value.text.length)},
-                                  onSaved: (val) =>
-                                  setState(() => _call.vehicleYear = int.parse(val)),
+                                  onTap: () => {
+                                    _yearController.selection = TextSelection(
+                                        baseOffset: 0,
+                                        extentOffset:
+                                            _yearController.value.text.length)
+                                  },
+                                  onSaved: (val) =>_call.vehicleYear = int.parse(val),
+                                      // setState(
+                                      // () => _call.vehicleYear = int.parse(val)),
                                 ),
                               ),
                               new ListTile(
@@ -1626,15 +1705,17 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Make';
+                                      } else {
+                                        return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new VehicleMakeModal(
-                                                      setMake: setMake)));
+                                                      setMake: setMake)))
                                     }),
                               ),
 //                          new ListTile(
@@ -1675,6 +1756,8 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Top Color';
+                                      } else {
+                                        return null;
                                       }
                                     },
                                     onTap: () {
@@ -1703,21 +1786,23 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Bottom Color';
+                                      } else {
+                                        return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new ColorModal(
                                                       setColor:
-                                                          setSecondColor)));
+                                                          setSecondColor)))
                                     }),
                               ),
                               new ListTile(
                                 title: new TextFormField(
-                                  autocorrect : false,
+                                  autocorrect: false,
                                   readOnly: _isFormReadOnly,
                                   textCapitalization:
                                       TextCapitalization.characters,
@@ -1731,9 +1816,20 @@ refresh(){
                                   validator: (value) {
                                     if (value.isEmpty) {
                                       return 'Please enter License Plate';
+                                    } else {
+                                      return null;
                                     }
                                   },
-                                  onTap: () => {_licensePlateController.selection = TextSelection(baseOffset: 0, extentOffset: _licensePlateController.value.text.length)},
+                                  onTap: () => {
+                                    _licensePlateController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _licensePlateController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) =>_call.licensePlate = val,
+                                      // setState(() => _call.licensePlate = val),
                                 ),
                               ),
                               new ListTile(
@@ -1752,16 +1848,18 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select License State';
+                                      } else {
+                                        return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new SystemStateModal(
                                                       setSystemState:
-                                                          setLicenseState)));
+                                                          setLicenseState)))
                                     }),
                               ),
 //                          new ListTile(
@@ -1863,14 +1961,24 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: this._vehicleOdometerController,
-                                  keyboardType:TextInputType.number,
-                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   decoration: new InputDecoration(
                                     labelText: "Odometer",
                                   ),
-                                  onTap: () => {_vehicleOdometerController.selection = TextSelection(baseOffset: 0, extentOffset: _vehicleOdometerController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.vehicleOdometer = val),
+                                  onTap: () => {
+                                    _vehicleOdometerController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _vehicleOdometerController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.vehicleOdometer = val,
+                                  // setState(
+                                  //     () => _call.vehicleOdometer = val),
                                 ),
                               ),
                             ],
@@ -1894,15 +2002,17 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Tow Type';
+                                      } else {
+                                        return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new TowTypeModal(
-                                                      setTowType: setTowType)));
+                                                      setTowType: setTowType)))
                                     }),
                               ),
                               new ListTile(
@@ -1918,14 +2028,14 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new TowReasonModal(
                                                       setTowReason:
-                                                          setTowReason)));
+                                                          setTowReason)))
                                     }),
                               ),
                               new ListTile(
@@ -1941,14 +2051,14 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new TowAuthorizationModal(
                                                       setAuthorization:
-                                                          setAuthorization)));
+                                                          setAuthorization)))
                                     }),
                               ),
                               new ListTile(
@@ -1967,16 +2077,18 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Jurisdiction';
+                                      } else {
+                                        return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new TowJurisdictionModal(
                                                       setJurisdiction:
-                                                          setJurisdiction)));
+                                                          setJurisdiction)))
                                     }),
                               ),
                               new ListTile(
@@ -1990,30 +2102,31 @@ refresh(){
                                     labelText: "Towed Date",
                                     suffixIcon: IconButton(
                                       onPressed: () {
-                                        _isFormReadOnly == false ?
-                                        DatePicker.showDatePicker(context,
-                                            showTitleActions: true,
-                                            //  minTime: DateTime(2018, 3, 5),
-                                            //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                            //   //print('change $date');
-                                            // },
-                                            onConfirm: (date) {
-                                          String formattedDate =
-                                              DateFormat('MM-dd-yyyy')
-                                                  .format(date);
-                                          _towedDateController.text =
-                                              formattedDate;
+                                        _isFormReadOnly == false
+                                            ? DatePicker.showDatePicker(context,
+                                                showTitleActions: true,
+                                                //  minTime: DateTime(2018, 3, 5),
+                                                //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                                //   //print('change $date');
+                                                // },
+                                                onConfirm: (date) {
+                                                String formattedDate =
+                                                    DateFormat('MM-dd-yyyy')
+                                                        .format(date);
+                                                _towedDateController.text =
+                                                    formattedDate;
 //                              String formattedTime = DateFormat('kk.mm').format(now);
 //                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                                        },
-                                            currentTime: DateTime.now(),
-                                            locale: LocaleType.en) : null;
+                                              },
+                                                currentTime: DateTime.now(),
+                                                locale: LocaleType.en)
+                                            : null;
                                       }, //_controller.clear(),
                                       icon: Icon(Icons.date_range, size: 14),
                                     ),
                                   ),
-                                  onSaved: (val) =>
-                                      setState(() => _call.towedDate = val),
+                                  onSaved: (val) =>_call.towedDate = val
+                                      // setState(() => _call.towedDate = val),
                                 ),
                               ),
                               new ListTile(
@@ -2027,30 +2140,32 @@ refresh(){
                                     labelText: "Towed Time",
                                     suffixIcon: IconButton(
                                       onPressed: () {
-                                        _isFormReadOnly == false ?
-                                        DatePicker.showTimePicker(context,
-                                            showSecondsColumn: false,
-                                            showTitleActions: true,
-                                            //  minTime: DateTime(2018, 3, 5),
-                                            //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                            //   //print('change $date');
-                                            // },
-                                            onConfirm: (time) {
-                                          String formattedTime =
-                                              DateFormat('HH:mm').format(time);
-                                          _towedTimeController.text =
-                                              formattedTime;
+                                        _isFormReadOnly == false
+                                            ? DatePicker.showTimePicker(context,
+                                                showSecondsColumn: false,
+                                                showTitleActions: true,
+                                                //  minTime: DateTime(2018, 3, 5),
+                                                //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                                //   //print('change $date');
+                                                // },
+                                                onConfirm: (time) {
+                                                String formattedTime =
+                                                    DateFormat('HH:mm')
+                                                        .format(time);
+                                                _towedTimeController.text =
+                                                    formattedTime;
 //                              String formattedTime = DateFormat('kk.mm').format(now);
 //                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                                        },
-                                            currentTime: DateTime.now(),
-                                            locale: LocaleType.en) : null;
+                                              },
+                                                currentTime: DateTime.now(),
+                                                locale: LocaleType.en)
+                                            : null;
                                       }, //_controller.clear(),
                                       icon: Icon(Icons.access_time, size: 14),
                                     ),
                                   ),
-                                  onSaved: (val) =>
-                                      setState(() => _call.towedTime = val),
+                                  onSaved: (val) =>_call.towedTime = val,
+                                      // setState(() => _call.towedTime = val),
                                 ),
                               ),
                               new ListTile(
@@ -2066,11 +2181,19 @@ refresh(){
                                   validator: (value) {
                                     if (value.isEmpty || value == null) {
                                       return 'Please enter location';
+                                    } else {
+                                      return null;
                                     }
                                   },
-                                  onTap: () => {_towedStreetController.selection = TextSelection(baseOffset: 0, extentOffset: _towedStreetController.value.text.length)},
-                                  onSaved: (val) =>
-                                      setState(() => _call.towedStreet = val),
+                                  onTap: () => {
+                                    _towedStreetController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset: _towedStreetController
+                                                .value.text.length)
+                                  },
+                                  onSaved: (val) =>_call.towedStreet = val,
+                                      // setState(() => _call.towedStreet = val),
                                 ),
                               ),
                               new ListTile(
@@ -2083,9 +2206,17 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "",
                                   ),
-                                  onTap: () => {_towedStreetTwoController.selection = TextSelection(baseOffset: 0, extentOffset: _towedStreetTwoController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.towedStreetTwo = val),
+                                  onTap: () => {
+                                    _towedStreetTwoController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _towedStreetTwoController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.towedStreetTwo = val,
+                                  // setState(
+                                  //     () => _call.towedStreetTwo = val),
                                 ),
                               ),
                               new ListTile(
@@ -2101,14 +2232,14 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new SystemStateModal(
                                                       setSystemState:
-                                                          setTowedState)));
+                                                          setTowedState)))
                                     }),
                               ),
                               new ListTile(
@@ -2124,7 +2255,7 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
@@ -2132,7 +2263,7 @@ refresh(){
                                                   new SystemCityModal(
                                                       setCity: setCity,
                                                       stateId: _call.towedState
-                                                          .toString())));
+                                                          .toString())))
                                     }),
                               ),
 
@@ -2156,9 +2287,16 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Destination",
                                   ),
-                                  onTap: () => {_towedToStreetController.selection = TextSelection(baseOffset: 0, extentOffset: _towedToStreetController.value.text.length)},
-                                  onSaved: (val) =>
-                                      setState(() => _call.towedToStreet = val),
+                                  onTap: () => {
+                                    _towedToStreetController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _towedToStreetController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) =>_call.towedToStreet = val,
+                                      // setState(() => _call.towedToStreet = val),
                                 ),
                               ),
                               new ListTile(
@@ -2171,9 +2309,17 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "",
                                   ),
-                                  onTap: () => {_towedToStreetTwoController.selection = TextSelection(baseOffset: 0, extentOffset: _towedToStreetTwoController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.towedToStreetTwo = val),
+                                  onTap: () => {
+                                    _towedToStreetTwoController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _towedToStreetTwoController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.towedToStreetTwo = val,
+                                  // setState(
+                                  //     () => _call.towedToStreetTwo = val),
                                 ),
                               ),
                               new ListTile(
@@ -2189,7 +2335,7 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                       Navigator.push(
                                           context,
@@ -2197,7 +2343,7 @@ refresh(){
                                               builder: (context) =>
                                                   new SystemStateModal(
                                                       setSystemState:
-                                                          setTowedToState)));
+                                                          setTowedToState)))
                                     }),
                               ),
                               new ListTile(
@@ -2213,7 +2359,7 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                       Navigator.push(
                                           context,
@@ -2223,7 +2369,7 @@ refresh(){
                                                       setCity: setTowedToCity,
                                                       stateId: _call
                                                           .towedToState
-                                                          .toString())));
+                                                          .toString())))
                                     }),
                               ),
 
@@ -2253,16 +2399,18 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Company';
+                                      } else {
+                                        return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new WreckerCompanyModal(
-                                                      setCompany: setCompany)));
+                                                      setCompany: setCompany)))
                                     }),
                               ),
 //                          new ListTile(
@@ -2286,13 +2434,14 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new WreckerDriverModal(
-                                                      setDriver: setDriverOnEdit)));
+                                                      setDriver:
+                                                          setDriverOnEdit)))
                                     }),
                               ),
                               new ListTile(
@@ -2308,13 +2457,13 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
                                       Navigator.push(
                                           context,
                                           new MaterialPageRoute(
                                               builder: (context) =>
                                                   new TowTrucksModal(
-                                                      setTruck: setTruck)));
+                                                      setTruck: setTruck)))
                                     }),
                               ),
 //                          new ListTile(
@@ -2405,12 +2554,11 @@ refresh(){
                                     validator: (value) {
                                       if (value.isEmpty) {
                                         return 'Please select Tow Customer';
-                                      }
-                                      else{
+                                      } else {
                                         return null;
                                       }
                                     },
-                                    onTap: () {
+                                    onTap: () => {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                       Navigator.push(
                                           context,
@@ -2418,7 +2566,7 @@ refresh(){
                                               builder: (context) =>
                                                   new TowCustomersModal(
                                                       setTowCustomer:
-                                                          setTowCustomer)));
+                                                          setTowCustomer)))
                                     }),
                               ),
                               new ListTile(
@@ -2436,10 +2584,19 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Instructions",
                                   ),
-                                  onTap: () => {_dispatchInstructions_stringController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchInstructions_stringController.value.text.length)},
-                                  onSaved: (val) => setState(() => {
-                                        _call.dispatchInstructions_string = val
-                                      }),
+                                  onTap: () => {
+                                    _dispatchInstructions_stringController
+                                            .selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _dispatchInstructions_stringController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.dispatchInstructions_string = val,
+                                  // setState(() => {
+                                  //       _call.dispatchInstructions_string = val
+                                  //     }),
                                 ),
                               ),
                               new ListTile(
@@ -2452,9 +2609,17 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Contact",
                                   ),
-                                  onTap: () => {_dispatchContactController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchContactController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.dispatchContact = val),
+                                  onTap: () => {
+                                    _dispatchContactController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _dispatchContactController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.dispatchContact = val,
+                                  // setState(
+                                  //     () => _call.dispatchContact = val),
                                 ),
                               ),
                               new ListTile(
@@ -2471,14 +2636,21 @@ refresh(){
                                   validator: (value) {
                                     if (value.length > 1 && value.length < 10) {
                                       return 'Please enter a valid Contact Phone';
-                                    }
-                                    else{
+                                    } else {
                                       return null;
                                     }
                                   },
-                                  onTap: () => {_dispatchContactPhoneController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchContactPhoneController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.dispatchContactPhone = val),
+                                  onTap: () => {
+                                    _dispatchContactPhoneController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _dispatchContactPhoneController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.dispatchContactPhone = val,
+                                  // setState(
+                                  //     () => _call.dispatchContactPhone = val),
                                 ),
                               ),
                               new ListTile(
@@ -2495,7 +2667,7 @@ refresh(){
                                       suffixIcon: Icon(Icons.arrow_forward_ios,
                                           size: 14),
                                     ),
-                                    onTap: () {
+                                    onTap: () => {
 //                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChildScreen(func: function))),
                                       Navigator.push(
                                           context,
@@ -2503,7 +2675,7 @@ refresh(){
                                               builder: (context) =>
                                                   new SystemPriorityModal(
                                                       setVehiclePriority:
-                                                          setVehiclePriority)));
+                                                          setVehiclePriority)))
                                     }),
                               ),
                               new ListTile(
@@ -2513,15 +2685,26 @@ refresh(){
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
                                   controller: _dispatchETAMinutesController,
-                                  keyboardType:TextInputType.numberWithOptions(decimal: true),
-                                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+                                  keyboardType: TextInputType.numberWithOptions(
+                                      decimal: true),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp("[0-9.]"))
+                                  ],
                                   decoration: new InputDecoration(
                                     labelText: "ETA",
                                   ),
-
-                                  onTap: () => {_dispatchETAMinutesController.selection = TextSelection(baseOffset: 0, extentOffset: _dispatchETAMinutesController.value.text.length)},
-                                  onSaved: (val) => setState(
-                                      () => _call.dispatchETAMinutes = val),
+                                  onTap: () => {
+                                    _dispatchETAMinutesController.selection =
+                                        TextSelection(
+                                            baseOffset: 0,
+                                            extentOffset:
+                                                _dispatchETAMinutesController
+                                                    .value.text.length)
+                                  },
+                                  onSaved: (val) => _call.dispatchETAMinutes = val,
+                                  // setState(
+                                  //     () => _call.dispatchETAMinutes = val),
                                 ),
                               ),
                               new ListTile(
@@ -2535,30 +2718,31 @@ refresh(){
                                     labelText: "Call Date",
                                     suffixIcon: IconButton(
                                       onPressed: () {
-                                        _isFormReadOnly == false ?
-                                        DatePicker.showDatePicker(context,
-                                            showTitleActions: true,
-                                            //  minTime: DateTime(2018, 3, 5),
-                                            //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-                                            //   //print('change $date');
-                                            // },
-                                            onConfirm: (date) {
-                                          String formattedDate =
-                                              DateFormat('MM-dd-yyyy')
-                                                  .format(date);
-                                          _dispatchDateController.text =
-                                              formattedDate;
+                                        _isFormReadOnly == false
+                                            ? DatePicker.showDatePicker(context,
+                                                showTitleActions: true,
+                                                //  minTime: DateTime(2018, 3, 5),
+                                                //  maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+                                                //   //print('change $date');
+                                                // },
+                                                onConfirm: (date) {
+                                                String formattedDate =
+                                                    DateFormat('MM-dd-yyyy')
+                                                        .format(date);
+                                                _dispatchDateController.text =
+                                                    formattedDate;
 //                              String formattedTime = DateFormat('kk.mm').format(now);
 //                              String formattedTime2 = DateFormat('kk^mm').format(now);
-                                        },
-                                            currentTime: DateTime.now(),
-                                            locale: LocaleType.en):null;
+                                              },
+                                                currentTime: DateTime.now(),
+                                                locale: LocaleType.en)
+                                            : null;
                                       }, //_controller.clear(),
                                       icon: Icon(Icons.date_range, size: 14),
                                     ),
                                   ),
-                                  onSaved: (val) =>
-                                      setState(() => _call.dispatchDate = val),
+                                  onSaved: (val) =>_call.dispatchDate = val,
+                                      // setState(() => _call.dispatchDate = val),
                                 ),
                               ),
 //                          new ListTile(
@@ -2806,8 +2990,9 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Response Id",
                                   ),
-                                  onSaved: (val) => setState(
-                                      () => _call.dispatchResponseID = val),
+                                  onSaved: (val) =>  _call.dispatchResponseID = val,
+                                  // setState(
+                                  //     () => _call.dispatchResponseID = val),
                                 ),
                               ),
                               new ListTile(
@@ -2822,8 +3007,9 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Authorization #",
                                   ),
-                                  onSaved: (val) => setState(() =>
-                                      _call.dispatchAuthorizationNumber = val),
+                                  onSaved: (val) => _call.dispatchAuthorizationNumber = val,
+                                  // setState(() =>
+                                  //     _call.dispatchAuthorizationNumber = val),
                                 ),
                               ),
 //                          new ListTile(
@@ -2848,8 +3034,9 @@ refresh(){
                                   decoration: new InputDecoration(
                                     labelText: "Response Type",
                                   ),
-                                  onSaved: (val) => setState(() =>
-                                      _call.dispatchProviderResponse = val),
+                                  onSaved: (val) => _call.dispatchProviderResponse = val,
+                                  // setState(() =>
+                                  //     _call.dispatchProviderResponse = val),
                                 ),
                               ),
 //                          new ListTile(
@@ -3251,15 +3438,25 @@ refresh(){
 //                        ],
 //                      )),
                           Column(children: <Widget>[
-                            Expanded(child: TowedVehicleNotesList(userRole:userRole, userId:userId, notifyParent:refreshNotes))
+                            Expanded(
+                                child: TowedVehicleNotesList(
+                                    userRole: userRole,
+                                    userId: userId
+                                    ))
                           ]),
 
                           Column(children: <Widget>[
-                            Expanded(child: TowedVehicleChargesList(userRole:userRole, notifyParent:refresh))
+                            Expanded(
+                                child: TowedVehicleChargesList(
+                                    userRole: userRole))
                           ]),
-                              Column(children: <Widget>[
-                                Expanded(child: PhotosList(userRole:userRole, userId:userId, notifyParent:refresh))
-                              ]),
+                          Column(children: <Widget>[
+                            Expanded(
+                                child: PhotosList(
+                                    userRole: userRole,
+                                    userId: userId
+                                    ))
+                          ]),
                         ])))));
   }
 }

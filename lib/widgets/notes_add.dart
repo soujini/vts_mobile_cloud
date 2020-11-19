@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vts_mobile_cloud/providers/calls_provider.dart';
 import 'package:vts_mobile_cloud/providers/notes_provider.dart';
-import 'package:vts_mobile_cloud/screens/add_edit_call.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 
 enum SingingCharacter{

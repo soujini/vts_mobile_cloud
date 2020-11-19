@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_pagewise/flutter_pagewise.dart';
-import 'package:vts_mobile_cloud/providers/secureStoreMixin_provider.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 import '../providers/calls_provider.dart';
 import '../providers/towedVehicleNotes_provider.dart';
 import 'package:vts_mobile_cloud/widgets/notes_edit.dart';
 
 class TowedVehicleNotesList extends StatefulWidget {
-  TowedVehicleNotesList({Key key, this.userRole,this.userId, this.notifyParent});
+  TowedVehicleNotesList({Key key, this.userRole,this.userId});
 
   final String userRole;
   final String userId;
-  final Function notifyParent;
   bool isLoading = false;
 
   @override
@@ -20,6 +18,7 @@ class TowedVehicleNotesList extends StatefulWidget {
 }
 class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
   static const int PAGE_SIZE = 15;
+  bool isDeleteDialogWidgetProcessing = true;
   //
   // void initState(){
   //   super.initState();
@@ -75,9 +74,9 @@ class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
                     .listMini(pageIndex, PAGE_SIZE, selectedCall.id.toString())));
   }
   refresh(){
-    setState(() {
-
-    });
+    // setState(() {
+    //
+    // });
   }
 
   _showErrorMessage(BuildContext context, errorMessage) {
@@ -88,28 +87,20 @@ class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
                 ))));
   }
-  Future deleteNote(id, towedVehicle) async {
-    setState(() {
-      widget.isLoading = true;
-    });
-
-    var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+  Future deleteNote(context, id, towedVehicle) async {
+    isDeleteDialogWidgetProcessing = true;
     await Provider.of<TowedVehicleNotesVM>(context, listen: false).delete(id, towedVehicle);
-    var notesDeleteResponse = Provider.of<TowedVehicleNotesVM>(context, listen: false).notesDeleteResponse;
-    setState(() {
+    var notesDeleteResponse = await Provider.of<TowedVehicleNotesVM>(context, listen: false).notesDeleteResponse;
 
-    });
     if (notesDeleteResponse["errorStatus"] == "false") {
-      widget.isLoading = false;
       _showErrorMessage(context, notesDeleteResponse["errorMessage"]);
     }
       else {
-      setState(() {
-        widget.isLoading = false;
-      });
-      }
-    }
 
+      }
+    Navigator.of(context).pop();
+    isDeleteDialogWidgetProcessing = false;
+    }
 
   Widget _itemBuilder(context, towedVehicleNotes, _) {
     towedVehicleNotes.vehicleNotes_string = towedVehicleNotes.vehicleNotes_string.replaceAll("\\r\\n", "\n");
@@ -254,9 +245,9 @@ class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
                                     color: Colors.white,
                                     textColor: Colors.green,
                                     child: Text('Yes'),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      deleteNote(towedVehicleNotes.id, towedVehicleNotes.towedVehicle);
+                                    onPressed: () => {
+                                      // Navigator.of(context).pop();
+                                      deleteNote(context, towedVehicleNotes.id, towedVehicleNotes.towedVehicle)
                                       // deleteCharge(
                                       //     towedVehicleCharges.id, towedVehicleCharges.towCharges, towedVehicleCharges.towedVehicle);
                                     },

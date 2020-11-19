@@ -8,10 +8,9 @@ import '../providers/calls_provider.dart';
 import '../providers/towedVehicleCharges_provider.dart';
 
 class TowedVehicleChargesList extends StatefulWidget {
-  TowedVehicleChargesList({Key key, this.userRole, this.notifyParent});
+  TowedVehicleChargesList({Key key, this.userRole});
 
   final String userRole;
-  final Function notifyParent;
   bool isLoading=false;
 
   @override
@@ -19,6 +18,7 @@ class TowedVehicleChargesList extends StatefulWidget {
 }
 class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
   static const int PAGE_SIZE = 15;
+  bool isDeleteDialogWidgetProcessing = false;
 
   Future<List> _refreshCallsList(BuildContext context) async {
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
@@ -51,18 +51,12 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                 style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500
                 ))));
   }
-  Future deleteCharge(id, towCharges, towedVehicle) async {
-       setState(() {
-      widget.isLoading = true;
-       });
+  Future deleteCharge(context, id, towCharges, towedVehicle) async {
+    isDeleteDialogWidgetProcessing = true;
+    // var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
 
-    var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
-
-    await Provider.of<TowedVehicleChargesVM>(context, listen: false).delete(id, selectedCall.id);
-     var chargesDeleteResponse = Provider.of<TowedVehicleChargesVM>(context, listen: false).chargesDeleteResponse;
-       setState(() {
-
-       });
+    await Provider.of<TowedVehicleChargesVM>(context, listen: false).delete(id, towedVehicle);
+     var chargesDeleteResponse = await Provider.of<TowedVehicleChargesVM>(context, listen: false).chargesDeleteResponse;
      if (chargesDeleteResponse["errorStatus"] == "false") {
       widget.isLoading = false;
       _showErrorMessage(context, chargesDeleteResponse["errorMessage"]);
@@ -71,7 +65,7 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
       //call process change charge
       await Provider.of<ProcessTowedVehiclesVM>(context, listen: false)
           .processChangeCharges(towedVehicle,towCharges);
-      var processChangeChargeResponse = Provider
+      var processChangeChargeResponse = await Provider
           .of<ProcessTowedVehiclesVM>(context, listen: false)
           .processChangeChargeResponse;
 
@@ -81,15 +75,19 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
             context, processChangeChargeResponse["errorMessage"]);
       }
       else {
-        setState(() {
-          widget.isLoading = false;
-        });
+
+        // setState(() {
+
+        // });
       }
+      Navigator.of(context).pop();
+      isDeleteDialogWidgetProcessing = false;
+
     }
   }
   refresh(){
   setState(() {
-
+    widget.isLoading = false; //dummy
   });
   }
 
@@ -178,7 +176,7 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                               title: Text(
                                   'DELETE CHARGE', style: TextStyle(fontSize: 16,
                                   fontWeight: FontWeight.bold, color:Color(0xff1C3764))),
-                              content: widget.isLoading == true ? Center(child:Loader()):SingleChildScrollView(
+                              content: isDeleteDialogWidgetProcessing == true ? Center(child:Loader()):SingleChildScrollView(
                                 child: ListBody(
                                   children: <Widget>[
                                     Text(
@@ -203,8 +201,8 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                                   textColor: Colors.green,
                                   child: Text('Yes'),
                                   onPressed: () {
-                                    Navigator.of(context).pop();
-                                    deleteCharge(
+                                    // Navigator.of(context).pop();
+                                    deleteCharge(context,
                                          towedVehicleCharges.id, towedVehicleCharges.towCharges, towedVehicleCharges.towedVehicle);
                                     },
                                 ),
@@ -216,8 +214,8 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                                   color: Colors.white,
                                   textColor: Colors.grey,
                                   child: Text('No'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
+                                  onPressed: () =>  {
+                                    Navigator.of(context).pop()
                                   },
                                 ),
                               ],

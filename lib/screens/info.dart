@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../providers/secureStoreMixin_provider.dart';
 import 'package:get_version/get_version.dart';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart';
 
 class InfoScreen extends StatefulWidget {
   InfoScreen() : super();
@@ -31,6 +29,7 @@ class InfoScreenState extends State<InfoScreen> with SecureStoreMixin {
     // TODO: implement initState
     getAboutInformation();
     initPlatformState();
+    super.initState();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.

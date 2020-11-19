@@ -8,7 +8,6 @@ import '../models/call.dart';
 import '../models/call_add.dart';
 import '../providers/secureStoreMixin_provider.dart';
 import '../providers/common_provider.dart';
-import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 
 class Calls with ChangeNotifier, SecureStoreMixin {
@@ -71,21 +70,16 @@ class Calls with ChangeNotifier, SecureStoreMixin {
   Future<List> updateCall(_call) async {
     final int id = _call.id;
     List<String> fieldList = new List<String>();
-    List<String> filteredFieldList = new List<String>();
     String tabUpdate = "Mobile Update";
     String fieldName="";
     bool moveStatus=false;
     String dispatchInstructions_string=_call.dispatchInstructions_string;//Need to be updated
     String xmlValues="";
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('MM-dd-yyyy').format(now);
-    String formattedTime = DateFormat('kk.mm').format(now);
-    String formattedTime2 = DateFormat('kk^mm').format(now);
 
     var formatTowedTime = _call.towedTime.split(":");
-     String formattedTowedTime = formatTowedTime[0]+'.'+formatTowedTime[1];
       dispatchInstructions_string = dispatchInstructions_string == '--' ? '' : dispatchInstructions_string;
-    List<int> dispatchInstructionsBytes = utf8.encode("dispatchInstructions_string");
+    // List<int> dispatchInstructionsBytes = utf8.encode("dispatchInstructions_string");
     await  getSecureStore('userId', (token) {
       userId=token;
     });
