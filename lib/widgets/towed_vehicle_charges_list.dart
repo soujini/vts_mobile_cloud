@@ -8,10 +8,12 @@ import '../providers/calls_provider.dart';
 import '../providers/towedVehicleCharges_provider.dart';
 
 class TowedVehicleChargesList extends StatefulWidget {
-  TowedVehicleChargesList({Key key, this.userRole});
+  TowedVehicleChargesList({Key key, this.userRole, this.selectedCall, this.notifyParent});
 
   final String userRole;
+  var selectedCall;
   bool isLoading=false;
+  final Function notifyParent;
 
   @override
   _TowedVehicleChargesList createState() => _TowedVehicleChargesList();
@@ -19,9 +21,17 @@ class TowedVehicleChargesList extends StatefulWidget {
 class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
   static const int PAGE_SIZE = 15;
   bool isDeleteDialogWidgetProcessing = false;
+   // var selectedCall;
+
+  void initState() {
+    super.initState();
+     // selectedCall =  Provider.of<Calls>(context, listen: false).callDetails;
+    // selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+  }
 
   Future<List> _refreshCallsList(BuildContext context) async {
-    var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+
     return await Provider.of<TowedVehicleChargesVM>(context, listen: false)
         .listMini(0, PAGE_SIZE, selectedCall.id.toString())
         .catchError((onError) {
@@ -53,10 +63,22 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
   }
   Future deleteCharge(context, id, towCharges, towedVehicle) async {
     isDeleteDialogWidgetProcessing = true;
-    // var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+    showDialog(
+        context: context,
+        builder: ((context) => AlertDialog(
+          title: Text("Deleting Charge..."),
+          content:
+          SingleChildScrollView(
+            padding: EdgeInsets.only(left:100, right:100, top:10, bottom:10),
+              child: ListBody(
+                  children: <Widget>[
+                  Loader()
+                    ])
+          )
+        )));
 
     await Provider.of<TowedVehicleChargesVM>(context, listen: false).delete(id, towedVehicle);
-     var chargesDeleteResponse = await Provider.of<TowedVehicleChargesVM>(context, listen: false).chargesDeleteResponse;
+    var chargesDeleteResponse = await Provider.of<TowedVehicleChargesVM>(context, listen: false).chargesDeleteResponse;
      if (chargesDeleteResponse["errorStatus"] == "false") {
       widget.isLoading = false;
       _showErrorMessage(context, chargesDeleteResponse["errorMessage"]);
@@ -71,30 +93,30 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
 
       if (processChangeChargeResponse["errorStatus"] == "false") {
         widget.isLoading = false;
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
         _showErrorMessage(
             context, processChangeChargeResponse["errorMessage"]);
       }
       else {
-
-        // setState(() {
-
-        // });
+        widget.notifyParent();
+         Navigator.of(context).pop();
+        Navigator.of(context).pop();
       }
-      Navigator.of(context).pop();
       isDeleteDialogWidgetProcessing = false;
-
     }
   }
   refresh(){
   setState(() {
     widget.isLoading = false; //dummy
   });
+   widget.notifyParent();
   }
 
   @override
   Widget build(BuildContext context) {
-    // _refreshCallsList(context);
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
+    // _refreshCallsList(context);
     return RefreshIndicator(
         onRefresh: () => _refreshCallsList(context),
         child: PagewiseListView(
@@ -120,8 +142,11 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
   }
 
   Widget _itemBuilder(context, towedVehicleCharges, _) {
+    // var selectedCall = Provider.of<Calls>(context, listen: false).callDetails;
 
-  return Card(
+  return Column(children:[
+
+  Card(
     child: Padding(
         padding: EdgeInsets.all(10),
         child: Column(
@@ -145,7 +170,7 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                       fontWeight: FontWeight.bold,
                       fontSize: 14.0)),
               Visibility(
-                  visible:widget.userRole == "3" ? false : true,
+                  // visible:widget.userRole == "3" ? false : true,
                   child: IconButton(
                     icon: new Icon(Icons.edit, size:20),
                     tooltip: 'Edit',
@@ -153,7 +178,7 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                       Navigator.push(
                           context,
                           new MaterialPageRoute(
-                              builder: (context) => new ChargesEdit(notifyParent:refresh)));
+                              builder: (context) => new ChargesEdit(notifyParent:refresh, userRole:widget.userRole)));
                       Provider.of<TowedVehicleChargesVM>(context,
                           listen: false)
                           .selectedCharge
@@ -200,11 +225,10 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
                                   color: Colors.white,
                                   textColor: Colors.green,
                                   child: Text('Yes'),
-                                  onPressed: () {
-                                    // Navigator.of(context).pop();
+                                  onPressed: () => {
                                     deleteCharge(context,
-                                         towedVehicleCharges.id, towedVehicleCharges.towCharges, towedVehicleCharges.towedVehicle);
-                                    },
+                                         towedVehicleCharges.id, towedVehicleCharges.towCharges, towedVehicleCharges.towedVehicle)
+                                     },
                                 ),
                                 FlatButton(
                                   shape: RoundedRectangleBorder(
@@ -323,7 +347,7 @@ class _TowedVehicleChargesList extends State<TowedVehicleChargesList> {
               ),
             )
           ],
-        )),
+        )))],
     //Divider()
   );
   }

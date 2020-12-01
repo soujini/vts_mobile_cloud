@@ -29,6 +29,9 @@
 .pub/
 /build/
 
+# ignore the development environments
+assets/env/.env_dev
+
 # Android related
 **/android/**/gradle-wrapper.jar
 **/android/.gradle

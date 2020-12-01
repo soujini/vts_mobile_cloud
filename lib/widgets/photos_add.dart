@@ -20,6 +20,7 @@ class PhotosAdd extends StatefulWidget {
   }
 }
 
+
 class _PhotosAddState extends State<PhotosAdd> {
   final _formKey = GlobalKey<FormState>();
   final _picture = TowedVehiclePicture();
@@ -227,7 +228,22 @@ else if(selectedOptionIndex == 7){
                     child:
                     Container(
                       height:200,
-                      child: _image == null ? Text('No image selected.') : Image.file(_image),
+                      child: _image == null ? Text('No image selected.') :
+                      GestureDetector(
+                        child: Center(
+                          child: Hero(
+                            tag: 'imageHero',
+                            child:Image.file(_image),
+                          ),
+                        ),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) {
+                            return DetailScreen(_image);
+                          }));
+                        },
+
+                      ),
+                      //Image.file(_image),
                     ),
 //                    SizedBox(
 //                      height: 75,
@@ -324,5 +340,28 @@ class RadioModel {
   final String text;
 
   RadioModel(this.isSelected, this.buttonText, this.text);
+}
+class DetailScreen extends StatelessWidget {
+  DetailScreen(this._image);
+   final File _image;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding:EdgeInsets.only(left:5, right:5, top:37),
+          child:GestureDetector(
+        child: Center(
+
+          child: Hero(
+            tag: 'imageHero',
+            child: Image.file(_image),
+          ),
+        ),
+        onTap: () {
+          Navigator.pop(context);
+        },
+      )),
+    );
+  }
 }
 

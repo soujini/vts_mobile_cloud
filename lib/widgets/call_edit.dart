@@ -44,9 +44,8 @@ class CallEdit extends StatefulWidget {
   _CallEditState createState() => _CallEditState();
 }
 
-class _CallEditState extends State<CallEdit>
-    with SecureStoreMixin, AutomaticKeepAliveClientMixin {
-  final _formKey = GlobalKey<FormState>();
+class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKeepAliveClientMixin {
+  final GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   bool _autoValidate = true;
   bool _isFormReadOnly = false;
   bool wantKeepAlive = true;
@@ -57,6 +56,7 @@ class _CallEditState extends State<CallEdit>
   var dispatchPaging;
   bool isLoading = false;
   int tabIndex = 0;
+  var x;
   var _billToController = new TextEditingController();
   var _towedInvoiceController = new TextEditingController();
   var _dispatchMemberController = new TextEditingController();
@@ -291,6 +291,13 @@ class _CallEditState extends State<CallEdit>
         .value;
     // });
   }
+  setLicenseState2(obj) {
+    _call.vehicleLicenseState = obj.id != null ? obj.id : 0;
+    _call.vehicleLicenseStateName = obj.name != null ? obj.name : '';
+    _licenseStateController.value = new TextEditingController.fromValue(
+        new TextEditingValue(text: obj.shortName != null ? obj.shortName : ''))
+        .value;
+  }
 
   setYearMakeModelName(yearMakeModelObj) {
     setMake(yearMakeModelObj.vehicleMake, yearMakeModelObj.vehicleMakeName);
@@ -399,12 +406,12 @@ class _CallEditState extends State<CallEdit>
     // });
   }
 
-  setTowedState(id, name, shortName) {
+  setTowedState(obj) {
     // setState(() {
-    _call.towedState = id != null ? id : 0;
-    _call.towedStateName = name != null ? name : '';
+    _call.towedState = obj.id != null ? obj.id : 0;
+    _call.towedStateName = obj.name != null ? obj.name : '';
     _towedStateController.value = new TextEditingController.fromValue(
-            new TextEditingValue(text: shortName != null ? shortName : ''))
+            new TextEditingValue(text: obj.shortName != null ? obj.shortName : ''))
         .value;
 
     //Empty City
@@ -426,12 +433,12 @@ class _CallEditState extends State<CallEdit>
     // });
   }
 
-  setTowedToState(id, name, shortName) {
+  setTowedToState(obj) {
     // setState(() {
-    _call.towedToState = id != null ? id : 0;
-    _call.towedToStateName = name != null ? name : '';
+    _call.towedToState = obj.id != null ? obj.id : 0;
+    _call.towedToStateName = obj.name != null ? obj.name : '';
     _towedToStateController.value = new TextEditingController.fromValue(
-            new TextEditingValue(text: shortName != null ? shortName : ''))
+            new TextEditingValue(text: obj.shortName != null ? obj.shortName : ''))
         .value;
 
     //Empty City
@@ -509,7 +516,7 @@ class _CallEditState extends State<CallEdit>
     isLoading = true;
     var selectedCall = Provider.of<Calls>(context, listen: false).selectedCall;
     await Provider.of<Calls>(context, listen: false).get(selectedCall.id);
-    var x = await Provider.of<Calls>(context, listen: false).callDetails;
+     x = await Provider.of<Calls>(context, listen: false).callDetails;
 
     setState(() {
       //Bill To and BillToName
@@ -1140,8 +1147,8 @@ class _CallEditState extends State<CallEdit>
   }
 
   var selectedCall;
-  bool shouldListenTowedDiscountRateController = false;
-  bool shouldListenTowedDiscountAmountController = false;
+  // bool shouldListenTowedDiscountRateController = false;
+  // bool shouldListenTowedDiscountAmountController = false;
 
   @override
   void initState() {
@@ -1161,7 +1168,7 @@ class _CallEditState extends State<CallEdit>
   }
 
   refresh() {
-    // bla();
+     bla();
     setState(() {
       tabIndex = 5;
     });
@@ -1188,8 +1195,9 @@ class _CallEditState extends State<CallEdit>
 
   @override
   Widget build(BuildContext context) {
-    shouldListenTowedDiscountRateController = true;
-    shouldListenTowedDiscountAmountController = true;
+    // shouldListenTowedDiscountRateController = true;
+    // shouldListenTowedDiscountAmountController = true;
+    // super.build(context);
     super.build(context);
     // TODO: implement build
     return DefaultTabController(
@@ -1206,7 +1214,8 @@ class _CallEditState extends State<CallEdit>
                 // key:UniqueKey(),
                 // controller:_tabController,
                 onTap: (index) => {
-                  FocusScope.of(context).requestFocus(new FocusNode()),
+                   // FocusScope.of(context).requestFocus(new FocusNode()),
+                // FocusScope.of(context).unfocus(),
                   // setState(() {
                   tabIndex = index,
                   // });
@@ -1288,7 +1297,7 @@ class _CallEditState extends State<CallEdit>
                                     selectedCall: selectedCall.id,
                                     notifyParent: refresh)))
                         .then((value) =>
-                        print("bb")
+                       print(""),
                         // setState(() {
                         //       tabIndex = 5;
                         //     })
@@ -1334,9 +1343,9 @@ class _CallEditState extends State<CallEdit>
                   icon: new Icon(Icons.check,
                       size: 20.0,
                       color:
-                          _isFormReadOnly == true ? Colors.grey : Colors.white),
+                          Colors.white),
                   tooltip: 'Save',
-                  onPressed: () => _isFormReadOnly == false ? update() : null,
+                  onPressed: () => update(),
                 ),
 //                new IconButton(
 //                  icon: new Icon(Icons.more_vert),
@@ -1349,15 +1358,19 @@ class _CallEditState extends State<CallEdit>
                 ? Center(child: Loader())
                 : Padding(
                     padding: EdgeInsets.all(10.0),
-                    child: Form(
-                        key: this._formKey,
+                    child:
+                        new Form(
+                        key: _formKey,
                         autovalidate: _autoValidate,
-                        child: TabBarView(key: UniqueKey(), children: [
+                        child: TabBarView(
+                            key: UniqueKey(),
+                            children: [
                           SingleChildScrollView(
                               child: Column(
                             children: <Widget>[
                               new ListTile(
                                 title: new TextFormField(
+                                    // //autofocus: true,
                                     readOnly: true,
                                     enabled: !_isFormReadOnly,
                                     style: TextStyle(
@@ -1384,6 +1397,7 @@ class _CallEditState extends State<CallEdit>
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  // //autofocus: true,
                                   readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -1407,6 +1421,7 @@ class _CallEditState extends State<CallEdit>
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  // //autofocus: true,
                                   readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -1429,6 +1444,7 @@ class _CallEditState extends State<CallEdit>
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  // //autofocus: true,
                                   readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -1452,6 +1468,7 @@ class _CallEditState extends State<CallEdit>
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  ////autofocus: true,
                                   readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -1481,6 +1498,7 @@ class _CallEditState extends State<CallEdit>
                               ),
                               new ListTile(
                                 title: new TextFormField(
+
                                   readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
@@ -1609,7 +1627,12 @@ class _CallEditState extends State<CallEdit>
                             children: <Widget>[
                               new ListTile(
                                 title: new TextFormField(
-                                  readOnly: _isFormReadOnly,
+                                  // onEditingComplete: () {
+                                  //   FocusScope.of(context).requestFocus(new FocusNode());
+                                  //   FocusScope.of(context).unfocus();
+                                  // },
+
+                                  // readOnly: _isFormReadOnly,
                                   textCapitalization:
                                       TextCapitalization.characters,
                                   style: TextStyle(
@@ -1802,8 +1825,13 @@ class _CallEditState extends State<CallEdit>
                               ),
                               new ListTile(
                                 title: new TextFormField(
+                                  // onEditingComplete: () {
+                                  //   FocusScope.of(context).requestFocus(new FocusNode());
+                                  //   // FocusScope.of(context).unfocus();
+                                  // },
+
                                   autocorrect: false,
-                                  readOnly: _isFormReadOnly,
+                                  // readOnly: _isFormReadOnly,
                                   textCapitalization:
                                       TextCapitalization.characters,
                                   style: TextStyle(
@@ -1835,7 +1863,7 @@ class _CallEditState extends State<CallEdit>
                               new ListTile(
                                 title: new TextFormField(
                                     readOnly: true,
-                                    enabled: !_isFormReadOnly,
+                                    // enabled: !_isFormReadOnly,
                                     style: TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500),
@@ -1859,7 +1887,7 @@ class _CallEditState extends State<CallEdit>
                                               builder: (context) =>
                                                   new SystemStateModal(
                                                       setSystemState:
-                                                          setLicenseState)))
+                                                          setLicenseState2)))
                                     }),
                               ),
 //                          new ListTile(
@@ -1956,7 +1984,7 @@ class _CallEditState extends State<CallEdit>
 //                          ),
                               new ListTile(
                                 title: new TextFormField(
-                                  readOnly: _isFormReadOnly,
+                                  // readOnly: _isFormReadOnly,
                                   style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500),
@@ -2186,11 +2214,13 @@ class _CallEditState extends State<CallEdit>
                                     }
                                   },
                                   onTap: () => {
+                                    _towedStreetController
+                                        .value.text.length > 0 ?
                                     _towedStreetController.selection =
                                         TextSelection(
                                             baseOffset: 0,
                                             extentOffset: _towedStreetController
-                                                .value.text.length)
+                                                .value.text.length) : ''
                                   },
                                   onSaved: (val) =>_call.towedStreet = val,
                                       // setState(() => _call.towedStreet = val),
@@ -3446,15 +3476,87 @@ class _CallEditState extends State<CallEdit>
                           ]),
 
                           Column(children: <Widget>[
+                            Padding(
+                                padding: EdgeInsets.all(5),
+                                child:Container(
+                                  color: Colors.white,
+                                  padding: EdgeInsets.only(top: 20.0),
+                                  child: Table(
+                                    children: [
+                                      TableRow(children: [
+                                        TableCell(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text("SUB TOTAL",
+                                                    style: new TextStyle(
+                                                        color: Color(0xff6C89BA), fontSize: 11.0,  fontWeight:FontWeight.w800)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(top: 15, bottom:15),
+                                                  child:
+                                                  Text(x[0].towedSubTotal.toStringAsFixed(2)), ),
+                                              ],
+                                            )),
+                                        TableCell(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text("DISCOUNT",
+                                                    style: new TextStyle(
+                                                        color: Color(0xff6C89BA), fontSize: 11.0, fontWeight:FontWeight.w800)),
+                                                Padding(
+                                                    padding: EdgeInsets.only(top: 15),
+                                                    child:
+                                                    Text(x[0].towedDiscountTotal.toStringAsFixed(2))),
+                                              ],
+                                            )),
+                                        TableCell(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text("TAX",
+                                                    style: new TextStyle(
+                                                        color: Color(0xff6C89BA), fontSize: 11.0, fontWeight:FontWeight.w800)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(top: 15),
+                                                  child: Text(x[0].towedTaxAmount.toStringAsFixed(2)),
+                                                )
+                                              ],
+                                            )),
+                                        TableCell(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text("TOTAL",
+                                                    style: new TextStyle(
+                                                        color: Color(0xff6C89BA), fontSize: 11.0,  fontWeight:FontWeight.w800)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(top: 15),
+                                                  child: Text(x[0].towedTotalAmount.toStringAsFixed(2)),
+                                                )
+                                              ],
+                                            )),
+                                        TableCell(
+                                            child: Column(
+                                              children: <Widget>[
+                                                Text("BALANCE",
+                                                    style: new TextStyle(
+                                                        color:Color(0xff6C89BA), fontSize: 11.0,  fontWeight:FontWeight.w800)),
+                                                Padding(
+                                                  padding: EdgeInsets.only(top: 15),
+                                                  child: Text(x[0].towedBalance.toStringAsFixed(2)),
+                                                )
+                                              ],
+                                            )),
+                                      ])
+                                    ],
+                                  ),
+                                )),
                             Expanded(
                                 child: TowedVehicleChargesList(
-                                    userRole: userRole))
+                                    userRole: userRole, selectedCall: x[0], notifyParent:refresh))
                           ]),
                           Column(children: <Widget>[
                             Expanded(
                                 child: PhotosList(
                                     userRole: userRole,
-                                    userId: userId
+                                    userId: userId,
                                     ))
                           ]),
                         ])))));

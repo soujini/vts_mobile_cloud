@@ -200,8 +200,6 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                   padding:EdgeInsets.all(0.0),
                   child:(selectedOptionIndex == 1 || selectedOptionIndex == 2 || selectedOptionIndex == 3) ?
                   SizedBox(
-
-                  height: 75,
                       child:Padding(
                         padding:EdgeInsets.all(15.0),
                   child: TextField(
@@ -330,7 +328,7 @@ class SearchCallScreenState extends State<SearchCallScreen> with SecureStoreMixi
                     title: new TextFormField(
                         controller: this.myController,
                         decoration: new InputDecoration(
-                          hintText: "Tow Type *",
+                          labelText: "Tow Type *",
                             labelStyle: TextStyle(fontSize:14, fontWeight:FontWeight.w500),
                           suffixIcon: Icon(Icons.arrow_forward_ios, size:14),
                         ),

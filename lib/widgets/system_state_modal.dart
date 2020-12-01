@@ -57,7 +57,8 @@ class SystemStateModal extends StatelessWidget {
                     },
                     onSuggestionSelected: (suggestion) {
                       this._typeAheadController1.text = suggestion.shortName;
-                      setSystemState(suggestion.id, suggestion.name, suggestion.shortName);
+                      // setSystemState(suggestion.id, suggestion.name, suggestion.shortName);
+                      setSystemState(suggestion);
                       Navigator.of(context).pop();
                     },
                   ),

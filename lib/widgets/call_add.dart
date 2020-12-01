@@ -279,11 +279,11 @@ class CallAddState extends State<CallAdd> {
 
   }
   setTowCustomer(id, name) {
-    setState(() {
+    // setState(() {
       _call.towCustomer = id;
       _call.towCustomerName = name;
       _towCustomerController.value =new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
-    });
+    // });
     _getTowCustomerDefaults(id);
   }
 
@@ -299,83 +299,94 @@ class CallAddState extends State<CallAdd> {
 //  }
 
   setModel(id, name) {
-    setState(() {
+    // setState(() {
       _call.vehicleYearMakeModel = id;
       _call.vehicleYearMakeModelName = name;
       _modelController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
 
-    });
+    // });
     _formKey[0].currentState.validate();
   }
 
   setVehicleYear(year) {
-    setState(() {
+    // setState(() {
       _call.vehicleYear = year;
       _yearController.value = new TextEditingController.fromValue(new TextEditingValue(text: year.toString())).value;
-    });
+    // });
     _formKey[0].currentState.validate();
   }
 
   setMake(id, name) {
-    setState(() {
+    // setState(() {
       _call.vehicleMake = id;
       _call.vehicleMakeName = name;
       _makeController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
 
-    });
+    // });
     _formKey[0].currentState.validate();
   }
 
   setStyle(id, name) {
-    setState(() {
+    // setState(() {
       _call.vehicleStyle = id;
       _call.vehicleStyleName = name;
       _styleController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name)).value;
 
-    });
+    // });
     _formKey[0].currentState.validate();
   }
 
   setTopColor(id, name) {
-    setState(() {
+    // setState(() {
       _call.topColor = id;
       _call.topColorName = name;
       _topColorController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
     _formKey[0].currentState.validate();
     setSecondColor(id, name);
   }
 
   setSecondColor(id, name) {
-    setState(() {
+    // setState(() {
       _call.secondColor = id;
       _call.secondColorName = name;
       _secondColorController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
     _formKey[0].currentState.validate();
   }
 
   setLicenseState(id, name, shortName) {
-    setState(() {
+    // setState(() {
       _call.vehicleLicenseState = id;
       _call.vehicleLicenseStateName = name;
       _licenseStateController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
+    _formKey[0].currentState.validate();
+  }
+
+  setLicenseState2(obj) {
+    // setState(() {
+      _call.vehicleLicenseState = obj.id;
+      _call.vehicleLicenseStateName = obj.name;
+      _licenseStateController.value =
+          new TextEditingController.fromValue(new TextEditingValue(text: obj.name))
+              .value;
+    // });
     _formKey[0].currentState.validate();
   }
 
   setTowType(suggestion) {
     //Default
-    setState(() {
+    // setState(() {
       _call.towType = suggestion.towType != null && suggestion.towType != 'null' ? suggestion.towType : 0;
       _call.towTypeName = suggestion.towTypeName != null && suggestion.towTypeName != 'null' ? suggestion.towTypeName : '';
       _call.towAuthorization = suggestion.towAuthorization != null && suggestion.towAuthorization != 'null' ? suggestion.towAuthorization : 0;
@@ -398,38 +409,38 @@ class CallAddState extends State<CallAdd> {
       _towReasonController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: suggestion.towReasonName))
               .value;
-    });
+    // });
     _formKey[1].currentState.validate();
   }
 
   setTowReason(id, name) {
-    setState(() {
+    // setState(() {
       _call.towReason = id;
       _call.towReasonName = name;
       _towReasonController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
   }
 
   setAuthorization(id, name) {
-    setState(() {
+    // setState(() {
       _call.towAuthorization = id;
       _call.towAuthorizationName = name;
       _authorizationController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
   }
 
   setJurisdiction(id, name) {
-    setState(() {
+    // setState(() {
       _call.towJurisdiction = id;
       _call.towJurisdictionName = name;
       _jurisdictionController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
     _formKey[1].currentState.validate();
   }
 
@@ -443,60 +454,60 @@ class CallAddState extends State<CallAdd> {
   }
 
   setCity(id, name) {
-    setState(() {
+    // setState(() {
       _call.towedCity = id;
       _call.towedCityName = name;
       _towedCityController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
    //_formKey.currentState.validate();
   }
   setTowedToCity(id, name) {
-    setState(() {
+    // setState(() {
       _call.towedToCity = id;
       _call.towedToCityName = name;
       _towedToCityController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
     //_formKey.currentState.validate();
   }
 
-  setTowedState(id, name, shortName) {
-    setState(() {
-      _call.towedState = id;
-      _call.towedStateName = name;
+  setTowedState(obj) {
+    // setState(() {
+      _call.towedState = obj.id;
+      _call.towedStateName = obj.name;
       _towedStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: shortName))
+          new TextEditingController.fromValue(new TextEditingValue(text: obj.shortName))
               .value;
-    });
+    // });
    //_formKey.currentState.validate();
   }
-  setTowedToState(id, name, shortName) {
-    setState(() {
-      _call.towedToState = id;
-      _call.towedToStateName = name;
+  setTowedToState(obj) {
+    // setState(() {
+      _call.towedToState = obj.id;
+      _call.towedToStateName = obj.name;
       _towedToStateController.value =
-          new TextEditingController.fromValue(new TextEditingValue(text: shortName))
+          new TextEditingController.fromValue(new TextEditingValue(text: obj.shortName))
               .value;
-    });
+    // });
     //_formKey.currentState.validate();
   }
 
   setCompany(id, name) {
-    setState(() {
+    // setState(() {
       _call.wreckerCompany = id;
       _call.wreckerCompanyName = name;
       _companyController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
     _formKey[1].currentState.validate();
   }
 
   setDriver(suggestion) {
-    setState(() {
+    // setState(() {
       _call.wreckerDriver = suggestion.wreckerDriver;
       _call.wreckerDriverName = suggestion.wreckerDriverName;
       _driverController.value =
@@ -505,29 +516,29 @@ class CallAddState extends State<CallAdd> {
       if(suggestion.towTruck != 0) {
         setTruck(suggestion.towTruck, suggestion.towTruckName);
       }
-    });
+    // });
    //_formKey.currentState.validate();
   }
 
   setTruck(id, name) {
-    setState(() {
+    // setState(() {
       _call.towTruck = id;
       _call.towTruckName = name;
       _truckController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
    //_formKey.currentState.validate();
   }
 
   setBillTo(id, name) {
-    setState(() {
+    // setState(() {
       _call.billTo = id;
       _call.billToName = name;
       _billToController.value =
           new TextEditingController.fromValue(new TextEditingValue(text: name))
               .value;
-    });
+    // });
    //_formKey.currentState.validate();
   }
 
@@ -540,11 +551,11 @@ class CallAddState extends State<CallAdd> {
   setTowedInvoice(storageCompanyId) async {
     await Provider.of<StorageCompaniesVM>(context, listen:false).get(storageCompanyId);
 
-    setState(() {
+    // setState(() {
       var towedInvoice = _call.towedInvoice =Provider.of<StorageCompaniesVM>(context, listen:false).sc["towedInvoice"];
       var newTowedInvoice = int.parse(towedInvoice) + 1;
       _towedInvoiceController.value = new TextEditingController.fromValue( new TextEditingValue(text: newTowedInvoice.toString())).value;
-    });
+    // });
   }
   // _navigate(context){
   //  Navigator.of(context).push(MaterialPageRoute(builder:(context) =>CallAdd() ));
@@ -1097,7 +1108,7 @@ class CallAddState extends State<CallAdd> {
                             context,
                             new MaterialPageRoute(
                                 builder: (context) => new SystemStateModal(
-                                    setSystemState: setLicenseState)));
+                                    setSystemState: setLicenseState2)));
                       }),
                 ),
               ])

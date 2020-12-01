@@ -88,9 +88,20 @@ x(){
   }
 
   Future deletePicture(BuildContext context, id, towedVehicle) async {
-    // setState(() {
         isDeleteDialogWidgetProcessing=true;
-    // });
+        showDialog(
+            context: context,
+            builder: ((context) => AlertDialog(
+                title: Text("Deleting Picture..."),
+                content:
+                SingleChildScrollView(
+                    padding: EdgeInsets.only(left:100, right:100, top:10, bottom:10),
+                    child: ListBody(
+                        children: <Widget>[
+                          Loader()
+                        ])
+                )
+            )));
 
     await Provider.of<TowedVehiclePicturesVM>(context, listen: false).delete(id, towedVehicle);
     var picturesDeleteResponse =await Provider.of<TowedVehiclePicturesVM>(context, listen: false) .picturesDeleteResponse;
@@ -98,11 +109,14 @@ x(){
     if (picturesDeleteResponse["errorStatus"] == "false") {
       _showErrorMessage(context, picturesDeleteResponse["errorMessage"]);
     } else {
+
       Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      setState(() {
+        widget.isLoading=false;
+      });
     }
-    // setState(() {
          isDeleteDialogWidgetProcessing=false;
-    // });
   }
   _showDeleteDialog(vehiclePictureTypeName, id, towedVehicle){
     showDialog(

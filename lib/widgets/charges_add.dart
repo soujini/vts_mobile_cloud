@@ -194,7 +194,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
               ),
               new ListTile(
                 title: new TextFormField(
-                  readOnly: _isFormReadOnly,
+                  // readOnly: _isFormReadOnly,
                   onEditingComplete: () {
                     FocusScope.of(context).requestFocus(new FocusNode());
                     FocusScope.of(context).unfocus();

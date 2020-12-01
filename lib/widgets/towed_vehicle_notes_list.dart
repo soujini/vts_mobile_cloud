@@ -18,7 +18,6 @@ class TowedVehicleNotesList extends StatefulWidget {
 }
 class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
   static const int PAGE_SIZE = 15;
-  bool isDeleteDialogWidgetProcessing = true;
   //
   // void initState(){
   //   super.initState();
@@ -74,9 +73,9 @@ class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
                     .listMini(pageIndex, PAGE_SIZE, selectedCall.id.toString())));
   }
   refresh(){
-    // setState(() {
-    //
-    // });
+    setState(() {
+      widget.isLoading = false; //dummy
+    });
   }
 
   _showErrorMessage(BuildContext context, errorMessage) {
@@ -88,18 +87,38 @@ class _TowedVehicleNotesList extends State<TowedVehicleNotesList> {
                 ))));
   }
   Future deleteNote(context, id, towedVehicle) async {
-    isDeleteDialogWidgetProcessing = true;
+    showDialog(
+        context: context,
+        builder: ((context) => AlertDialog(
+            title: Text("Deleting Note..."),
+            content:
+            SingleChildScrollView(
+                padding: EdgeInsets.only(left:100, right:100, top:10, bottom:10),
+                child: ListBody(
+                    children: <Widget>[
+                      Loader()
+                    ])
+            )
+        )));
+
     await Provider.of<TowedVehicleNotesVM>(context, listen: false).delete(id, towedVehicle);
     var notesDeleteResponse = await Provider.of<TowedVehicleNotesVM>(context, listen: false).notesDeleteResponse;
 
     if (notesDeleteResponse["errorStatus"] == "false") {
+      widget.isLoading = false;
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
       _showErrorMessage(context, notesDeleteResponse["errorMessage"]);
     }
       else {
-
+      // widget.notifyParent();
+      Navigator.of(context).pop();
+      Navigator.of(context).pop();
+      setState(() {
+        widget.isLoading=false;//dummy
+      });
       }
-    Navigator.of(context).pop();
-    isDeleteDialogWidgetProcessing = false;
+
     }
 
   Widget _itemBuilder(context, towedVehicleNotes, _) {

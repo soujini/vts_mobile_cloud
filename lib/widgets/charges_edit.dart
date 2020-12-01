@@ -5,11 +5,12 @@ import 'package:vts_mobile_cloud/providers/processTowedVehicle_provider.dart';
 import '../providers/towedVehicleCharges_provider.dart';
 import 'package:vts_mobile_cloud/widgets/loader.dart';
 import "package:flutter/services.dart";
+import '../providers/secureStoreMixin_provider.dart';
 
 class ChargesEdit extends StatefulWidget {
   final Function notifyParent;
-
-  ChargesEdit({Key key, this.notifyParent});
+  String userRole;
+  ChargesEdit({Key key, this.notifyParent, this.userRole});
 
   @override
   State<StatefulWidget> createState() {
@@ -17,13 +18,15 @@ class ChargesEdit extends StatefulWidget {
   }
 }
 
-class _ChargesEditState extends State<ChargesEdit> {
+class _ChargesEditState extends State<ChargesEdit> with SecureStoreMixin{
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = true;
   bool isLoading = false;
   var _charge = TowedVehicleCharge();
   var _enableDiscountApply = false;
   bool isChargesQuantitySelected = false;
+  bool _isFormReadOnly = false;
+
 
   var _towChargesController = new TextEditingController();
   var _chargesQuantityController = new TextEditingController();
@@ -34,6 +37,10 @@ class _ChargesEditState extends State<ChargesEdit> {
 
   // new MoneyMaskedTextController(precision: 2, decimalSeparator: '.', thousandSeparator: '');
   void initState() {
+    if(widget.userRole == "3"){
+      _isFormReadOnly=true;
+    }
+
     _chargesQuantityController.addListener(() {
       final text = _chargesQuantityController.text;
       if(text.isNotEmpty) {
@@ -144,7 +151,7 @@ class _ChargesEditState extends State<ChargesEdit> {
         } else {
           isLoading = false;
           Navigator.pop(context);
-          widget.notifyParent();
+           widget.notifyParent();
         }
       }
     } else {
@@ -293,6 +300,7 @@ class _ChargesEditState extends State<ChargesEdit> {
   }
 
   calculateDiscountRate(val) async { //On Apply
+    // isLoading = true;
     setState(() {
       isLoading = true;
     });
@@ -333,9 +341,9 @@ class _ChargesEditState extends State<ChargesEdit> {
       )).value;
 
     }
-    setState(() {
-      isLoading=false;
-    });
+     setState(() {
+       isLoading=false;
+     });
   }
 
   @override
@@ -378,7 +386,8 @@ class _ChargesEditState extends State<ChargesEdit> {
                     ),
                     new ListTile(
                       title: new TextFormField(
-                        readOnly: _charge.accruedCharge == true,
+                        enabled: _charge.accruedCharge == false ? true : false,
+                        // readOnly: _charge.accruedCharge == true ,
                         onEditingComplete: () {
                           FocusScope.of(context).requestFocus(new FocusNode());
                           FocusScope.of(context).unfocus();
@@ -412,6 +421,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                     ),
                     new ListTile(
                       title: new TextFormField(
+                        enabled: !_isFormReadOnly,
                         onEditingComplete: () {
                           FocusScope.of(context).requestFocus(new FocusNode());
                           FocusScope.of(context).unfocus();
@@ -451,6 +461,7 @@ class _ChargesEditState extends State<ChargesEdit> {
                     ),
                     new ListTile(
                       title: new TextFormField(
+                        enabled: !_isFormReadOnly,
                         onEditingComplete: () {
                           FocusScope.of(context).requestFocus(new FocusNode());
                           FocusScope.of(context).unfocus();
@@ -525,7 +536,11 @@ class _ChargesEditState extends State<ChargesEdit> {
                           //       }
                           //     : null,
                           onChanged: (val) {
-                            calculateDiscountRate(val);
+                            if(!_isFormReadOnly){
+                            calculateDiscountRate(val);}
+                            else{
+                              return null;
+                            }
                             // if(val == true){
                             //   var a =
                             //   setState(() {

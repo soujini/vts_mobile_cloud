@@ -10,6 +10,9 @@ class Call {
   String dispatchStatusName;
   double towedTotalAmount;
   double towedSubTotal;
+  double towedDiscountTotal;
+  double towedTaxAmount;
+  double towedBalance;
   String towReasonName;
   int vehicleModel;
   int vehicleYearMakeModel;
@@ -306,6 +309,9 @@ class Call {
     @required this.dispatchStatusName,
     @required this.towedTotalAmount,
     @required this.towedSubTotal,
+    @required this.towedDiscountTotal,
+    @required this.towedTaxAmount,
+    @required this.towedBalance,
     @required this.towReasonName,
     @required this.vehicleMakeName,
     this.vehicleModel,
@@ -607,6 +613,9 @@ Call _towedVehicleCallsFromJson(Map<String, dynamic> parsedJson) {
       dispatchStatusName: parsedJson["dispatchStatusName"],
       towedTotalAmount: double.parse(parsedJson["towedTotalAmount"]),
       towedSubTotal:double.parse(parsedJson["towedSubTotal"]),
+      towedDiscountTotal:double.parse(parsedJson["towedDiscountTotal"]),
+      towedTaxAmount:double.parse(parsedJson["towedTaxAmount"]),
+      towedBalance:double.parse(parsedJson["towedBalance"]),
 //      towReasonName: parsedJson["towReasonName"],
       vehicleMakeName: parsedJson["vehicleMakeName"],
       vehicleYearMakeModel: int.parse(parsedJson["vehicleYearMakeModel"]),
