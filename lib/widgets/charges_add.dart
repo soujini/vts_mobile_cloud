@@ -34,11 +34,11 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
   var _chargesRateController = new TextEditingController();
 
 
-  setTowCharge(id, name) {
+   setTowCharge(id, name) async {
     // final form = _formKey.currentState;
     // if (form.validate()) {
     //    form.save();
-      getAndSetDefaultCharges(id);
+      await getAndSetDefaultCharges(id);
       setState(() {
         _charge.towCharges = id;
         _towChargesController.value =
@@ -203,6 +203,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                   // inputFormatters: [DecimalTextInputFormatter(decimalRa
                   keyboardType:TextInputType.numberWithOptions(decimal: true),
                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
+                  controller: _chargesQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Quantity *',
                   ),
@@ -247,6 +248,7 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                       return null;
                     }
                   },
+                  //onChanged: (val) => calculateTotalChargesOnDiscountQuantityChange(val),
                   onTap: () => {_discountQuantityController.selection = TextSelection(baseOffset: 0, extentOffset: _discountQuantityController.value.text.length)},
                   onSaved: (val) =>
                       setState(() => _charge.discountQuantity = val),
