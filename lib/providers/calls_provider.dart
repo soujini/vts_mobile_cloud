@@ -320,11 +320,18 @@ class Calls with ChangeNotifier, SecureStoreMixin {
       timeZoneName=token;
     });
     bool isLocationServiceEnabled  = await Geolocator.isLocationServiceEnabled();
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    var latitude = 0.00;
+    var longitude = 0.00;
+    if(isLocationServiceEnabled == true){
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+       latitude = position.latitude;
+       longitude = position.longitude;
+    }
+
+
     //var geoLocator = GeoLocator();
      //geoLocator.getCurrentPosition();
-     var latitude = position.latitude;
-     var longitude = position.longitude;
+
 
     if(fieldName == "Received")
     {

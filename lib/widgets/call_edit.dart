@@ -1130,6 +1130,7 @@ class _CallEditState extends State<CallEdit> with SecureStoreMixin, AutomaticKee
                       new SuccessScreen("Call Successfully Updated!")));
 
           Timer(Duration(milliseconds: 3000), () {
+            bla();
             Navigator.pop(context);
           });
         }

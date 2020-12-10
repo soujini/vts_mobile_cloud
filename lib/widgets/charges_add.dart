@@ -200,10 +200,9 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  // inputFormatters: [DecimalTextInputFormatter(decimalRange: 2)],
-                  keyboardType:TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  controller: _chargesQuantityController,
+                  // inputFormatters: [DecimalTextInputFormatter(decimalRa
+                  keyboardType:TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                   decoration: new InputDecoration(
                     labelText: 'Quantity *',
                   ),
@@ -228,9 +227,8 @@ class _ChargesAddState extends State<ChargesAdd> with SecureStoreMixin {
                     FocusScope.of(context).unfocus();
                   },
                   style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  keyboardType:TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-
+                  keyboardType:TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                   controller: _discountQuantityController,
                   decoration: new InputDecoration(
                     labelText: 'Discount Quantity',

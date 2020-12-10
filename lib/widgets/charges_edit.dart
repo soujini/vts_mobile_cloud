@@ -395,8 +395,8 @@ class _ChargesEditState extends State<ChargesEdit> with SecureStoreMixin{
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
                         controller: this._chargesQuantityController,
-                        keyboardType:TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        keyboardType:TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                         decoration: new InputDecoration(
                           labelText: 'Quantity',
                         ),
@@ -429,8 +429,8 @@ class _ChargesEditState extends State<ChargesEdit> with SecureStoreMixin{
                         style: TextStyle(
                             fontSize: 14, fontWeight: FontWeight.w500),
                         controller: this._discountQuantityController,
-                        keyboardType:TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        keyboardType:TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[0-9.]"))],
                         decoration: new InputDecoration(
                           labelText: 'Discount Quantity',
                         ),
