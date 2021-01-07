@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import '../providers/secureStoreMixin_provider.dart';
+import '../providers/common_provider.dart';
 
 class TowedVehiclePicture {
   bool errorStatus;
@@ -68,6 +69,7 @@ bool _convertTobool(value) {
 
 class TowedVehiclePicturesVM with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  API api = API();
   final String appName = "towing";
   String userId="";
   String pinNumber="";
@@ -113,11 +115,11 @@ class TowedVehiclePicturesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehiclePicturesTable.asmx',
+        api.baseURL+'towedvehiclePicturesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/delete",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -171,11 +173,11 @@ class TowedVehiclePicturesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehiclePicturesTable.asmx',
+        api.baseURL+'towedVehiclePicturesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/create",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -229,11 +231,11 @@ class TowedVehiclePicturesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehiclePicturesTable.asmx',
+        api.baseURL+'towedVehiclePicturesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 

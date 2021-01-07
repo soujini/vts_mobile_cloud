@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import '../providers/secureStoreMixin_provider.dart';
+import '../providers/common_provider.dart';
 
 class TowedVehicleCharge {
   bool errorStatus;
@@ -87,6 +88,7 @@ bool _convertTobool(value) {
 
 class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  API api = API();
   final String appName = "towing";
   String userId="";
   String pinNumber="";
@@ -146,11 +148,11 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        api.baseURL+'towedVehicleChargesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/create",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -209,11 +211,11 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
 
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        api.baseURL+'towedVehicleChargesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/update",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -256,11 +258,11 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        api.baseURL+'towedVehicleChargesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/delete",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -309,11 +311,11 @@ class TowedVehicleChargesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedVehicleChargesTable.asmx',
+        api.baseURL+'towedVehicleChargesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import '../providers/secureStoreMixin_provider.dart';
+import '../providers/common_provider.dart';
 
 class WreckerCompany {
   String errorStatus;
@@ -48,6 +49,7 @@ class WreckerCompany {
 
 class WreckerCompaniesVM with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  API api = API();
   final String appName = "towing";
   String userId="";
   String pinNumber="";
@@ -90,11 +92,11 @@ class WreckerCompaniesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/relationWreckerCompanyTable.asmx',
+        api.baseURL+'relationWreckerCompanyTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/list",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -146,11 +148,11 @@ class WreckerCompaniesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/relationWreckerCompanyTable.asmx',
+        api.baseURL+'relationWreckerCompanyTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMini",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 

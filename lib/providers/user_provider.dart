@@ -4,6 +4,7 @@ import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../providers/secureStoreMixin_provider.dart';
+import '../providers/common_provider.dart';
 
 class User{
 bool errorStatus;
@@ -336,6 +337,7 @@ User _userFromJson(Map<String, dynamic> parsedJson) {
   );
 }
 class UsersVM with ChangeNotifier, SecureStoreMixin {
+  API api = API();
   List<User> _userData = [];
   List<User> tc;
 
@@ -369,11 +371,11 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/userTable.asmx',
+        api.baseURL+'userTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/validateUser",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
     final resBody = xml2json.parse(response.body);
@@ -395,7 +397,6 @@ class UsersVM with ChangeNotifier, SecureStoreMixin {
       setSecureStore("userRoleName",  extractedData["userRoleName"]);
       setSecureStore("dispatchPaging",  extractedData["dispatchPaging"]);
       setSecureStore("restrictWreckerDriver",  extractedData["restrictWreckerDriver"]);
-
      }
     else{
        ////print("nothing is set");

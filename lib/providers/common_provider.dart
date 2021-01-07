@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 
 class DateAndTime{
   String date;
@@ -22,6 +23,34 @@ class GeoLocator{
 
     latitude = position.latitude.toString();
     longitude = position.longitude.toString();
+  }
+}
+
+class API{
+  String _baseURL;
+  String _host;
+
+  API(){
+    getBaseURL();
+  }
+
+  get baseURL {
+    return _baseURL; //gets a copy of the items
+  }
+  get host {
+    return _host; //gets a copy of the items
+  }
+
+  getBaseURL() async{
+    if (kReleaseMode) {
+      _baseURL = "https://myvtscloud.net/WebServices/";
+      _host = "myvtscloud.net";
+        print(_baseURL);
+    } else {
+      _baseURL = "https://cktsystems.com/vtscloud/WebServices/";
+      _host = "cktsystems.com";
+        print(_baseURL);
+    }
   }
 }
 

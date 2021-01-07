@@ -56,8 +56,6 @@ class _MyAppState extends State<MyApp>{
     final dateAndTime = DateAndTime();
     dateAndTime.getCurrentDateAndTime();
   }
-
-
 //  Map<int, Color> color =
 //  {
 //    50:Color.fromRGBO(136,14,79, .1),
@@ -101,6 +99,7 @@ class _MyAppState extends State<MyApp>{
 
   @override
   Widget build(BuildContext context) {
+
     getCurrentDateAndTime();
     MaterialColor colorCustom = MaterialColor(0xff1C3764, color);
     return MultiProvider(

@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:vts_mobile_cloud/providers/secureStoreMixin_provider.dart';
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
+import '../providers/common_provider.dart';
 
 class StorageCompany {
   String errorStatus;
@@ -27,6 +28,7 @@ StorageCompany _towCustomerFromJson(Map<String, dynamic> parsedJson) {
 
 class StorageCompaniesVM with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  API api = API();
   final String appName = "towing";
   String userId="";
   String pinNumber="";
@@ -59,11 +61,11 @@ class StorageCompaniesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/storageCompanyTable.asmx',
+        api.baseURL+'storageCompanyTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/get",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 

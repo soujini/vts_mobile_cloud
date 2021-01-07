@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
-
+import '../providers/common_provider.dart';
 import '../providers/secureStoreMixin_provider.dart';
 
 class Note {
@@ -43,6 +43,7 @@ Note _towedVehicleNotesFromJson(Map<String, dynamic> parsedJson) {
 
 class NotesVM with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  API api = API();
   final String appName = "towing";
   String userId="";
   String pinNumber="";
@@ -96,11 +97,11 @@ class NotesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicleNotesTable.asmx',
+        api.baseURL+'towedvehicleNotesTable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/create",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 

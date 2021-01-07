@@ -4,6 +4,7 @@ import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import '../models/call.dart';
 import '../providers/secureStoreMixin_provider.dart';
+import '../providers/common_provider.dart';
 
 class Charge{
   bool errorStatus;
@@ -161,6 +162,7 @@ bool _convertTobool(value) {
 
 class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  API api = API();
   final String appName = "towing";
   String userId="";
   String pinNumber="";
@@ -192,11 +194,11 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
+        api.baseURL+'processTowedVehicle.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/processDriverSMSMessage",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -242,11 +244,11 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
+        api.baseURL+'processTowedVehicle.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/checkForDuplicateTickets",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -286,11 +288,11 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
+        api.baseURL+'processTowedVehicle.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/getDefaultCharges",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -339,11 +341,11 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/processTowedvehicle.asmx',
+        api.baseURL+'processTowedvehicle.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/processChangeCharges",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -376,11 +378,11 @@ class ProcessTowedVehiclesVM with ChangeNotifier, SecureStoreMixin {
         "</soap:Body>"
         "</soap:Envelope>";
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/processTowedVehicle.asmx',
+        api.baseURL+'processTowedVehicle.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/mobileDigitalDispatch",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 

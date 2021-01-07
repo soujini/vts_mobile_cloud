@@ -3,15 +3,16 @@ import 'package:http/http.dart' as http;
 import 'package:xml2json/xml2json.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
-
 import '../models/call.dart';
 import '../models/call_add.dart';
 import '../providers/secureStoreMixin_provider.dart';
 import '../providers/common_provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 
 class Calls with ChangeNotifier, SecureStoreMixin {
   Xml2Json xml2json = new Xml2Json();
+  API api = API();
   final String appName = "towing";
   String userId="";
   String pinNumber="";
@@ -175,11 +176,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        api.baseURL+'towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/update",
-          "Host": "cktsystems.com",
+          "Host": api.host,
         },
         body: envelope);
 
@@ -280,11 +281,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        api.baseURL+'towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/create",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -501,11 +502,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        api.baseURL+'towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/update",
-          "Host": "cktsystems.com",
+          "Host": api.host,
         },
         body: envelope);
 
@@ -538,11 +539,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx',
+        api.baseURL+'towedvehicletable.asmx',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/get",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
@@ -648,11 +649,11 @@ class Calls with ChangeNotifier, SecureStoreMixin {
         "</soap:Envelope>";
 
     final response = await http.post(
-        'https://cktsystems.com/vtscloud/WebServices/towedvehicletable.asmx?op=listMiniMobile',
+        api.baseURL+'towedvehicletable.asmx?op=listMiniMobile',
         headers: {
           "Content-Type": "text/xml; charset=utf-8",
           "SOAPAction": "http://cktsystems.com/listMiniMobile",
-          "Host": "cktsystems.com"
+          "Host": api.host
         },
         body: envelope);
 
